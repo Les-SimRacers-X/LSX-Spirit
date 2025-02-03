@@ -1,0 +1,19 @@
+{
+  "colors": {
+    "mainServerColor": "White",
+    "checkColor": "#1FFF00",
+    "crossColor": "FF0000"
+  },
+  "emojis": {
+    "checkEmoji": "✅",
+    "crossEmoji": "❌"
+  },
+  "channels": {
+    "logsChannel": "1321920387126263872",
+    "gestionChannel": "1317894969222103093",
+    "errorlogChannel": "1321920324119560435"
+  },
+  "roles": {
+    "admin": "1324563836619063387"
+  }
+}
