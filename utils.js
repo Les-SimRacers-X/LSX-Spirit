@@ -1,3 +1,5 @@
+const Config = require("./config.json")
+
 // Function to generate a random ID (for database entries)
 export function generateID() {
   let characters = [
@@ -45,7 +47,7 @@ export async function getXboxId(axios, gamertag, apikey) {
   }
 }
 
-export async function errorHandler(Discord, bot, interaction, Config, error) {
+export async function errorHandler(Discord, bot, interaction, error) {
   const embedErrorDetectionLog = new Discord.EmbedBuilder()
     .setColor(Config.colors.mainServerColor)
     .setTitle("📌 Erreur Détecté :")
