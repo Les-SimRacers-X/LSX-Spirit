@@ -6,7 +6,9 @@
   },
   "emojis": {
     "checkEmoji": "✅",
-    "crossEmoji": "❌"
+    "crossEmoji": "❌",
+    "playstationEmote": "<:playstationEmote:1336016627657080884>",
+    "xboxEmote": "<:xboxEmote:1336016632300048415>"
   },
   "channels": {
     "logsChannel": "1321920387126263872",

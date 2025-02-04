@@ -2,7 +2,7 @@ const Discord = require("discord.js")
 const Config = require("../config.json")
 const Papa = require("papaparse")
 const axios = require("axios")
-const cheerio = require("cheerio")
+require("dotenv").config()
 
 module.exports = async (bot, message) => {
   let db = bot.db
@@ -56,38 +56,6 @@ module.exports = async (bot, message) => {
     }
   }
 
-  if (message.content.toLowerCase() === "!test") {
-    const member = await message.guild.members.fetch(message.author.id)
-    if (!member.roles.cache.has(Config.roles.admin)) {
-      return
-    } else {
-      async function getXboxId(gamertag) {
-        try {
-          const response = await axios.get(
-            `https://xbl.io/api/v2/search/${gamertag}`,
-            {
-              headers: {
-                "X-Authorization": "APIKEY",
-              },
-            }
-          )
-
-          const xboxId = response.data.people[0].xuid
-          console.log(`L'ID Xbox pour ${gamertag} est : ${xboxId}`)
-          return xboxId
-        } catch (error) {
-          console.error(
-            `Erreur lors de la récupération de l'ID Xbox pour ${gamertag}:`,
-            error
-          )
-        }
-      }
-
-      const xboxId = await getXboxId("FcT Vincent1")
-      await message.reply({ content: `ton id : ${xboxId}` })
-    }
-  }
-
   if (message.content.toLowerCase() === "send:embeds") {
     const member = await message.guild.members.fetch(message.author.id)
     if (!member.roles.cache.has(Config.roles.admin)) {
@@ -123,6 +91,12 @@ module.exports = async (bot, message) => {
                 label: "Gestion des événements",
                 description: "Gérer vos événements (Fermer, supprimer, etc...)",
                 value: "8",
+              },
+              {
+                emoji: "📨",
+                label: "Demande d'Adhésion",
+                description: "Visualisez les demandes d'adhésion à l'entrylist",
+                value: "10",
               },
               {
                 emoji: "💬",
@@ -173,6 +147,26 @@ module.exports = async (bot, message) => {
       await bot.channels.cache.get(Config.channels.gestionChannel).send({
         embeds: [embedGestionOfAllBotInteractions],
         components: [interactionGestionOfAllBotInteractions],
+      })
+
+      const embedEntrylist = new Discord.EmbedBuilder()
+        .setColor(Config.colors.mainServerColor)
+        .setDescription(
+          `## 📝 Entrylist\n\n- Choisissez un numéro libre dans [Entrylist](https://les-simracers.fr/entrylist/)\n- Replissez le fomulaire en cliquant sur le bouton en dessous \`📨\`\n- Votre demande d'adhésion à l'entrylist sera traiter dans les plus bref délais.\n\n*Merci de bien suivre les étapes du formulaire et de les complétées !*\n\n-# Chaque personne qui quitte le serveur sera retirée de l'entrylist !`
+        )
+
+      const actionEntrylistFormStart =
+        new Discord.ActionRowBuilder().addComponents(
+          new Discord.ButtonBuilder()
+            .setCustomId(`startEntrylistRegistration`)
+            .setEmoji("📨")
+            .setDisabled(false)
+            .setStyle(Discord.ButtonStyle.Secondary)
+        )
+
+      await bot.channels.cache.get("1323999152731979816").send({
+        embeds: [embedEntrylist],
+        components: [actionEntrylistFormStart],
       })
     }
   }
