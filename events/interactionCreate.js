@@ -1,7 +1,7 @@
 const Discord = require("discord.js")
 const Config = require("../config.json")
 const axios = require("axios")
-const { generateID, getXboxId } = require("../utils")
+const { generateID, getXboxId, errorHandler } = require("../utils")
 
 module.exports = async (bot, interaction) => {
   let db = bot.db
@@ -66,26 +66,7 @@ module.exports = async (bot, interaction) => {
             ])
         }
       } catch (error) {
-        const embedErrorDetectionLog = new Discord.EmbedBuilder()
-          .setColor(Config.colors.mainServerColor)
-          .setTitle("📌 Erreur Détecté :")
-          .setDescription(`\`\`\`${error}\`\`\``)
-          .setTimestamp()
-
-        const embedErrorDetected = new Discord.EmbedBuilder()
-          .setColor(Config.colors.crossColor)
-          .setDescription(
-            "💥 **Une erreur a été détecté lors de votre interaction !**"
-          )
-
-        console.error(error)
-        await bot.channels.cache
-          .get(Config.channels.errorlogChannel)
-          .send({ embeds: [embedErrorDetectionLog] })
-        await interaction.reply({
-          embeds: [embedErrorDetected],
-          ephemeral: true,
-        })
+        errorHandler(bot, interaction, error)
       }
     }
 
@@ -206,26 +187,7 @@ module.exports = async (bot, interaction) => {
           })
         }
       } catch (error) {
-        const embedErrorDetectionLog = new Discord.EmbedBuilder()
-          .setColor(Config.colors.mainServerColor)
-          .setTitle("📌 Erreur Détecté :")
-          .setDescription(`\`\`\`${error}\`\`\``)
-          .setTimestamp()
-
-        const embedErrorDetected = new Discord.EmbedBuilder()
-          .setColor(Config.colors.crossColor)
-          .setDescription(
-            "💥 **Une erreur a été détecté lors de votre interaction !**"
-          )
-
-        console.error(error)
-        await bot.channels.cache
-          .get(Config.channels.errorlogChannel)
-          .send({ embeds: [embedErrorDetectionLog] })
-        await interaction.reply({
-          embeds: [embedErrorDetected],
-          ephemeral: true,
-        })
+        errorHandler(bot, interaction, error)
       }
     }
 
@@ -344,26 +306,7 @@ module.exports = async (bot, interaction) => {
           })
         }
       } catch (error) {
-        const embedErrorDetectionLog = new Discord.EmbedBuilder()
-          .setColor(Config.colors.mainServerColor)
-          .setTitle("📌 Erreur Détecté :")
-          .setDescription(`\`\`\`${error}\`\`\``)
-          .setTimestamp()
-
-        const embedErrorDetected = new Discord.EmbedBuilder()
-          .setColor(Config.colors.crossColor)
-          .setDescription(
-            "💥 **Une erreur a été détecté lors de votre interaction !**"
-          )
-
-        console.error(error)
-        await bot.channels.cache
-          .get(Config.channels.errorlogChannel)
-          .send({ embeds: [embedErrorDetectionLog] })
-        await interaction.reply({
-          embeds: [embedErrorDetected],
-          ephemeral: true,
-        })
+        errorHandler(bot, interaction, error)
       }
     }
 
@@ -406,26 +349,7 @@ module.exports = async (bot, interaction) => {
           ephemeral: true,
         })
       } catch (error) {
-        const embedErrorDetectionLog = new Discord.EmbedBuilder()
-          .setColor(Config.colors.mainServerColor)
-          .setTitle("📌 Erreur Détecté :")
-          .setDescription(`\`\`\`${error}\`\`\``)
-          .setTimestamp()
-
-        const embedErrorDetected = new Discord.EmbedBuilder()
-          .setColor(Config.colors.crossColor)
-          .setDescription(
-            "💥 **Une erreur a été détecté lors de votre interaction !**"
-          )
-
-        console.error(error)
-        await bot.channels.cache
-          .get(Config.channels.errorlogChannel)
-          .send({ embeds: [embedErrorDetectionLog] })
-        await interaction.reply({
-          embeds: [embedErrorDetected],
-          ephemeral: true,
-        })
+        errorHandler(bot, interaction, error)
       }
     }
 
@@ -563,26 +487,7 @@ module.exports = async (bot, interaction) => {
           })
         }
       } catch (error) {
-        const embedErrorDetectionLog = new Discord.EmbedBuilder()
-          .setColor(Config.colors.mainServerColor)
-          .setTitle("📌 Erreur Détecté :")
-          .setDescription(`\`\`\`${error}\`\`\``)
-          .setTimestamp()
-
-        const embedErrorDetected = new Discord.EmbedBuilder()
-          .setColor(Config.colors.crossColor)
-          .setDescription(
-            "💥 **Une erreur a été détecté lors de votre interaction !**"
-          )
-
-        console.error(error)
-        await bot.channels.cache
-          .get(Config.channels.errorlogChannel)
-          .send({ embeds: [embedErrorDetectionLog] })
-        await interaction.reply({
-          embeds: [embedErrorDetected],
-          ephemeral: true,
-        })
+        errorHandler(bot, interaction, error)
       }
     }
 
@@ -719,26 +624,7 @@ module.exports = async (bot, interaction) => {
           })
         }
       } catch (error) {
-        const embedErrorDetectionLog = new Discord.EmbedBuilder()
-          .setColor(Config.colors.mainServerColor)
-          .setTitle("📌 Erreur Détecté :")
-          .setDescription(`\`\`\`${error}\`\`\``)
-          .setTimestamp()
-
-        const embedErrorDetected = new Discord.EmbedBuilder()
-          .setColor(Config.colors.crossColor)
-          .setDescription(
-            "💥 **Une erreur a été détecté lors de votre interaction !**"
-          )
-
-        console.error(error)
-        await bot.channels.cache
-          .get(Config.channels.errorlogChannel)
-          .send({ embeds: [embedErrorDetectionLog] })
-        await interaction.reply({
-          embeds: [embedErrorDetected],
-          ephemeral: true,
-        })
+        errorHandler(bot, interaction, error)
       }
     }
 
@@ -860,26 +746,7 @@ module.exports = async (bot, interaction) => {
           ephemeral: true,
         })
       } catch (error) {
-        const embedErrorDetectionLog = new Discord.EmbedBuilder()
-          .setColor(Config.colors.mainServerColor)
-          .setTitle("📌 Erreur Détecté :")
-          .setDescription(`\`\`\`${error}\`\`\``)
-          .setTimestamp()
-
-        const embedErrorDetected = new Discord.EmbedBuilder()
-          .setColor(Config.colors.crossColor)
-          .setDescription(
-            "💥 **Une erreur a été détecté lors de votre interaction !**"
-          )
-
-        console.error(error)
-        await bot.channels.cache
-          .get(Config.channels.errorlogChannel)
-          .send({ embeds: [embedErrorDetectionLog] })
-        await interaction.reply({
-          embeds: [embedErrorDetected],
-          ephemeral: true,
-        })
+        errorHandler(bot, interaction, error)
       }
     }
 
@@ -1583,26 +1450,7 @@ module.exports = async (bot, interaction) => {
           })
         }
       } catch (error) {
-        const embedErrorDetectionLog = new Discord.EmbedBuilder()
-          .setColor(Config.colors.mainServerColor)
-          .setTitle("📌 Erreur Détecté :")
-          .setDescription(`\`\`\`${error}\`\`\``)
-          .setTimestamp()
-
-        const embedErrorDetected = new Discord.EmbedBuilder()
-          .setColor(Config.colors.crossColor)
-          .setDescription(
-            "💥 **Une erreur a été détecté lors de votre interaction !**"
-          )
-
-        console.error(error)
-        await bot.channels.cache
-          .get(Config.channels.errorlogChannel)
-          .send({ embeds: [embedErrorDetectionLog] })
-        await interaction.reply({
-          embeds: [embedErrorDetected],
-          ephemeral: true,
-        })
+        errorHandler(bot, interaction, error)
       }
     }
 
@@ -1644,26 +1492,7 @@ module.exports = async (bot, interaction) => {
           ephemeral: true,
         })
       } catch (error) {
-        const embedErrorDetectionLog = new Discord.EmbedBuilder()
-          .setColor(Config.colors.mainServerColor)
-          .setTitle("📌 Erreur Détecté :")
-          .setDescription(`\`\`\`${error}\`\`\``)
-          .setTimestamp()
-
-        const embedErrorDetected = new Discord.EmbedBuilder()
-          .setColor(Config.colors.crossColor)
-          .setDescription(
-            "💥 **Une erreur a été détecté lors de votre interaction !**"
-          )
-
-        console.error(error)
-        await bot.channels.cache
-          .get(Config.channels.errorlogChannel)
-          .send({ embeds: [embedErrorDetectionLog] })
-        await interaction.reply({
-          embeds: [embedErrorDetected],
-          ephemeral: true,
-        })
+        errorHandler(bot, interaction, error)
       }
     }
 
@@ -1695,7 +1524,151 @@ module.exports = async (bot, interaction) => {
         ephemeral: true,
       })
     }
+
+    async function updateDisplayedRequest(interaction, currentRequestIndex) {
+      try {
+        const [requestsList] = db
+          .promise()
+          .query(`SELECT * FROM requests WHERE requestStat = waiting`)
+        const [countResult] = db
+          .promise()
+          .query(`SELECT COUNT(*) AS total FROM requests`)
+
+        const totalRequests = countResult[0].total
+
+        if (totalRequests === 0) {
+          const noRequestsAvailable = new Discord.EmbedBuilder()
+            .setColor(Config.colors.crossColor)
+            .setDescription(
+              `${Config.emojis.crossEmoji} **Il n'y aucune demande pour l'instant !**`
+            )
+
+          return interaction.reply({
+            embeds: [noRequestsAvailable],
+            ephemeral: true,
+          })
+        } else {
+          const currentRequest = requestsList[currentRequestIndex]
+
+          const user = await bot.users.fetch(currentRequest.requestAuthorID)
+
+          let checkPreviousRequestIndex, checkNextRequestIndex
+          let checkCurrentRequestIndex = currentRequestIndex
+
+          checkPreviousRequestIndex =
+            currentRequestIndex === 0 &&
+            checkCurrentRequestIndex + 1 === totalRequests
+              ? true
+              : currentRequestIndex === 0
+              ? true
+              : false
+
+          checkNextRequestIndex =
+            currentRequestIndex === 0 &&
+            checkCurrentRequestIndex + 1 === totalRequests
+              ? true
+              : checkCurrentRequestIndex + 1 === totalRequests
+              ? true
+              : false
+
+          let checkRequestStat =
+            currentRequest.requestStat === "waiting"
+              ? `⏳ En Attente...`
+              : currentRequest.requestStat
+
+          const [emote, platform] = currentRequest.requestPlatform
+
+          const requestInformationEmbed = new Discord.EmbedBuilder()
+            .setColor(Config.colors.mainServerColor)
+            .setThumbnail(user.displayAvatarURL({ dynamic: true }))
+            .setDescription(
+              `### 📩 Demande Entrylist de ${
+                user.globalName || user.username
+              }\n\n- Utilisateur : ${user} (${
+                user.globalName || user.username
+              })\n- Identifiant : ${user.id}\n- ${emote} ${platform} : ${
+                currentRequest.requestInGameUsername
+              } (${
+                currentRequest.requestPlatformID
+              })\n- Demande : ${checkRequestStat}\n\n-# Demande : ${
+                currentRequestIndex + 1
+              } sur ${totalRequests}`
+            )
+
+          const actionRequestInformationSelecter =
+            new Discord.ActionRowBuilder().addComponents(
+              new Discord.StringSelectMenuBuilder()
+                .setCustomId(`selectRequestAction_${currentRequest.requestID}`)
+                .setPlaceholder("📌 Sélectionner une option...")
+                .addOptions(
+                  {
+                    emoji: "✅",
+                    label: "Accepter",
+                    description: `Accepter la demande de ${
+                      user.globalName || user.username
+                    }`,
+                    value: "Accepted",
+                  },
+                  {
+                    emoji: "⛔",
+                    label: "Refuser",
+                    description: `Refuser la demande de ${
+                      user.globalName || user.username
+                    }`,
+                    value: "Refused",
+                  }
+                )
+            )
+
+          const actionRequestInformationButtons = new Discord.ActionRowBuilder()
+            .addComponents(
+              new Discord.ButtonBuilder()
+                .setCustomId(`previousRequest_${currentRequestIndex}`)
+                .setEmoji("◀️")
+                .setDisabled(checkPreviousRequestIndex)
+                .setStyle(Discord.ButtonStyle.Secondary)
+            )
+            .addComponents(
+              new Discord.ButtonBuilder()
+                .setCustomId(`nextRequest_${currentRequestIndex}`)
+                .setEmoji("▶")
+                .setDisabled(checkNextRequestIndex)
+                .setStyle(Discord.ButtonStyle.Secondary)
+            )
+
+          await interaction.reply({
+            embeds: [requestInformationEmbed],
+            components: [
+              actionRequestInformationSelecter,
+              actionRequestInformationButtons,
+            ],
+            ephemeral: true,
+          })
+        }
+      } catch (error) {
+        errorHandler(bot, interaction, error)
+      }
+    }
+
+    const [fromDisplayRequest, requestIndex] = interaction.customId.split("_")
+    if (
+      fromDisplayRequest === "previousRequest" ||
+      fromDisplayRequest === "nextRequest"
+    ) {
+      let currentRequestIndex = parseInt(requestIndex)
+
+      currentRequestIndex =
+        fromDisplayRequest === "previousRequest"
+          ? currentRequestIndex - 1
+          : fromDisplayRequest === "nextRequest"
+          ? currentRequestIndex + 1
+          : currentRequestIndex
+
+      await updateDisplayedRequest(interaction, currentRequestIndex)
+    }
   }
+
+  /*************************************************************************************************************************/
 
   if (interaction.isStringSelectMenu()) {
     // Récupérer l'interaction "gestionAllBot_Interactions" celle qui va permettre de gérer plusieurs interaction du bot !
@@ -2431,6 +2404,175 @@ module.exports = async (bot, interaction) => {
 
           await interaction.showModal(modalRulesUpdate)
         }
+
+        // "10" Est l'interaction pour afficher une pagination de la liste d'adhésion
+        if (reqGestionChoice === "10") {
+          try {
+            const [requestsList] = db
+              .promise()
+              .query(`SELECT * FROM requests WHERE requestStat = waiting`)
+            const [countResult] = db
+              .promise()
+              .query(`SELECT COUNT(*) AS total FROM requests`)
+
+            let currentRequestIndex = 0
+            const totalRequests = countResult[0].total
+
+            if (totalRequests === 0) {
+              const noRequestsAvailable = new Discord.EmbedBuilder()
+                .setColor(Config.colors.crossColor)
+                .setDescription(
+                  `${Config.emojis.crossEmoji} **Il n'y aucune demande pour l'instant !**`
+                )
+
+              return interaction.reply({
+                embeds: [noRequestsAvailable],
+                ephemeral: true,
+              })
+            } else {
+              const currentRequest = requestsList[currentRequestIndex]
+
+              const user = await bot.users.fetch(currentRequest.requestAuthorID)
+
+              let checkPreviousRequestIndex, checkNextRequestIndex
+              let checkCurrentRequestIndex = currentRequestIndex
+
+              checkPreviousRequestIndex =
+                currentRequestIndex === 0 &&
+                checkCurrentRequestIndex + 1 === totalRequests
+                  ? true
+                  : currentRequestIndex === 0
+                  ? true
+                  : false
+
+              checkNextRequestIndex =
+                currentRequestIndex === 0 &&
+                checkCurrentRequestIndex + 1 === totalRequests
+                  ? true
+                  : checkCurrentRequestIndex + 1 === totalRequests
+                  ? true
+                  : false
+
+              let checkRequestStat =
+                currentRequest.requestStat === "waiting"
+                  ? `⏳ En Attente...`
+                  : currentRequest.requestStat
+
+              const [emote, platform] = currentRequest.requestPlatform
+
+              const requestInformationEmbed = new Discord.EmbedBuilder()
+                .setColor(Config.colors.mainServerColor)
+                .setThumbnail(user.displayAvatarURL({ dynamic: true }))
+                .setDescription(
+                  `### 📩 Demande Entrylist de ${
+                    user.globalName || user.username
+                  }\n\n- Utilisateur : ${user} (${
+                    user.globalName || user.username
+                  })\n- Identifiant : ${user.id}\n- ${emote} ${platform} : ${
+                    currentRequest.requestInGameUsername
+                  } (${
+                    currentRequest.requestPlatformID
+                  })\n- Demande : ${checkRequestStat}\n\n-# Demande : ${
+                    currentRequestIndex + 1
+                  } sur ${totalRequests}`
+                )
+
+              const actionRequestInformationSelecter =
+                new Discord.ActionRowBuilder().addComponents(
+                  new Discord.StringSelectMenuBuilder()
+                    .setCustomId(
+                      `selectRequestAction_${currentRequest.requestID}`
+                    )
+                    .setPlaceholder("📌 Sélectionner une option...")
+                    .addOptions(
+                      {
+                        emoji: "✅",
+                        label: "Accepter",
+                        description: `Accepter la demande de ${
+                          user.globalName || user.username
+                        }`,
+                        value: "Accepted",
+                      },
+                      {
+                        emoji: "⛔",
+                        label: "Refuser",
+                        description: `Refuser la demande de ${
+                          user.globalName || user.username
+                        }`,
+                        value: "Refused",
+                      }
+                    )
+                )
+
+              const actionRequestInformationButtons =
+                new Discord.ActionRowBuilder()
+                  .addComponents(
+                    new Discord.ButtonBuilder()
+                      .setCustomId(`previousRequest_${currentRequestIndex}`)
+                      .setEmoji("◀️")
+                      .setDisabled(checkPreviousRequestIndex)
+                      .setStyle(Discord.ButtonStyle.Secondary)
+                  )
+                  .addComponents(
+                    new Discord.ButtonBuilder()
+                      .setCustomId(`nextRequest_${currentRequestIndex}`)
+                      .setEmoji("▶")
+                      .setDisabled(checkNextRequestIndex)
+                      .setStyle(Discord.ButtonStyle.Secondary)
+                  )
+
+              await interaction.reply({
+                embeds: [requestInformationEmbed],
+                components: [
+                  actionRequestInformationSelecter,
+                  actionRequestInformationButtons,
+                ],
+                ephemeral: true,
+              })
+            }
+          } catch (error) {
+            errorHandler(bot, interaction, error)
+          }
+        }
+      }
+    }
+
+    const [fromDisplayRequest, userId] = interaction.customId.split("_")
+    if (fromDisplayRequest === "selectRequestAction") {
+      if (interaction.values && interaction.values.length > 0) {
+        let reqActionChoice = interaction.values[0]
+
+        try {
+          const user = await bot.users.fetch(userId)
+
+          let checkColor =
+            reqActionChoice === "Accepted"
+              ? `${Config.colors.checkColor}`
+              : `${Config.colors.crossColor}`
+
+          let checkChoice =
+            reqActionChoice === "Accepted" ? `accepter` : `refuser`
+
+          const sendEmbedToUser = new Discord.EmbedBuilder()
+            .setColor(checkColor)
+            .setDescription(
+              `**Vous avez été ${checkChoice} de l'entrylist ${interaction.guild.name}**`
+            )
+
+          const interactionReplyEmbed = new Discord.EmbedBuilder()
+            .setColor(Config.colors.checkColor)
+            .setDescription(
+              `${Config.emojis.checkEmoji} **Utilisateur ${checkChoice} avec succès !**`
+            )
+
+          await user.send({ embeds: [sendEmbedToUser] })
+          await interaction.reply({
+            embeds: [interactionReplyEmbed],
+            ephemeral: true,
+          })
+        } catch (error) {
+          errorHandler(bot, interaction, error)
+        }
       }
     }
 
@@ -2467,26 +2609,7 @@ module.exports = async (bot, interaction) => {
             ephemeral: true,
           })
         } catch (error) {
-          const embedErrorDetectionLog = new Discord.EmbedBuilder()
-            .setColor(Config.colors.mainServerColor)
-            .setTitle("📌 Erreur Détecté :")
-            .setDescription(`\`\`\`${error}\`\`\``)
-            .setTimestamp()
-
-          const embedErrorDetected = new Discord.EmbedBuilder()
-            .setColor(Config.colors.crossColor)
-            .setDescription(
-              "💥 **Une erreur a été détecté lors de votre interaction !**"
-            )
-
-          console.error(error)
-          await bot.channels.cache
-            .get(Config.channels.errorlogChannel)
-            .send({ embeds: [embedErrorDetectionLog] })
-          await interaction.reply({
-            embeds: [embedErrorDetected],
-            ephemeral: true,
-          })
+          errorHandler(bot, interaction, error)
         }
       }
     }
@@ -2528,26 +2651,7 @@ module.exports = async (bot, interaction) => {
             ephemeral: true,
           })
         } catch (error) {
-          const embedErrorDetectionLog = new Discord.EmbedBuilder()
-            .setColor(Config.colors.mainServerColor)
-            .setTitle("📌 Erreur Détecté :")
-            .setDescription(`\`\`\`${error}\`\`\``)
-            .setTimestamp()
-
-          const embedErrorDetected = new Discord.EmbedBuilder()
-            .setColor(Config.colors.crossColor)
-            .setDescription(
-              "💥 **Une erreur a été détecté lors de votre interaction !**"
-            )
-
-          console.error(error)
-          await bot.channels.cache
-            .get(Config.channels.errorlogChannel)
-            .send({ embeds: [embedErrorDetectionLog] })
-          await interaction.reply({
-            embeds: [embedErrorDetected],
-            ephemeral: true,
-          })
+          errorHandler(bot, interaction, error)
         }
       }
     }
@@ -2612,26 +2716,7 @@ module.exports = async (bot, interaction) => {
             ephemeral: true,
           })
         } catch (error) {
-          const embedErrorDetectionLog = new Discord.EmbedBuilder()
-            .setColor(Config.colors.mainServerColor)
-            .setTitle("📌 Erreur Détecté :")
-            .setDescription(`\`\`\`${error}\`\`\``)
-            .setTimestamp()
-
-          const embedErrorDetected = new Discord.EmbedBuilder()
-            .setColor(Config.colors.crossColor)
-            .setDescription(
-              "💥 **Une erreur a été détecté lors de votre interaction !**"
-            )
-
-          console.error(error)
-          await bot.channels.cache
-            .get(Config.channels.errorlogChannel)
-            .send({ embeds: [embedErrorDetectionLog] })
-          await interaction.reply({
-            embeds: [embedErrorDetected],
-            ephemeral: true,
-          })
+          errorHandler(bot, interaction, error)
         }
       }
     }
@@ -2686,26 +2771,7 @@ module.exports = async (bot, interaction) => {
             ephemeral: true,
           })
         } catch (error) {
-          const embedErrorDetectionLog = new Discord.EmbedBuilder()
-            .setColor(Config.colors.mainServerColor)
-            .setTitle("📌 Erreur Détecté :")
-            .setDescription(`\`\`\`${error}\`\`\``)
-            .setTimestamp()
-
-          const embedErrorDetected = new Discord.EmbedBuilder()
-            .setColor(Config.colors.crossColor)
-            .setDescription(
-              "💥 **Une erreur a été détecté lors de votre interaction !**"
-            )
-
-          console.error(error)
-          await bot.channels.cache
-            .get(Config.channels.errorlogChannel)
-            .send({ embeds: [embedErrorDetectionLog] })
-          await interaction.reply({
-            embeds: [embedErrorDetected],
-            ephemeral: true,
-          })
+          errorHandler(bot, interaction, error)
         }
       }
     }
@@ -2766,26 +2832,7 @@ module.exports = async (bot, interaction) => {
 
           await interaction.showModal(modalEventCreation)
         } catch (error) {
-          const embedErrorDetectionLog = new Discord.EmbedBuilder()
-            .setColor(Config.colors.mainServerColor)
-            .setTitle("📌 Erreur Détecté :")
-            .setDescription(`\`\`\`${error}\`\`\``)
-            .setTimestamp()
-
-          const embedErrorDetected = new Discord.EmbedBuilder()
-            .setColor(Config.colors.crossColor)
-            .setDescription(
-              "💥 **Une erreur a été détecté lors de votre interaction !**"
-            )
-
-          console.error(error)
-          await bot.channels.cache
-            .get(Config.channels.errorlogChannel)
-            .send({ embeds: [embedErrorDetectionLog] })
-          await interaction.reply({
-            embeds: [embedErrorDetected],
-            ephemeral: true,
-          })
+          errorHandler(bot, interaction, error)
         }
       }
     }
@@ -3060,6 +3107,8 @@ module.exports = async (bot, interaction) => {
     }
   }
 
+  /*************************************************************************************************************************/
+
   if (interaction.isModalSubmit()) {
     const [fromSelectPlatformPlay, PlatformChoicePlay] =
       interaction.customId.split("_")
@@ -3122,26 +3171,7 @@ module.exports = async (bot, interaction) => {
           })
         }
       } catch (error) {
-        const embedErrorDetectionLog = new Discord.EmbedBuilder()
-          .setColor(Config.colors.mainServerColor)
-          .setTitle("📌 Erreur Détecté :")
-          .setDescription(`\`\`\`${error}\`\`\``)
-          .setTimestamp()
-
-        const embedErrorDetected = new Discord.EmbedBuilder()
-          .setColor(Config.colors.crossColor)
-          .setDescription(
-            "💥 **Une erreur a été détecté lors de votre interaction !**"
-          )
-
-        console.error(error)
-        await bot.channels.cache
-          .get(Config.channels.errorlogChannel)
-          .send({ embeds: [embedErrorDetectionLog] })
-        await interaction.reply({
-          embeds: [embedErrorDetected],
-          ephemeral: true,
-        })
+        errorHandler(bot, interaction, error)
       }
     }
 
@@ -3207,26 +3237,7 @@ module.exports = async (bot, interaction) => {
           })
         }
       } catch (error) {
-        const embedErrorDetectionLog = new Discord.EmbedBuilder()
-          .setColor(Config.colors.mainServerColor)
-          .setTitle("📌 Erreur Détecté :")
-          .setDescription(`\`\`\`${error}\`\`\``)
-          .setTimestamp()
-
-        const embedErrorDetected = new Discord.EmbedBuilder()
-          .setColor(Config.colors.crossColor)
-          .setDescription(
-            "💥 **Une erreur a été détecté lors de votre interaction !**"
-          )
-
-        console.error(error)
-        await bot.channels.cache
-          .get(Config.channels.errorlogChannel)
-          .send({ embeds: [embedErrorDetectionLog] })
-        await interaction.reply({
-          embeds: [embedErrorDetected],
-          ephemeral: true,
-        })
+        errorHandler(bot, interaction, error)
       }
     }
 
@@ -3293,29 +3304,7 @@ module.exports = async (bot, interaction) => {
           .get(Config.channels.logsChannel)
           .send({ embeds: [embedLog] })
       } catch (error) {
-        // Gestion des erreurs, si une erreur apparaît lors de l'insertion dans la base de données ou n'importe
-        // Une réponse sera quant-même envoyer à l'utilisateur lui disant qu'il y a une erreur avec le bot
-        // Et un embed sera envoyer dans un salon spécifique pour la gestion des erreurs
-        const embedErrorDetectionLog = new Discord.EmbedBuilder()
-          .setColor(Config.colors.mainServerColor)
-          .setTitle("📌 Erreur Détecté :")
-          .setDescription(`\`\`\`${error}\`\`\``)
-          .setTimestamp()
-
-        const embedErrorDetected = new Discord.EmbedBuilder()
-          .setColor(Config.colors.crossColor)
-          .setDescription(
-            "💥 **Une erreur a été détecté lors de votre interaction !**"
-          )
-
-        console.error(error)
-        await bot.channels.cache
-          .get(Config.channels.errorlogChannel)
-          .send({ embeds: [embedErrorDetectionLog] })
-        await interaction.reply({
-          embeds: [embedErrorDetected],
-          ephemeral: true,
-        })
+        errorHandler(bot, interaction, error)
       }
     }
 
@@ -3403,26 +3392,7 @@ module.exports = async (bot, interaction) => {
           ephemeral: true,
         })
       } catch (error) {
-        const embedErrorDetectionLog = new Discord.EmbedBuilder()
-          .setColor(Config.colors.mainServerColor)
-          .setTitle("📌 Erreur Détecté :")
-          .setDescription(`\`\`\`${error}\`\`\``)
-          .setTimestamp()
-
-        const embedErrorDetected = new Discord.EmbedBuilder()
-          .setColor(Config.colors.crossColor)
-          .setDescription(
-            "💥 **Une erreur a été détecté lors de votre interaction !**"
-          )
-
-        console.error(error)
-        await bot.channels.cache
-          .get(Config.channels.errorlogChannel)
-          .send({ embeds: [embedErrorDetectionLog] })
-        await interaction.reply({
-          embeds: [embedErrorDetected],
-          ephemeral: true,
-        })
+        errorHandler(bot, interaction, error)
       }
     }
 
@@ -3471,26 +3441,7 @@ module.exports = async (bot, interaction) => {
           .get(Config.channels.logsChannel)
           .send({ embeds: [embedLog] })
       } catch (error) {
-        const embedErrorDetectionLog = new Discord.EmbedBuilder()
-          .setColor(Config.colors.mainServerColor)
-          .setTitle("📌 Erreur Détecté :")
-          .setDescription(`\`\`\`${error}\`\`\``)
-          .setTimestamp()
-
-        const embedErrorDetected = new Discord.EmbedBuilder()
-          .setColor(Config.colors.crossColor)
-          .setDescription(
-            "💥 **Une erreur a été détecté lors de votre interaction !**"
-          )
-
-        console.error(error)
-        await bot.channels.cache
-          .get(Config.channels.errorlogChannel)
-          .send({ embeds: [embedErrorDetectionLog] })
-        await interaction.reply({
-          embeds: [embedErrorDetected],
-          ephemeral: true,
-        })
+        errorHandler(bot, interaction, error)
       }
     }
 
@@ -3518,26 +3469,7 @@ module.exports = async (bot, interaction) => {
           ephemeral: true,
         })
       } catch (error) {
-        const embedErrorDetectionLog = new Discord.EmbedBuilder()
-          .setColor(Config.colors.mainServerColor)
-          .setTitle("📌 Erreur Détecté :")
-          .setDescription(`\`\`\`${error}\`\`\``)
-          .setTimestamp()
-
-        const embedErrorDetected = new Discord.EmbedBuilder()
-          .setColor(Config.colors.crossColor)
-          .setDescription(
-            "💥 **Une erreur a été détecté lors de votre interaction !**"
-          )
-
-        console.error(error)
-        await bot.channels.cache
-          .get(Config.channels.errorlogChannel)
-          .send({ embeds: [embedErrorDetectionLog] })
-        await interaction.reply({
-          embeds: [embedErrorDetected],
-          ephemeral: true,
-        })
+        errorHandler(bot, interaction, error)
       }
     }
 
@@ -3568,26 +3500,7 @@ module.exports = async (bot, interaction) => {
           ephemeral: true,
         })
       } catch (error) {
-        const embedErrorDetectionLog = new Discord.EmbedBuilder()
-          .setColor(Config.colors.mainServerColor)
-          .setTitle("📌 Erreur Détecté :")
-          .setDescription(`\`\`\`${error}\`\`\``)
-          .setTimestamp()
-
-        const embedErrorDetected = new Discord.EmbedBuilder()
-          .setColor(Config.colors.crossColor)
-          .setDescription(
-            "💥 **Une erreur a été détecté lors de votre interaction !**"
-          )
-
-        console.error(error)
-        await bot.channels.cache
-          .get(Config.channels.errorlogChannel)
-          .send({ embeds: [embedErrorDetectionLog] })
-        await interaction.reply({
-          embeds: [embedErrorDetected],
-          ephemeral: true,
-        })
+        errorHandler(bot, interaction, error)
       }
     }
   }
