@@ -1529,7 +1529,7 @@ module.exports = async (bot, interaction) => {
       try {
         const [requestsList] = db
           .promise()
-          .query(`SELECT * FROM requests WHERE requestStat = waiting`)
+          .query(`SELECT * FROM requests WHERE requestStat = "waiting"`)
         const [countResult] = db
           .promise()
           .query(`SELECT COUNT(*) AS total FROM requests`)
@@ -2410,7 +2410,7 @@ module.exports = async (bot, interaction) => {
           try {
             const [requestsList] = db
               .promise()
-              .query(`SELECT * FROM requests WHERE requestStat = waiting`)
+              .query(`SELECT * FROM requests WHERE requestStat = "waiting"`)
             const [countResult] = db
               .promise()
               .query(`SELECT COUNT(*) AS total FROM requests`)
