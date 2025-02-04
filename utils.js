@@ -45,7 +45,7 @@ export async function getXboxId(axios, gamertag, apikey) {
   }
 }
 
-export async function errorHandler(Discord, bot, interaction, error) {
+export async function errorHandler(Discord, bot, interaction, Config, error) {
   const embedErrorDetectionLog = new Discord.EmbedBuilder()
     .setColor(Config.colors.mainServerColor)
     .setTitle("📌 Erreur Détecté :")

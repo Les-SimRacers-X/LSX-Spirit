@@ -66,7 +66,7 @@ module.exports = async (bot, interaction) => {
             ])
         }
       } catch (error) {
-        errorHandler(Discord, bot, interaction, error)
+        errorHandler(Discord, bot, interaction, Config, error)
       }
     }
 
@@ -187,7 +187,7 @@ module.exports = async (bot, interaction) => {
           })
         }
       } catch (error) {
-        errorHandler(Discord, bot, interaction, error)
+        errorHandler(Discord, bot, interaction, Config, error)
       }
     }
 
@@ -306,7 +306,7 @@ module.exports = async (bot, interaction) => {
           })
         }
       } catch (error) {
-        errorHandler(Discord, bot, interaction, error)
+        errorHandler(Discord, bot, interaction, Config, error)
       }
     }
 
@@ -349,7 +349,7 @@ module.exports = async (bot, interaction) => {
           ephemeral: true,
         })
       } catch (error) {
-        errorHandler(Discord, bot, interaction, error)
+        errorHandler(Discord, bot, interaction, Config, error)
       }
     }
 
@@ -487,7 +487,7 @@ module.exports = async (bot, interaction) => {
           })
         }
       } catch (error) {
-        errorHandler(Discord, bot, interaction, error)
+        errorHandler(Discord, bot, interaction, Config, error)
       }
     }
 
@@ -624,7 +624,7 @@ module.exports = async (bot, interaction) => {
           })
         }
       } catch (error) {
-        errorHandler(Discord, bot, interaction, error)
+        errorHandler(Discord, bot, interaction, Config, error)
       }
     }
 
@@ -746,7 +746,7 @@ module.exports = async (bot, interaction) => {
           ephemeral: true,
         })
       } catch (error) {
-        errorHandler(Discord, bot, interaction, error)
+        errorHandler(Discord, bot, interaction, Config, error)
       }
     }
 
@@ -1450,7 +1450,7 @@ module.exports = async (bot, interaction) => {
           })
         }
       } catch (error) {
-        errorHandler(Discord, bot, interaction, error)
+        errorHandler(Discord, bot, interaction, Config, error)
       }
     }
 
@@ -1492,7 +1492,7 @@ module.exports = async (bot, interaction) => {
           ephemeral: true,
         })
       } catch (error) {
-        errorHandler(Discord, bot, interaction, error)
+        errorHandler(Discord, bot, interaction, Config, error)
       }
     }
 
@@ -1646,7 +1646,7 @@ module.exports = async (bot, interaction) => {
           })
         }
       } catch (error) {
-        errorHandler(Discord, bot, interaction, error)
+        errorHandler(Discord, bot, interaction, Config, error)
       }
     }
 
@@ -2531,7 +2531,7 @@ module.exports = async (bot, interaction) => {
               })
             }
           } catch (error) {
-            errorHandler(Discord, bot, interaction, error)
+            errorHandler(Discord, bot, interaction, Config, error)
           }
         }
       }
@@ -2571,7 +2571,7 @@ module.exports = async (bot, interaction) => {
             ephemeral: true,
           })
         } catch (error) {
-          errorHandler(Discord, bot, interaction, error)
+          errorHandler(Discord, bot, interaction, Config, error)
         }
       }
     }
@@ -2609,7 +2609,7 @@ module.exports = async (bot, interaction) => {
             ephemeral: true,
           })
         } catch (error) {
-          errorHandler(Discord, bot, interaction, error)
+          errorHandler(Discord, bot, interaction, Config, error)
         }
       }
     }
@@ -2651,7 +2651,7 @@ module.exports = async (bot, interaction) => {
             ephemeral: true,
           })
         } catch (error) {
-          errorHandler(Discord, bot, interaction, error)
+          errorHandler(Discord, bot, interaction, Config, error)
         }
       }
     }
@@ -2716,7 +2716,7 @@ module.exports = async (bot, interaction) => {
             ephemeral: true,
           })
         } catch (error) {
-          errorHandler(Discord, bot, interaction, error)
+          errorHandler(Discord, bot, interaction, Config, error)
         }
       }
     }
@@ -2771,7 +2771,7 @@ module.exports = async (bot, interaction) => {
             ephemeral: true,
           })
         } catch (error) {
-          errorHandler(Discord, bot, interaction, error)
+          errorHandler(Discord, bot, interaction, Config, error)
         }
       }
     }
@@ -2832,7 +2832,7 @@ module.exports = async (bot, interaction) => {
 
           await interaction.showModal(modalEventCreation)
         } catch (error) {
-          errorHandler(Discord, bot, interaction, error)
+          errorHandler(Discord, bot, interaction, Config, error)
         }
       }
     }
@@ -3171,7 +3171,7 @@ module.exports = async (bot, interaction) => {
           })
         }
       } catch (error) {
-        errorHandler(Discord, bot, interaction, error)
+        errorHandler(Discord, bot, interaction, Config, error)
       }
     }
 
@@ -3237,7 +3237,7 @@ module.exports = async (bot, interaction) => {
           })
         }
       } catch (error) {
-        errorHandler(Discord, bot, interaction, error)
+        errorHandler(Discord, bot, interaction, Config, error)
       }
     }
 
@@ -3304,7 +3304,7 @@ module.exports = async (bot, interaction) => {
           .get(Config.channels.logsChannel)
           .send({ embeds: [embedLog] })
       } catch (error) {
-        errorHandler(Discord, bot, interaction, error)
+        errorHandler(Discord, bot, interaction, Config, error)
       }
     }
 
@@ -3392,7 +3392,7 @@ module.exports = async (bot, interaction) => {
           ephemeral: true,
         })
       } catch (error) {
-        errorHandler(Discord, bot, interaction, error)
+        errorHandler(Discord, bot, interaction, Config, error)
       }
     }
 
@@ -3441,7 +3441,7 @@ module.exports = async (bot, interaction) => {
           .get(Config.channels.logsChannel)
           .send({ embeds: [embedLog] })
       } catch (error) {
-        errorHandler(Discord, bot, interaction, error)
+        errorHandler(Discord, bot, interaction, Config, error)
       }
     }
 
@@ -3469,7 +3469,7 @@ module.exports = async (bot, interaction) => {
           ephemeral: true,
         })
       } catch (error) {
-        errorHandler(Discord, bot, interaction, error)
+        errorHandler(Discord, bot, interaction, Config, error)
       }
     }
 
@@ -3500,7 +3500,7 @@ module.exports = async (bot, interaction) => {
           ephemeral: true,
         })
       } catch (error) {
-        errorHandler(Discord, bot, interaction, error)
+        errorHandler(Discord, bot, interaction, Config, error)
       }
     }
   }
