@@ -61,113 +61,167 @@ module.exports = async (bot, message) => {
     if (!member.roles.cache.has(Config.roles.admin)) {
       return
     } else {
-      const embedGestionOfAllBotInteractions = new Discord.EmbedBuilder()
-        .setColor(Config.colors.mainServerColor)
-        .setDescription(
-          `## 📊 GESTION GLOBAL\n\n\n ➡️ ***Utilisez le sélecteur ci-dessous pour gérer le bot et accéder aux différentes interactions disponibles.***\n\n*__Liste des drapeaux :__ [Cliquez ici](https://emojipedia.org/fr/drapeaux)*`
-        )
+      try {
+        const [rows] = await db
+          .promise()
+          .query(`SELECT * FROM requests WHERE requestStat = ?`, ["waiting"])
+        const embedGestionOfAllBotInteractions = new Discord.EmbedBuilder()
+          .setColor(Config.colors.mainServerColor)
+          .setDescription(
+            `## 📊 GESTION GLOBAL\n\n\n ➡️ ***Utilisez le sélecteur ci-dessous pour gérer le bot et accéder aux différentes interactions disponibles.***\n\n*__Liste des drapeaux :__ [Cliquez ici](https://emojipedia.org/fr/drapeaux)*`
+          )
 
-      const interactionGestionOfAllBotInteractions =
-        new Discord.ActionRowBuilder().addComponents(
-          new Discord.StringSelectMenuBuilder()
-            .setCustomId(`gestionAllBot_Interactions`)
-            .setPlaceholder("📌 Séléctionner une option...")
-            .addOptions(
-              {
-                emoji: "📌",
-                label: "Séléctionner une option",
-                description: "...",
-                value: "0",
-                default: true,
-              },
-              {
-                emoji: "📆",
-                label: "Créer un événement",
-                description: "Créer un nouvel événement !",
-                value: "7",
-              },
-              {
-                emoji: "⚙️",
-                label: "Gestion des événements",
-                description: "Gérer vos événements (Fermer, supprimer, etc...)",
-                value: "8",
-              },
-              {
-                emoji: "📨",
-                label: "Demande d'Adhésion",
-                description: "Visualisez les demandes d'adhésion à l'entrylist",
-                value: "10",
-              },
-              {
-                emoji: "💬",
-                label: "Ajouter un salon",
-                description: "Ajouter des salons pour vos événements",
-                value: "1",
-              },
-              {
-                emoji: "🗯️",
-                label: "Gestion des salons",
-                description: "Gérer vos salons (supprimer, modifier)",
-                value: "2",
-              },
-              {
-                emoji: "🚦",
-                label: "Ajouter un preset",
-                description: "Créer vos propres présets",
-                value: "3",
-              },
-              {
-                emoji: "🎨",
-                label: "Gestion des presets",
-                description: "Gérer les différents presets d'évenement",
-                value: "4",
-              },
-              {
-                emoji: "🏁",
-                label: "Ajouter un circuit",
-                description:
-                  "Ajouter des circuits (Drapeau, Pays, Circuit, Longueur, Image)",
-                value: "5",
-              },
-              {
-                emoji: "🚧",
-                label: "Gestion des circuits",
-                description: "Gérer vos circuits (Activer ou Désactiver)",
-                value: "6",
-              },
-              {
-                emoji: "🔨",
-                label: "Règlement",
-                description: "Modifier le règlement de course",
-                value: "9",
-              }
-            )
-        )
+        const interactionGestionOfAllBotInteractions =
+          new Discord.ActionRowBuilder().addComponents(
+            new Discord.StringSelectMenuBuilder()
+              .setCustomId(`gestionAllBot_Interactions`)
+              .setPlaceholder("📌 Séléctionner une option...")
+              .addOptions(
+                {
+                  emoji: "📌",
+                  label: "Séléctionner une option",
+                  description: "...",
+                  value: "0",
+                  default: true,
+                },
+                {
+                  emoji: "📆",
+                  label: "Créer un événement",
+                  description: "Créer un nouvel événement !",
+                  value: "7",
+                },
+                {
+                  emoji: "⚙️",
+                  label: "Gestion des événements",
+                  description:
+                    "Gérer vos événements (Fermer, supprimer, etc...)",
+                  value: "8",
+                },
+                {
+                  emoji: "📨",
+                  label: `Demande d'Adhésion (${rows.length})`,
+                  description:
+                    "Visualisez les demandes d'adhésion à l'entrylist",
+                  value: "10",
+                },
+                {
+                  emoji: "💬",
+                  label: "Ajouter un salon",
+                  description: "Ajouter des salons pour vos événements",
+                  value: "1",
+                },
+                {
+                  emoji: "🗯️",
+                  label: "Gestion des salons",
+                  description: "Gérer vos salons (supprimer, modifier)",
+                  value: "2",
+                },
+                {
+                  emoji: "🚦",
+                  label: "Ajouter un preset",
+                  description: "Créer vos propres présets",
+                  value: "3",
+                },
+                {
+                  emoji: "🎨",
+                  label: "Gestion des presets",
+                  description: "Gérer les différents presets d'évenement",
+                  value: "4",
+                },
+                {
+                  emoji: "🏁",
+                  label: "Ajouter un circuit",
+                  description:
+                    "Ajouter des circuits (Drapeau, Pays, Circuit, Longueur, Image)",
+                  value: "5",
+                },
+                {
+                  emoji: "🚧",
+                  label: "Gestion des circuits",
+                  description: "Gérer vos circuits (Activer ou Désactiver)",
+                  value: "6",
+                },
+                {
+                  emoji: "🔨",
+                  label: "Règlement",
+                  description: "Modifier le règlement de course",
+                  value: "9",
+                }
+              )
+          )
 
-      await bot.channels.cache.get(Config.channels.gestionChannel).send({
-        embeds: [embedGestionOfAllBotInteractions],
-        components: [interactionGestionOfAllBotInteractions],
-      })
+        await bot.channels.cache.get(Config.channels.gestionChannel).send({
+          embeds: [embedGestionOfAllBotInteractions],
+          components: [interactionGestionOfAllBotInteractions],
+        })
 
-      const embedEntrylist = new Discord.EmbedBuilder()
-        .setColor(Config.colors.mainServerColor)
-        .setDescription(
-          `## 📝 Entrylist\n\n- Choisissez un numéro libre dans [Entrylist](https://les-simracers.fr/entrylist/)\n- Replissez le fomulaire en cliquant sur le bouton en dessous \`📨\`\n- Votre demande d'adhésion à l'entrylist sera traiter dans les plus bref délais.\n\n*Merci de bien suivre les étapes du formulaire et de les complétées !*\n\n-# Chaque personne qui quitte le serveur sera retirée de l'entrylist !`
-        )
+        const embedEntrylist = new Discord.EmbedBuilder()
+          .setColor(Config.colors.mainServerColor)
+          .setDescription(
+            `## 📝 Entrylist\n\n- Choisissez un numéro libre dans [Entrylist](https://les-simracers.fr/entrylist/)\n- Replissez le fomulaire en cliquant sur le bouton en dessous \`📨\`\n- Votre demande d'adhésion à l'entrylist sera traiter dans les plus bref délais.\n\n*Merci de bien suivre les étapes du formulaire et de les complétées !*\n\n-# Chaque personne qui quitte le serveur sera retirée de l'entrylist !`
+          )
 
-      const actionEntrylistFormStart =
-        new Discord.ActionRowBuilder().addComponents(
-          new Discord.ButtonBuilder()
-            .setCustomId(`startEntrylistRegistration`)
-            .setEmoji("📨")
-            .setDisabled(false)
-            .setStyle(Discord.ButtonStyle.Secondary)
-        )
+        const actionEntrylistFormStart =
+          new Discord.ActionRowBuilder().addComponents(
+            new Discord.ButtonBuilder()
+              .setCustomId(`startEntrylistRegistration`)
+              .setEmoji("📨")
+              .setDisabled(false)
+              .setStyle(Discord.ButtonStyle.Secondary)
+          )
 
-      await bot.channels.cache.get("1323999152731979816").send({
-        embeds: [embedEntrylist],
-        components: [actionEntrylistFormStart],
-      })
+        await bot.channels.cache.get("1224609366016131153").send({
+          embeds: [embedEntrylist],
+          components: [actionEntrylistFormStart],
+        })
+
+        const embedTeamAndPersonnalProfils = new Discord.EmbedBuilder()
+          .setColor(Config.colors.mainServerColor)
+          .setDescription(
+            `## 📘 Informations\n \n- **Créer et personnaliser son profil** avec des infos comme Pseudo, Platform, Numéro de joueur, etc...\n- **Consulter son profil et celui des autres** pour voir leurs historique et leurs équipes.\n- **Créer et gérer une équipe** en définissant un nom, un logo et éventuellement un objectif.\n- **Rejoindre une équipe existante** en envoyant une demande ou en étant invité.\n-# Si vous avez le moindre soucis, merci d'ouvrir un ticket !`
+          )
+
+        const actionTeamAndPersonnalProfils =
+          new Discord.ActionRowBuilder().addComponents(
+            new Discord.StringSelectMenuBuilder()
+              .setCustomId(`teamsAndPersonnalProfilsActions`)
+              .addOptions(
+                {
+                  emoji: "📌",
+                  label: "Sélectionner une option...",
+                  value: "options",
+                  default: true,
+                },
+                {
+                  emoji: "🤝",
+                  label: "Équipes",
+                  description: "Accéder aux différentes équipes disponibles !",
+                  value: "teams",
+                },
+                {
+                  emoji: "👥",
+                  label: "Mon équipe",
+                  description:
+                    "Vous êtes dans une équipe, vous pouvez regarder !",
+                  value: "myTeam",
+                },
+                {
+                  emoji: "👤",
+                  label: "Votre profil",
+                  description:
+                    "Admirer votre profil ou laisser les autres le voir",
+                  value: "personalProfil",
+                }
+              )
+          )
+
+        await bot.channels.cache.get("1339169354989830208").send({
+          embeds: [embedTeamAndPersonnalProfils],
+          components: [actionTeamAndPersonnalProfils],
+        })
+      } catch (error) {
+        console.error(error)
+      }
     }
   }
 }
