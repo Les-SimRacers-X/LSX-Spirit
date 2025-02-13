@@ -19,6 +19,7 @@
     "fs": "^0.0.1-security",
     "mysql2": "^3.11.3",
     "papaparse": "^5.5.2",
+    "psn-api": "^2.11.0",
     "stream": "^0.0.3"
   }
 }

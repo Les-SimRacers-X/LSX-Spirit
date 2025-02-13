@@ -2,6 +2,11 @@ const Discord = require("discord.js")
 const Config = require("../config.json")
 const axios = require("axios")
 const { generateID, getXboxId, currentTimestamp } = require("../utils")
+const {
+  exchangeNpssoForCode,
+  exchangeCodeForAccessToken,
+  getProfileFromUserName,
+} = require("psn-api")
 
 module.exports = async (bot, interaction) => {
   let db = bot.db
@@ -27,6 +32,25 @@ module.exports = async (bot, interaction) => {
       embeds: [embedErrorDetected],
       ephemeral: true,
     })
+  }
+
+  async function getPSNId(username) {
+    try {
+      // Étape 1 : Obtenir un code d'authentification avec le NPSSO
+      const accessCode = await exchangeNpssoForCode(process.env.PSN_APIKEY)
+
+      // Étape 2 : Échanger le code contre un jeton d'accès
+      const accessToken = await exchangeCodeForAccessToken(accessCode)
+
+      // Étape 3 : Récupérer les infos du profil via le pseudo PSN
+      const userProfile = await getProfileFromUserName(accessToken, username)
+
+      console.log(`ID PSN de ${username}:`, userProfile.profile.accountId)
+      const psnID = userProfile.profile.accountId
+      return psnID
+    } catch (error) {
+      console.error("Erreur lors de la récupération de l'ID PSN :", error)
+    }
   }
 
   // Gestion des Applications User Commands
@@ -1521,12 +1545,6 @@ module.exports = async (bot, interaction) => {
 
     // Récupérer l'interaction "startEntrylistRegistration"
     if (interaction.customId === "startEntrylistRegistration") {
-      const embedSelectPlatform = new Discord.EmbedBuilder()
-        .setColor(Config.colors.mainServerColor)
-        .setDescription(
-          `:warning: **Si vous êtes sur Playstation, merci de cliquer [ici](https://psn.flipscreen.games/) pour récupérer votre ID PSN**`
-        )
-
       const actionSelectPlatform = new Discord.ActionRowBuilder().addComponents(
         new Discord.StringSelectMenuBuilder()
           .setCustomId(`selectPlatform`)
@@ -1542,7 +1560,6 @@ module.exports = async (bot, interaction) => {
       )
 
       await interaction.reply({
-        embeds: [embedSelectPlatform],
         components: [actionSelectPlatform],
         ephemeral: true,
       })
@@ -1661,7 +1678,7 @@ module.exports = async (bot, interaction) => {
                 .setStyle(Discord.ButtonStyle.Secondary)
             )
 
-          await interaction.reply({
+          await interaction.update({
             embeds: [requestInformationEmbed],
             components: [
               actionRequestInformationSelecter,
@@ -3267,77 +3284,34 @@ module.exports = async (bot, interaction) => {
       if (interaction.values && interaction.values.length > 0) {
         let reqPlatformChoice = interaction.values[0]
 
-        if (reqPlatformChoice === "P") {
-          // INTERACTION POUR PLAYSTATION
-          const formEntrylist = new Discord.ModalBuilder()
-            .setCustomId(`modalFormEntrylistPlay_${reqPlatformChoice}`)
-            .setTitle("Entrylist LSX")
+        const formEntrylist = new Discord.ModalBuilder()
+          .setCustomId(`modalFormEntrylist_${reqPlatformChoice}`)
+          .setTitle("Entrylist LSX")
 
-          const pseudoFormInput = new Discord.TextInputBuilder()
-            .setCustomId(`modalPseudoInput`)
-            .setLabel("Veuillez entrer votre PSN :")
-            .setPlaceholder("Exemple : PossoRL0943")
-            .setRequired(true)
-            .setStyle(Discord.TextInputStyle.Short)
+        const pseudoFormInput = new Discord.TextInputBuilder()
+          .setCustomId(`modalPseudoInput`)
+          .setLabel("Veuillez entrer votre Gamertag/PSN :")
+          .setPlaceholder("Exemple : PossoRL0943")
+          .setRequired(true)
+          .setStyle(Discord.TextInputStyle.Short)
 
-          const platformIDFormInput = new Discord.TextInputBuilder()
-            .setCustomId(`modalPlatformIDInput`)
-            .setLabel("Veuillez entrer votre ID PSN :")
-            .setPlaceholder("Exemple : 984589385928443")
-            .setRequired(true)
-            .setStyle(Discord.TextInputStyle.Short)
+        const numberFormInput = new Discord.TextInputBuilder()
+          .setCustomId(`modalNumberInput`)
+          .setLabel("Veuillez entrer un numéro :")
+          .setPlaceholder("Exemple : 657")
+          .setRequired(true)
+          .setStyle(Discord.TextInputStyle.Short)
 
-          const numberFormInput = new Discord.TextInputBuilder()
-            .setCustomId(`modalNumberInput`)
-            .setLabel("Veuillez entrer un numéro :")
-            .setPlaceholder("Exemple : 657")
-            .setRequired(true)
-            .setStyle(Discord.TextInputStyle.Short)
+        const reqPseudoFormInput = new Discord.ActionRowBuilder().addComponents(
+          pseudoFormInput
+        )
+        const reqNumberFormInput = new Discord.ActionRowBuilder().addComponents(
+          numberFormInput
+        )
 
-          const reqPseudoFormInput =
-            new Discord.ActionRowBuilder().addComponents(pseudoFormInput)
-          const reqPlatformIDInput =
-            new Discord.ActionRowBuilder().addComponents(platformIDFormInput)
-          const reqNumberFormInput =
-            new Discord.ActionRowBuilder().addComponents(numberFormInput)
+        formEntrylist.addComponents(reqPseudoFormInput, reqNumberFormInput)
 
-          formEntrylist.addComponents(
-            reqPseudoFormInput,
-            reqPlatformIDInput,
-            reqNumberFormInput
-          )
-
-          await interaction.showModal(formEntrylist)
-        }
-
-        if (reqPlatformChoice === "M") {
-          const formEntrylist = new Discord.ModalBuilder()
-            .setCustomId(`modalFormEntrylistXbox_${reqPlatformChoice}`)
-            .setTitle("Entrylist LSX")
-
-          const pseudoFormInput = new Discord.TextInputBuilder()
-            .setCustomId(`modalPseudoInput`)
-            .setLabel("Veuillez entrer votre Gamertag :")
-            .setPlaceholder("Exemple : PossoRL0943")
-            .setRequired(true)
-            .setStyle(Discord.TextInputStyle.Short)
-
-          const numberFormInput = new Discord.TextInputBuilder()
-            .setCustomId(`modalNumberInput`)
-            .setLabel("Veuillez entrer un numéro :")
-            .setPlaceholder("Exemple : 657")
-            .setRequired(true)
-            .setStyle(Discord.TextInputStyle.Short)
-
-          const reqPseudoFormInput =
-            new Discord.ActionRowBuilder().addComponents(pseudoFormInput)
-          const reqNumberFormInput =
-            new Discord.ActionRowBuilder().addComponents(numberFormInput)
-
-          formEntrylist.addComponents(reqPseudoFormInput, reqNumberFormInput)
-
-          await interaction.showModal(formEntrylist)
-        }
+        await interaction.showModal(formEntrylist)
       }
     }
 
@@ -3729,74 +3703,8 @@ module.exports = async (bot, interaction) => {
   /*************************************************************************************************************************/
 
   if (interaction.isModalSubmit()) {
-    const [fromSelectPlatformPlay, PlatformChoicePlay] =
-      interaction.customId.split("_")
-    if (fromSelectPlatformPlay === "modalFormEntrylistPlay") {
-      const reqPseudocontent =
-        interaction.fields.getTextInputValue("modalPseudoInput")
-      const reqNumberContent =
-        interaction.fields.getTextInputValue("modalNumberInput")
-
-      const reqPlatformIDContent = interaction.fields.getTextInputValue(
-        "modalPlatformIDInput"
-      )
-
-      try {
-        const [row] = await db
-          .promise()
-          .query(`SELECT * FROM users WHERE inGameNumber = ${reqNumberContent}`)
-
-        if (reqNumberContent === row[0].inGameNumber) {
-          const embedNumberExist = new Discord.EmbedBuilder()
-            .setColor(Config.colors.crossColor)
-            .setDescription(
-              `${Config.emojis.crossEmoji} **Ce numéro est déjà pris ! Merci de refaire votre demande avec un numéro valide !**`
-            )
-
-          return interaction.reply({
-            embeds: [embedNumberExist],
-            ephemeral: true,
-          })
-        } else {
-          let requestID = generateID()
-          let platformID = `${PlatformChoicePlay}-${reqPlatformIDContent}`
-          let platform = `${Config.emojis.playstationEmote} Playstation`
-
-          await db
-            .promise()
-            .query(
-              `INSERT INTO requests (requestID, requestAuthorID, requestInGameUsername, requestInGameNumber, requestPlatformID, requestPlatform, requestStat) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-              [
-                requestID,
-                interaction.user.id,
-                reqPseudocontent,
-                reqNumberContent,
-                platformID,
-                platform,
-                "waiting",
-              ]
-            )
-
-          const embedRequestSuccess = new Discord.EmbedBuilder()
-            .setColor(Config.colors.checkColor)
-            .setDescription(
-              `${Config.emojis.checkEmoji} **Votre demande à bien été enregistrer !**`
-            )
-
-          await interaction.update({
-            embeds: [embedRequestSuccess],
-            components: [],
-            ephemeral: true,
-          })
-        }
-      } catch (error) {
-        errorHandler(bot, interaction, error)
-      }
-    }
-
-    const [fromSelectPlatformXbox, PlatformChoiceXbox] =
-      interaction.customId.split("_")
-    if (fromSelectPlatformXbox === "modalFormEntrylistXbox") {
+    const [fromSelectPlatform, PlatformChoice] = interaction.customId.split("_")
+    if (fromSelectPlatform === "modalFormEntrylist") {
       const reqPseudocontent =
         interaction.fields.getTextInputValue("modalPseudoInput")
       const reqNumberContent =
@@ -3805,7 +3713,9 @@ module.exports = async (bot, interaction) => {
       try {
         const [row] = await db
           .promise()
-          .query(`SELECT * FROM users WHERE inGameNumber = ${reqNumberContent}`)
+          .query(
+            `SELECT inGameNumber FROM users WHERE inGameNumber = ${reqNumberContent} UNION select requestInGameNumber FROM requests WHERE requestInGameNumber = ${reqNumberContent}`
+          )
 
         if (row.length > 0) {
           const embedNumberExist = new Discord.EmbedBuilder()
@@ -3820,13 +3730,17 @@ module.exports = async (bot, interaction) => {
           })
         } else {
           let requestID = generateID()
-          let generateXboxID = await getXboxId(
-            axios,
-            reqPseudocontent,
-            process.env.XBOX_APIKEY
-          )
-          let completPlatformID = `${PlatformChoiceXbox}-${generateXboxID}`
-          let platform = `${Config.emojis.xboxEmote} Xbox`
+          let generatePlatformID =
+            PlatformChoice === "M"
+              ? await getXboxId(
+                  axios,
+                  reqPseudocontent,
+                  process.env.XBOX_APIKEY
+                )
+              : await getPSNId(reqPseudocontent)
+
+          let completPlatformID = `${PlatformChoice}-${generatePlatformID}`
+          let platform = PlatformChoice === "M" ? `Xbox` : `Playstation`
 
           await db
             .promise()
