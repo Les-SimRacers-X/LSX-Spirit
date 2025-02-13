@@ -1616,8 +1616,6 @@ module.exports = async (bot, interaction) => {
               ? `⏳ En Attente...`
               : currentRequest.requestStat
 
-          const [emote, platform] = currentRequest.requestPlatform.split("-")
-
           const requestInformationEmbed = new Discord.EmbedBuilder()
             .setColor(Config.colors.mainServerColor)
             .setThumbnail(user.displayAvatarURL({ dynamic: true }))
@@ -1626,11 +1624,9 @@ module.exports = async (bot, interaction) => {
                 user.globalName || user.username
               }\n\n- Utilisateur : [${
                 currentRequest.requestInGameNumber
-              }] ${user} (${user.username})\n- Identifiant : ${
-                user.id
-              }\n- ${emote} ${platform} : ${
-                currentRequest.requestInGameUsername
-              } (${
+              }] ${user} (${user.username})\n- Identifiant : ${user.id}\n- ${
+                currentRequest.requestPlatform
+              } : ${currentRequest.requestInGameUsername} (${
                 currentRequest.requestPlatformID
               })\n- Demande : ${checkRequestStat}\n\n-# Demande : ${
                 currentRequestIndex + 1
@@ -2632,7 +2628,10 @@ module.exports = async (bot, interaction) => {
               ])
             const [countResult] = await db
               .promise()
-              .query(`SELECT COUNT(*) AS total FROM requests`)
+              .query(
+                `SELECT COUNT(*) AS total FROM requests WHERE requestStat = ?`,
+                ["waiting"]
+              )
 
             let currentRequestIndex = 0
             const totalRequests = countResult[0].total
@@ -2677,9 +2676,6 @@ module.exports = async (bot, interaction) => {
                   ? `⏳ En Attente...`
                   : currentRequest.requestStat
 
-              const [emote, platform] =
-                currentRequest.requestPlatform.split("-")
-
               const requestInformationEmbed = new Discord.EmbedBuilder()
                 .setColor(Config.colors.mainServerColor)
                 .setThumbnail(user.displayAvatarURL({ dynamic: true }))
@@ -2690,7 +2686,7 @@ module.exports = async (bot, interaction) => {
                     currentRequest.requestInGameNumber
                   }] ${user} (${user.username})\n- Identifiant : ${
                     user.id
-                  }\n- ${emote} ${platform} : ${
+                  }\n- ${currentRequest.requestPlatform} : ${
                     currentRequest.requestInGameUsername
                   } (${
                     currentRequest.requestPlatformID
@@ -2770,7 +2766,7 @@ module.exports = async (bot, interaction) => {
             .query(`SELECT * FROM requests WHERE requestID = ?`, [requestID])
 
           const user = await bot.users.fetch(requests[0].requestAuthorID)
-          const [emote, platform] = requests[0].requestPlatform.split("-")
+          const platform = requests[0].requestPlatform
 
           let checkColor =
             reqActionChoice === "Accepted"
@@ -2795,7 +2791,10 @@ module.exports = async (bot, interaction) => {
           if (reqActionChoice === "Accepted") {
             await db
               .promise()
-              .query(`UPDATE requests SET requestStat = ${reqActionChoice}`)
+              .query(
+                `UPDATE requests SET requestStat = ? WHERE requestID = ?`,
+                [reqActionChoice, requestID]
+              )
             await db
               .promise()
               .query(
@@ -2814,7 +2813,10 @@ module.exports = async (bot, interaction) => {
           } else {
             await db
               .promise()
-              .query(`UPDATE requests SET requestStat = ${reqActionChoice}`)
+              .query(
+                `UPDATE requests SET requestStat = ? WHERE requestID = ?`,
+                [reqActionChoice, requestID]
+              )
           }
 
           await user.send({ embeds: [sendEmbedToUser] })

@@ -40,8 +40,17 @@ module.exports = async (bot, message) => {
             await db
               .promise()
               .query(
-                `INSERT INTO users (userID, inGameUsername, inGameNumber, teamID, platformID, platformConsole, licencePoints) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-                [discordID, gamerTag, number, "None", idPSXBOX, platform, 12]
+                `INSERT INTO users (userID, inGameUsername, inGameNumber, teamID, embedColor, platformID, platformConsole, licencePoints) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+                [
+                  discordID,
+                  gamerTag,
+                  number,
+                  "None",
+                  "#2f3136",
+                  idPSXBOX,
+                  platform,
+                  12,
+                ]
               )
           }
           console.log("Données insérées en BDD !")
@@ -65,7 +74,7 @@ module.exports = async (bot, message) => {
         const [rows] = await db
           .promise()
           .query(`SELECT * FROM requests WHERE requestStat = ?`, ["waiting"])
-        const embedGestionOfAllBotInteractions = new Discord.EmbedBuilder()
+        /* const embedGestionOfAllBotInteractions = new Discord.EmbedBuilder()
           .setColor(Config.colors.mainServerColor)
           .setDescription(
             `## 📊 GESTION GLOBAL\n\n\n ➡️ ***Utilisez le sélecteur ci-dessous pour gérer le bot et accéder aux différentes interactions disponibles.***\n\n*__Liste des drapeaux :__ [Cliquez ici](https://emojipedia.org/fr/drapeaux)*`
@@ -153,12 +162,12 @@ module.exports = async (bot, message) => {
         await bot.channels.cache.get(Config.channels.gestionChannel).send({
           embeds: [embedGestionOfAllBotInteractions],
           components: [interactionGestionOfAllBotInteractions],
-        })
+        }) */
 
         const embedEntrylist = new Discord.EmbedBuilder()
           .setColor(Config.colors.mainServerColor)
           .setDescription(
-            `## 📝 Entrylist\n\n- Choisissez un numéro libre dans [Entrylist](https://les-simracers.fr/entrylist/)\n- Replissez le fomulaire en cliquant sur le bouton en dessous \`📨\`\n- Votre demande d'adhésion à l'entrylist sera traiter dans les plus bref délais.\n\n*Merci de bien suivre les étapes du formulaire et de les complétées !*\n\n-# Chaque personne qui quitte le serveur sera retirée de l'entrylist !`
+            `## 📝 Entrylist\n\n- Choisissez un numéro libre dans [Entrylist](https://les-simracers.fr/entrylist/)\n- Replissez le fomulaire en cliquant sur le bouton en dessous \`📨\`\n- Votre demande d'adhésion à l'entrylist sera traitée dans les plus brefs délais.\n\n*Merci de bien suivre les étapes du formulaire et de les compléter !*\n\n-# Chaque personne qui quitte le serveur sera retirée de l'entrylist !`
           )
 
         const actionEntrylistFormStart =
@@ -175,7 +184,7 @@ module.exports = async (bot, message) => {
           components: [actionEntrylistFormStart],
         })
 
-        const embedTeamAndPersonnalProfils = new Discord.EmbedBuilder()
+        /* const embedTeamAndPersonnalProfils = new Discord.EmbedBuilder()
           .setColor(Config.colors.mainServerColor)
           .setDescription(
             `## 📘 Informations\n \n- **Créer et personnaliser son profil** avec des infos comme Pseudo, Platform, Numéro de joueur, etc...\n- **Consulter son profil et celui des autres** pour voir leurs historique et leurs équipes.\n- **Créer et gérer une équipe** en définissant un nom, un logo et éventuellement un objectif.\n- **Rejoindre une équipe existante** en envoyant une demande ou en étant invité.\n-# Si vous avez le moindre soucis, merci d'ouvrir un ticket !`
@@ -218,7 +227,7 @@ module.exports = async (bot, message) => {
         await bot.channels.cache.get("1339169354989830208").send({
           embeds: [embedTeamAndPersonnalProfils],
           components: [actionTeamAndPersonnalProfils],
-        })
+        }) */
       } catch (error) {
         console.error(error)
       }
