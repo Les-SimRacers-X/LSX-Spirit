@@ -1616,6 +1616,8 @@ module.exports = async (bot, interaction) => {
               ? `⏳ En Attente...`
               : currentRequest.requestStat
 
+          const [platform, ID] = currentRequest.requestPlatformID
+
           const requestInformationEmbed = new Discord.EmbedBuilder()
             .setColor(Config.colors.mainServerColor)
             .setThumbnail(user.displayAvatarURL({ dynamic: true }))
@@ -1626,9 +1628,9 @@ module.exports = async (bot, interaction) => {
                 currentRequest.requestInGameNumber
               }] ${user} (${user.username})\n- Identifiant : ${user.id}\n- ${
                 currentRequest.requestPlatform
-              } : ${currentRequest.requestInGameUsername} (${
-                currentRequest.requestPlatformID
-              })\n- Demande : ${checkRequestStat}\n\n-# Demande : ${
+              } : ${
+                currentRequest.requestInGameUsername
+              } (${platform}${ID})\n- Demande : ${checkRequestStat}\n\n-# Demande : ${
                 currentRequestIndex + 1
               } sur ${totalRequests}`
             )
@@ -2676,6 +2678,8 @@ module.exports = async (bot, interaction) => {
                   ? `⏳ En Attente...`
                   : currentRequest.requestStat
 
+              const [platform, ID] = currentRequest.requestPlatformID
+
               const requestInformationEmbed = new Discord.EmbedBuilder()
                 .setColor(Config.colors.mainServerColor)
                 .setThumbnail(user.displayAvatarURL({ dynamic: true }))
@@ -2688,9 +2692,7 @@ module.exports = async (bot, interaction) => {
                     user.id
                   }\n- ${currentRequest.requestPlatform} : ${
                     currentRequest.requestInGameUsername
-                  } (${
-                    currentRequest.requestPlatformID
-                  })\n- Demande : ${checkRequestStat}\n\n-# Demande : ${
+                  } (${platform}${ID})\n- Demande : ${checkRequestStat}\n\n-# Demande : ${
                     currentRequestIndex + 1
                   } sur ${totalRequests}`
                 )
