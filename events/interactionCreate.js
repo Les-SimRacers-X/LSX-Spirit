@@ -2788,6 +2788,14 @@ module.exports = async (bot, interaction) => {
               `${Config.emojis.checkEmoji} **Utilisateur ${checkChoice} avec succès !**`
             )
 
+          const embedLogAboutUserRegistration = new Discord.EmbedBuilder()
+            .setColor(Config.colors.mainServerColor)
+            .setDescription(
+              `### 📝Entrylist Inscription\n\n- Auteur : ${user} (${
+                user.globalName || user.username
+              })\n- Identification : ${user.id}\n- requestID : ${requestID}`
+            )
+
           if (reqActionChoice === "Accepted") {
             await db
               .promise()
@@ -2819,6 +2827,9 @@ module.exports = async (bot, interaction) => {
               )
           }
 
+          bot.channels.cache
+            .get(Config.channels.logsChannel)
+            .send({ embeds: [embedLogAboutUserRegistration] })
           await user.send({ embeds: [sendEmbedToUser] })
           await interaction.reply({
             embeds: [interactionReplyEmbed],
@@ -3765,9 +3776,8 @@ module.exports = async (bot, interaction) => {
               `${Config.emojis.checkEmoji} **Votre demande à bien été enregistrer !**`
             )
 
-          await interaction.update({
+          await interaction.reply({
             embeds: [embedRequestSuccess],
-            components: [],
             ephemeral: true,
           })
         }
