@@ -1,7 +1,12 @@
 const Discord = require("discord.js")
 const Config = require("../config.json")
 const axios = require("axios")
-const { generateID, getXboxId, currentTimestamp } = require("../utils")
+const {
+  generateID,
+  getXboxId,
+  currentTimestamp,
+  currentTimestamp,
+} = require("../utils")
 const {
   exchangeNpssoForCode,
   exchangeCodeForAccessToken,
@@ -1545,24 +1550,55 @@ module.exports = async (bot, interaction) => {
 
     // Récupérer l'interaction "startEntrylistRegistration"
     if (interaction.customId === "startEntrylistRegistration") {
-      const actionSelectPlatform = new Discord.ActionRowBuilder().addComponents(
-        new Discord.StringSelectMenuBuilder()
-          .setCustomId(`selectPlatform`)
-          .setPlaceholder("📌 Sélectionner une platform...")
-          .addOptions(
-            {
-              emoji: `${Config.emojis.playstationEmote}`,
-              label: "Playstation",
-              value: "P",
-            },
-            { emoji: `${Config.emojis.xboxEmote}`, label: "Xbox", value: "M" }
-          )
-      )
+      try {
+        const [users] = await db
+          .promise()
+          .query(`SELECT * FROM users WHERE userID = ?`, [interaction.user.id])
 
-      await interaction.reply({
-        components: [actionSelectPlatform],
-        ephemeral: true,
-      })
+        if (users.lenght > 0) {
+          const alreadyRegistered = new Discord.EmbedBuilder()
+            .setColor(Config.colors.crossColor)
+            .setDescription(
+              `${Config.emojis.crossEmoji} **Vous êtes déjà inscrit à l'entrylist !**`
+            )
+
+          return interaction.reply({
+            embeds: [alreadyRegistered],
+            ephemeral: true,
+          })
+        }
+
+        const embedChoice = new Discord.EmbedBuilder()
+          .setColor(Config.colors.mainServerColor)
+          .setDescription(`**📌 Sélectionner une platform...**`)
+
+        const actionSelectPlatform =
+          new Discord.ActionRowBuilder().addComponents(
+            new Discord.StringSelectMenuBuilder()
+              .setCustomId(`selectPlatform`)
+              .setPlaceholder("📌 Sélectionner une platform...")
+              .addOptions(
+                {
+                  emoji: `${Config.emojis.playstationEmote}`,
+                  label: "Playstation",
+                  value: "P",
+                },
+                {
+                  emoji: `${Config.emojis.xboxEmote}`,
+                  label: "Xbox",
+                  value: "M",
+                }
+              )
+          )
+
+        await interaction.reply({
+          embeds: [embedChoice],
+          components: [actionSelectPlatform],
+          ephemeral: true,
+        })
+      } catch (error) {
+        errorHandler(bot, interaction, error)
+      }
     }
 
     async function updateDisplayedRequest(interaction, currentRequestIndex) {
@@ -1572,7 +1608,10 @@ module.exports = async (bot, interaction) => {
           .query(`SELECT * FROM requests WHERE requestStat = ?`, ["waiting"])
         const [countResult] = await db
           .promise()
-          .query(`SELECT COUNT(*) AS total FROM requests`)
+          .query(
+            `SELECT COUNT(*) AS total FROM requests WHERE requestStat = ?`,
+            ["waiting"]
+          )
 
         const totalRequests = countResult[0].total
 
@@ -1616,7 +1655,7 @@ module.exports = async (bot, interaction) => {
               ? `⏳ En Attente...`
               : currentRequest.requestStat
 
-          const [platform, ID] = currentRequest.requestPlatformID
+          const [platform, ID] = currentRequest.requestPlatformID.split("-")
 
           const requestInformationEmbed = new Discord.EmbedBuilder()
             .setColor(Config.colors.mainServerColor)
@@ -1859,6 +1898,29 @@ module.exports = async (bot, interaction) => {
 
       const modalModifyJsonInput = new Discord.TextInputBuilder()
         .setCustomId(`modifyJsonTeam`)
+        .setLabel("Entrer les nouvelles modifications :")
+        .setPlaceholder("Exemple : Ce que vous avez copier !")
+        .setRequired(true)
+        .setStyle(Discord.TextInputStyle.Paragraph)
+
+      const reqModifyJsonInput = new Discord.ActionRowBuilder().addComponents(
+        modalModifyJsonInput
+      )
+
+      modalModifyTeam.addComponents(reqModifyJsonInput)
+
+      await interaction.showModal(modalModifyTeam)
+    }
+
+    const [fromModifyProfil, profilTypeID, profilType] =
+      interaction.customId.split("_")
+    if (fromModifyProfil === "editTeam&Profil") {
+      const modalModifyTeam = new Discord.ModalBuilder()
+        .setCustomId(`modifyProfil_${profilTypeID}_${profilType}`)
+        .setTitle(`Modification Profil`)
+
+      const modalModifyJsonInput = new Discord.TextInputBuilder()
+        .setCustomId(`modifyJsonProfil`)
         .setLabel("Entrer les nouvelles modifications :")
         .setPlaceholder("Exemple : Ce que vous avez copier !")
         .setRequired(true)
@@ -2678,7 +2740,7 @@ module.exports = async (bot, interaction) => {
                   ? `⏳ En Attente...`
                   : currentRequest.requestStat
 
-              const [platform, ID] = currentRequest.requestPlatformID
+              const [platform, ID] = currentRequest.requestPlatformID.split("-")
 
               const requestInformationEmbed = new Discord.EmbedBuilder()
                 .setColor(Config.colors.mainServerColor)
@@ -2776,12 +2838,17 @@ module.exports = async (bot, interaction) => {
               : `${Config.colors.crossColor}`
 
           let checkChoice =
-            reqActionChoice === "Accepted" ? `accepter` : `refuser`
+            reqActionChoice === "Accepted" ? `accepté` : `refusé`
+
+          let profilCreation =
+            reqActionChoice === "Accepted"
+              ? `\n**Votre profil personnel à été créé !**`
+              : ""
 
           const sendEmbedToUser = new Discord.EmbedBuilder()
             .setColor(checkColor)
             .setDescription(
-              `**Vous avez été ${checkChoice} de l'entrylist ${interaction.guild.name}**\n**Votre profil personnel a été créer !**`
+              `**Vous avez été ${checkChoice} de l'entrylist ${interaction.guild.name}**${profilCreation}`
             )
 
           const interactionReplyEmbed = new Discord.EmbedBuilder()
@@ -2798,6 +2865,16 @@ module.exports = async (bot, interaction) => {
               })\n- Identification : ${user.id}\n- requestID : ${requestID}`
             )
 
+          let trigramme = user.username.match(/[a-zA-Z]/g) || []
+          while (trigramme.length < 3) {
+            trigramme.push(String.fromCharCode(65 + Math.random() * 26))
+          }
+
+          const newTrigramme = trigramme.slice(0, 3).join("").toUpperCase()
+
+          const [platformForID, ID] = requests[0].requestPlatformID.split("-")
+          const completPlatformID = `${platformForID}${ID}`
+
           if (reqActionChoice === "Accepted") {
             await db
               .promise()
@@ -2808,14 +2885,16 @@ module.exports = async (bot, interaction) => {
             await db
               .promise()
               .query(
-                `INSERT INTO users (userID, inGameUsername, inGameNumber, teamID, embedColor, platformID, platformConsole, licencePoints) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+                `INSERT INTO users (userID, discordUsername, inGameUsername, trigramme, inGameNumber, teamID, embedColor, platformID, platformConsole, licencePoints) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                 [
                   user.id,
+                  user.username,
                   requests[0].requestInGameUsername,
+                  newTrigramme,
                   requests[0].requestInGameNumber,
                   "None",
                   "#2b2d31",
-                  requests[0].requestPlatformID,
+                  completPlatformID,
                   platform,
                   12,
                 ]
@@ -3347,20 +3426,20 @@ module.exports = async (bot, interaction) => {
                     value: "options",
                     default: true,
                   },
-                  {
-                    emoji: "🤝",
-                    label: "Équipes",
-                    description:
-                      "Accéder aux différentes équipes disponibles !",
-                    value: "teams",
-                  },
-                  {
-                    emoji: "👥",
-                    label: "Mon équipe",
-                    description:
-                      "Vous êtes dans une équipe, vous pouvez regarder !",
-                    value: "myTeam",
-                  },
+                  // {
+                  //   emoji: "🤝",
+                  //   label: "Équipes",
+                  //   description:
+                  //     "Accéder aux différentes équipes disponibles !",
+                  //   value: "teams",
+                  // },
+                  // {
+                  //   emoji: "👥",
+                  //   label: "Mon équipe",
+                  //   description:
+                  //     "Vous êtes dans une équipe, vous pouvez regarder !",
+                  //   value: "myTeam",
+                  // },
                   {
                     emoji: "👤",
                     label: "Votre profil",
@@ -3647,6 +3726,81 @@ module.exports = async (bot, interaction) => {
         }
 
         if (reqActionChoice === "personalProfil") {
+          try {
+            const [users] = await db
+              .promise()
+              .query(`SELECT * FROM users WHERE userID = ?`, [
+                interaction.user.id,
+              ])
+            const driverProfil = users[0]
+
+            if (users.length === 0) {
+              const noProfilFound = new Discord.EmbedBuilder()
+                .setColor(Config.colors.crossColor)
+                .setDescription(
+                  `${Config.emojis.crossEmoji} **Vous n'êtes pas inscrit à l'entrylist !**`
+                )
+
+              return interaction.reply({
+                embeds: [noProfilFound],
+                ephemeral: true,
+              })
+            }
+
+            let checkIfUserHasTeam =
+              driverProfil.teamID !== "None"
+                ? await db
+                    .promise()
+                    .query(`SELECT * FROM teamsprofil WHERE teamID = ?`, [
+                      driverProfil.teamID,
+                    ])
+                : null
+
+            let teamInfo =
+              checkIfUserHasTeam && checkIfUserHasTeam[0]
+                ? `👥 **Équipe :** <@${checkIfUserHasTeam[0].teamRole}>`
+                : `👥 **Équipe :** Aucune équipe associée`
+
+            const user = await bot.users.fetch(driverProfil.userID)
+
+            let checkPlatformPseudo =
+              driverProfil.platformConsole === "Xbox" ? `Gamertag` : `PSN`
+
+            const embedDisplayDriverProfil = new Discord.EmbedBuilder()
+              .setColor(
+                driverProfil.embedColor || Config.colors.mainServerColor
+              )
+              .setThumbnail(user.displayAvatarURL({ dynamic: true }))
+              .setDescription(
+                `### 👤 Informations ${
+                  user.globalName || user.username
+                }\n\n- **${checkPlatformPseudo} :** ${
+                  driverProfil.inGameUsername
+                } (***${
+                  driverProfil.inGameNumber
+                }***)\n- ${teamInfo}\n- 💳 **Permis :** ${
+                  driverProfil.licencePoints
+                }`
+              )
+              .setImage(Config.PNG)
+
+            const actionEditProfilInteraction =
+              new Discord.ActionRowBuilder().addComponents(
+                new Discord.ButtonBuilder()
+                  .setURL("https://les-simracers.fr/profile-entrylist/")
+                  .setEmoji("📝")
+                  .setLabel("Modifier")
+                  .setStyle(Discord.ButtonStyle.Link)
+              )
+
+            await interaction.reply({
+              embeds: [embedDisplayDriverProfil],
+              components: [actionEditProfilInteraction],
+              ephemeral: true,
+            })
+          } catch (error) {
+            errorHandler(bot, interaction, error)
+          }
         }
       }
     }
@@ -3778,8 +3932,9 @@ module.exports = async (bot, interaction) => {
               `${Config.emojis.checkEmoji} **Votre demande à bien été enregistrer !**`
             )
 
-          await interaction.reply({
+          await interaction.update({
             embeds: [embedRequestSuccess],
+            components: [],
             ephemeral: true,
           })
         }
@@ -4026,8 +4181,60 @@ module.exports = async (bot, interaction) => {
       const user = await interaction.client.users.fetch(userId)
       const reqMessageContent =
         interaction.fields.getTextInputValue("messageContent")
+      const reqPointRetireContent =
+        interaction.fields.getTextInputValue("sanctionPoints")
+
+      let checkIfThereIsPointToRemove =
+        reqPointRetireContent === "" ? 0 : parseInt(reqPointRetireContent)
+
+      const sanctionID = generateID()
+
+      const timestamp = currentTimestamp()
+      let date = new Date(timestamp)
+      date.setMonth(date.getMonth() + 3)
+
+      let timestampIn3Month = date.getTime()
 
       try {
+        const [users] = db
+          .promise()
+          .query(`SELECT * FROM users WHERE userID = ?`, [user.id])
+
+        if (
+          users[0].licencePoints === 0 ||
+          users[0].licencePoints - checkIfThereIsPointToRemove < 0
+        ) {
+          const embedCannotRemovePoints = new Discord.EmbedBuilder()
+            .setColor(Config.colors.crossColor)
+            .setDescription(
+              `${Config.colors.crossColor} **Cette utilisateur est déjà à 0**`
+            )
+
+          return interaction.reply({ embeds: [embedCannotRemovePoints] })
+        }
+
+        await db
+          .promise()
+          .query(
+            `INSERT INTO sanctions sanctionID, authorID, targetID, sanctionDescription, sanctionPointRemove, timestamp, returnTimestamp) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+            [
+              sanctionID,
+              interaction.user.id,
+              user.id,
+              reqMessageContent,
+              checkIfThereIsPointToRemove,
+              timestamp,
+              timestampIn3Month,
+            ]
+          )
+
+        await db
+          .promise()
+          .query(
+            `UPDATE users SET licencePoints = licencePoints - ? WHERE userID = ?`,
+            [checkIfThereIsPointToRemove, user.id]
+          )
+
         const embedSanctionToUser = new Discord.EmbedBuilder()
           .setColor(Config.colors.mainServerColor)
           .setDescription(
@@ -4221,6 +4428,119 @@ module.exports = async (bot, interaction) => {
       } catch (error) {
         errorHandler(bot, interaction, error)
       }
+    }
+
+    const [fromStaffInteractionInformation, profilTypeID, profilType] =
+      interaction.customId.split("_")
+    if (fromStaffInteractionInformation === "modifyProfil") {
+      const reqModifiedJsonContent =
+        interaction.fields.getTextInputValue("modifyJsonProfil")
+
+      // if (profilType === "T") {
+      //   try {
+      //     const [teams] = await db
+      //       .promise()
+      //       .query(`SELECT * FROM teamsprofil WHERE teamID = ${profilTypeID}`)
+      //     const currentTeam = teams[0]
+
+      //     const teamData = JSON.parse(reqModifiedJsonContent)
+
+      //     const guild = interaction.guild
+      //     const teamRole = guild.roles.cache.get(currentTeam.teamID)
+
+      //     const [currentFlag, currentCountry] =
+      //       currentTeam.teamNationality.split("-")
+
+      //     // Comparaison et mise à jour des éléments modifier !
+
+      //     const updatedData = {
+      //       teamName:
+      //         teamData.teamName !== currentTeam.teamName
+      //           ? teamData.teamName
+      //           : currentTeam.teamName,
+      //       nationality: {
+      //         flag:
+      //           teamData.nationality?.flag !== currentFlag
+      //             ? teamData.nationality?.flag
+      //             : currentFlag,
+      //         country:
+      //           teamData.nationality?.country !== currentCountry
+      //             ? teamData.nationality?.country
+      //             : currentCountry,
+      //       },
+      //       teamCar:
+      //         teamData.teamCar !== currentTeam.teamCar
+      //           ? teamData.teamCar
+      //           : currentTeam.teamCar,
+      //       teamColor:
+      //         teamData.teamColor !== currentTeam.teamColor
+      //           ? teamData.teamColor
+      //           : currentTeam.teamColor,
+      //       teamEmote:
+      //         teamData.teamEmote !== currentTeam.teamEmote
+      //           ? teamData.teamEmote
+      //           : currentTeam.teamEmote,
+      //     }
+
+      //     const updatedNationality = `${updatedData.nationality.flag}-${updatedData.nationality.country}`
+
+      //     // Mettre à jour le rôle de l'équipe
+      //     await teamRole.edit({
+      //       name:
+      //         teamData.teamName !== currentTeam.teamName
+      //           ? teamData.teamName
+      //           : currentTeam.teamName,
+      //       color:
+      //         teamData.teamColor !== currentTeam.teamColor
+      //           ? teamData.teamColor
+      //           : currentTeam.teamColor,
+      //     })
+
+      //     // Update database
+      //     await db
+      //       .promise()
+      //       .query(
+      //         `UPDATE teamsprofil SET teamName = ?, teamNationality = ?, teamCar = ?, teamColor = ?, teamEmote = ? WHERE teamID = ?`,
+      //         [
+      //           updatedData.teamName,
+      //           updatedNationality,
+      //           updatedData.teamCar,
+      //           updatedData.teamColor,
+      //           updatedData.teamEmote,
+      //           profilTypeID,
+      //         ]
+      //       )
+
+      //     const embedTeamModified = new Discord.EmbedBuilder()
+      //       .setColor(Config.colors.success)
+      //       .setDescription(
+      //         `${Config.emotes.success} **L'équipe et son rôle ont été modifiés avec succès !**`
+      //       )
+
+      //     const embedLog = new Discord.EmbedBuilder()
+      //       .setColor(Config.colors.default)
+      //       .setDescription(
+      //         `🎨 **Modification d'équipe :**\n\n- Auteur : ${
+      //           interaction.user
+      //         } (${
+      //           interaction.user.globalName || interaction.user.username
+      //         })\n- Identifiant : ${
+      //           interaction.user.id
+      //         }\n- Équipe modifier : <@&${profilTypeID}>\n\n-# ${currentTimestamp()}` /* ✅ La fonction marche avec ce type d'écriture */
+      //       )
+
+      //     await bot.channels.cache
+      //       .get(Config.channels.logs)
+      //       .send({ embeds: [embedLog] })
+      //     await interaction.update({
+      //       embeds: [embedTeamModified],
+      //       components: [],
+      //       ephemeral: true,
+      //     })
+      //   } catch (error) {
+      //     errorHandler(bot, interaction, error)
+      //   }
+      // }
     }
   }
 

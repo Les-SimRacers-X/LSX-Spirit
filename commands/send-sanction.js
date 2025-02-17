@@ -26,15 +26,27 @@ module.exports = {
 
       const modalMessageInput = new Discord.TextInputBuilder()
         .setCustomId(`messageContent`)
-        .setLabel("Ajouter la sanction de l'utilisateur")
-        .setPlaceholder("Exemple : 5 secondes de pénalités...")
+        .setLabel("Description de la sanction")
+        .setPlaceholder("Exemple : Absence sur un événement...")
         .setRequired(true)
         .setStyle(Discord.TextInputStyle.Paragraph)
+
+      const modalPointToRemoveInput = new Discord.TextInputBuilder()
+        .setCustomId(`sanctionPoints`)
+        .setLabel("Points à retirer :")
+        .setPlaceholder("Exemple : 5 ou rien aucun points à enlever")
+        .setStyle(Discord.TextInputStyle.Short)
 
       const modalMessageActionRow =
         new Discord.ActionRowBuilder().addComponents(modalMessageInput)
 
-      modalSendingSanction.addComponents(modalMessageActionRow)
+      const modalPointToRemoveActionRow =
+        new Discord.ActionRowBuilder().addComponents(modalPointToRemoveInput)
+
+      modalSendingSanction.addComponents(
+        modalMessageActionRow,
+        modalPointToRemoveActionRow
+      )
 
       await interaction.showModal(modalSendingSanction)
     }

@@ -25,6 +25,20 @@ module.exports = async (bot, message) => {
 
           for (const row of data) {
             const gamerTag = row["Gamertag Forcé"]
+            const discordUsername = row["Pseudo Discord"]
+            let trigramme = row["TRI"] ? row["TRI"].trim() : ""
+
+            // Si le trigramme est vide, on le génère à partir du gamerTag
+            if (!trigramme) {
+              let letters = (gamerTag.match(/[a-zA-Z]/g) || [])
+                .slice(0, 3)
+                .join("")
+                .toUpperCase()
+              while (letters.length < 3) {
+                letters += String.fromCharCode(65 + Math.random() * 26) // Complète avec des lettres aléatoires
+              }
+              trigramme = letters
+            }
             const number = row["N°"]
             const idPSXBOX = row["ID PS / XBOX"]
             const platform =
@@ -40,10 +54,12 @@ module.exports = async (bot, message) => {
             await db
               .promise()
               .query(
-                `INSERT INTO users (userID, inGameUsername, inGameNumber, teamID, embedColor, platformID, platformConsole, licencePoints) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+                `INSERT INTO users (userID, discordUsername, inGameUsername, trigramme, inGameNumber, teamID, embedColor, platformID, platformConsole, licencePoints) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                 [
                   discordID,
+                  discordUsername,
                   gamerTag,
+                  trigramme,
                   number,
                   "None",
                   "#2f3136",
@@ -164,27 +180,27 @@ module.exports = async (bot, message) => {
           components: [interactionGestionOfAllBotInteractions],
         }) */
 
-        const embedEntrylist = new Discord.EmbedBuilder()
-          .setColor(Config.colors.mainServerColor)
-          .setDescription(
-            `## 📝 Entrylist\n\n- Choisissez un numéro libre dans [Entrylist](https://les-simracers.fr/entrylist/)\n- Replissez le fomulaire en cliquant sur le bouton en dessous \`📨\`\n- Votre demande d'adhésion à l'entrylist sera traitée dans les plus brefs délais.\n\n*Merci de bien suivre les étapes du formulaire et de les compléter !*\n\n-# Chaque personne qui quitte le serveur sera retirée de l'entrylist !`
-          )
+        // const embedEntrylist = new Discord.EmbedBuilder()
+        //   .setColor(Config.colors.mainServerColor)
+        //   .setDescription(
+        //     `## 📝 Entrylist\n\n- Choisissez un numéro libre dans [Entrylist](https://les-simracers.fr/entrylist/)\n- Replissez le fomulaire en cliquant sur le bouton en dessous \`📨\`\n- Votre demande d'adhésion à l'entrylist sera traitée dans les plus brefs délais.\n\n*Merci de bien suivre les étapes du formulaire et de les compléter !*\n\n-# Chaque personne qui quitte le serveur sera retirée de l'entrylist !`
+        //   )
 
-        const actionEntrylistFormStart =
-          new Discord.ActionRowBuilder().addComponents(
-            new Discord.ButtonBuilder()
-              .setCustomId(`startEntrylistRegistration`)
-              .setEmoji("📨")
-              .setDisabled(false)
-              .setStyle(Discord.ButtonStyle.Secondary)
-          )
+        // const actionEntrylistFormStart =
+        //   new Discord.ActionRowBuilder().addComponents(
+        //     new Discord.ButtonBuilder()
+        //       .setCustomId(`startEntrylistRegistration`)
+        //       .setEmoji("📨")
+        //       .setDisabled(false)
+        //       .setStyle(Discord.ButtonStyle.Secondary)
+        //   )
 
-        await bot.channels.cache.get("1224609366016131153").send({
-          embeds: [embedEntrylist],
-          components: [actionEntrylistFormStart],
-        })
+        // await bot.channels.cache.get("1224609366016131153").send({
+        //   embeds: [embedEntrylist],
+        //   components: [actionEntrylistFormStart],
+        // })
 
-        /* const embedTeamAndPersonnalProfils = new Discord.EmbedBuilder()
+        const embedTeamAndPersonnalProfils = new Discord.EmbedBuilder()
           .setColor(Config.colors.mainServerColor)
           .setDescription(
             `## 📘 Informations\n \n- **Créer et personnaliser son profil** avec des infos comme Pseudo, Platform, Numéro de joueur, etc...\n- **Consulter son profil et celui des autres** pour voir leurs historique et leurs équipes.\n- **Créer et gérer une équipe** en définissant un nom, un logo et éventuellement un objectif.\n- **Rejoindre une équipe existante** en envoyant une demande ou en étant invité.\n-# Si vous avez le moindre soucis, merci d'ouvrir un ticket !`
@@ -201,19 +217,19 @@ module.exports = async (bot, message) => {
                   value: "options",
                   default: true,
                 },
-                {
-                  emoji: "🤝",
-                  label: "Équipes",
-                  description: "Accéder aux différentes équipes disponibles !",
-                  value: "teams",
-                },
-                {
-                  emoji: "👥",
-                  label: "Mon équipe",
-                  description:
-                    "Vous êtes dans une équipe, vous pouvez regarder !",
-                  value: "myTeam",
-                },
+                // {
+                //   emoji: "🤝",
+                //   label: "Équipes",
+                //   description: "Accéder aux différentes équipes disponibles !",
+                //   value: "teams",
+                // },
+                // {
+                //   emoji: "👥",
+                //   label: "Mon équipe",
+                //   description:
+                //     "Vous êtes dans une équipe, vous pouvez regarder !",
+                //   value: "myTeam",
+                // },
                 {
                   emoji: "👤",
                   label: "Votre profil",
@@ -227,7 +243,7 @@ module.exports = async (bot, message) => {
         await bot.channels.cache.get("1339169354989830208").send({
           embeds: [embedTeamAndPersonnalProfils],
           components: [actionTeamAndPersonnalProfils],
-        }) */
+        })
       } catch (error) {
         console.error(error)
       }

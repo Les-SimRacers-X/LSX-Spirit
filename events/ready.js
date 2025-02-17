@@ -4,6 +4,7 @@ const Discord = require("discord.js")
 const Config = require("../config.json")
 const ftp = require("basic-ftp")
 const { Writable } = require("stream")
+const { currentTimestamp } = require("../utils")
 
 module.exports = async (bot) => {
   async function connectToDataBase() {
@@ -654,6 +655,55 @@ module.exports = async (bot) => {
         .send({ embeds: [embedErrorDetectionLog] })
     }
   }
+
+  async function checkSanctions() {
+    const timestamp = currentTimestamp()
+
+    try {
+      const [rows] = await db
+        .promise()
+        .query(`SELECT targetID FROM sanctions WHERE returnTimestamp <= ?`, [
+          timestamp,
+        ])
+
+      if (rows.length === 0) return
+
+      for (const row of rows) {
+        await db
+          .promise()
+          .query(
+            `UPDATE users SET licencePoints = LEAST(licencePoints + 12, 100) WHERE userID = ?`,
+            [row.targetID]
+          )
+
+        console.log(`Points restaurés pour l'utilisateur ${row.targetID}`)
+      }
+    } catch (error) {
+      const embedErrorDetectionLog = new Discord.EmbedBuilder()
+        .setColor("White")
+        .setTitle("📌 Erreur Détecté :")
+        .setDescription(`\`\`\`${error}\`\`\``)
+        .setTimestamp()
+
+      const embedErrorDetected = new Discord.EmbedBuilder()
+        .setColor("FF0000")
+        .setDescription(
+          "💥 **Une erreur a été détecté lors de votre interaction !**"
+        )
+
+      console.error(error)
+      await bot.channels.cache
+        .get("1321920324119560435")
+        .send({ embeds: [embedErrorDetectionLog] })
+      await interaction.reply({
+        embeds: [embedErrorDetected],
+        ephemeral: true,
+      })
+    }
+  }
+
+  setInterval(checkSanctions, 24 * 60 * 60 * 1000)
+  checkSanctions()
 
   // Listener pour les événements de membre ajoutés ou supprimés
   bot.on("guildMemberAdd", (member) => updateCategoryName(member.guild))
