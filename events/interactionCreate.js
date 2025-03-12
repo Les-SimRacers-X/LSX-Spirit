@@ -3873,7 +3873,7 @@ module.exports = async (bot, interaction) => {
                 new Discord.ButtonBuilder()
                   .setURL("https://les-simracers.fr/profile-entrylist/")
                   .setEmoji("📝")
-                  .setLabel("Modifier")
+                  .setLabel("Modification")
                   .setStyle(Discord.ButtonStyle.Link)
               )
 
