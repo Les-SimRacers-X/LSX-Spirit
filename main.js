@@ -1,6 +1,7 @@
 const Discord = require("discord.js")
 const intents = new Discord.IntentsBitField(3276799)
 const bot = new Discord.Client({ intents })
+const fs = require("fs")
 const loadCommands = require("./loader/loadCommands")
 const loadEvents = require("./loader/loadEvents")
 const Config = require("./config.json")
@@ -36,6 +37,11 @@ process.on("unhandledRejectionMonitor", (err, origin) => {
   bot.channels.cache
     .get(Config.channels.logsChannel)
     .send({ embeds: [embedBotLogs] })
+})
+
+fs.watchFile("restart.txt", () => {
+  console.log("Restart signal detected, restarting...")
+  process.exit(1)
 })
 
 bot.login(process.env.TOKEN)
