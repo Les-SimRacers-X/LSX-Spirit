@@ -1,33 +1,37 @@
-name: Deploy via SFTP
+name: Deploy main Updates
 
 on:
-  push:
-    branches:
-      - main # Déploiement automatique sur push dans la branche principale
+    push:
+        branches:
+            - main #Déclenchement uniquement sur la branch principal
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    deploy:
+        runs-on: ubuntu-lastest
 
-      - name: Upload files via SFTP
-        uses: appleboy/sftp-action@v0.1.5
-        with:
-          host: ${{ secrets.SFTP_HOST }}
-          username: ${{ secrets.SFTP_USER }}
-          password: ${{ secrets.SFTP_PASS }}
-          port: 22 # Vérifie le port SFTP utilisé par ton hébergeur
-          source: "." # Envoie tous les fichiers du repo
-          target: "/chemin/vers/ton/bot" # Remplace par le bon chemin sur ton hébergeur
-          strip_components: 1
+        steps:
+            - name: checkout repository
+              uses: actions/checkout@v4
 
-      - name: Restart Bot (if possible)
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SFTP_HOST }}
-          username: ${{ secrets.SFTP_USER }}
-          password: ${{ secrets.SFTP_PASS }}
-          script: |
-            touch /restart.txt
+            - name: Upload des fichiers via SFTP
+              uses: Dylan700/sftp-upload-action@latest
+              with:
+                server: ${{ secrets.SFTP_HOST }}
+                username: ${{ secrets.SFTP_USER }}
+                password: ${{ secrets.SFTP_PASSWORD }}
+                port: 2022
+                uploads: |
+                    ./ => /
+
+            - name: 🔄 Création du fichier restart.txt
+              run: touch restart.txt  # Crée un fichier vide en local
+
+            - name: 🔄 Redémarrage du bot
+              uses: Dylan700/sftp-upload-action@latest
+              with:
+                server: ${{ secrets.SFTP_HOST }}
+                username: ${{ secrets.SFTP_USER }}
+                password: ${{ secrets.SFTP_PASSWORD }}
+                port: 2022
+                uploads: |
+                restart.txt => /restart.txt
