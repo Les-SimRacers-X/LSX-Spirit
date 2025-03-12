@@ -108,44 +108,25 @@ module.exports = async (bot) => {
                       ])
                     const settingsData = settings[0]
 
-                    // Récupérer le thread associé au message
-                    let thread =
-                      message.hasThread && message.thread
-                        ? message.thread // Vérifie le cache local
-                        : await message.channel.threads
-                            .fetchActive()
-                            .then((activeThreads) =>
-                              activeThreads.threads.find(
-                                (t) => t.parentId === message.id
-                              )
-                            )
-                            .catch(() => null)
+                    // Vérifier si un thread à déjà été créer !
+                    let existingThread = reqChannel.threads.cache.find(
+                      (thread) => thread.id === message.id
+                    )
 
-                    // Vérifie également les threads archivés si nécessaire
-                    if (!thread) {
-                      thread = await message.channel.threads
-                        .fetchArchived()
-                        .then((archivedThreads) =>
-                          archivedThreads.threads.find(
-                            (t) => t.parentId === message.id
-                          )
-                        )
-                        .catch(() => null)
-                    }
-
-                    if (thread) {
+                    if (existingThread) {
                       console.log(
-                        `Un thread existe déjà pour le message ${message.id} (${thread.id}).`
+                        `Un thread existe déjà pour le message ${message.id} (${existingThread.id}).`
                       )
+                      return
                     } else {
-                      // Création d'un nouveau thread si aucun n'existe
-                      thread = await message.startThread({
+                      existingThread = await reqChannel.threads.create({
                         name: "Événement du jour !",
                         autoArchiveDuration: 1440, // 24 heures
                         type: Discord.ChannelType.PublicThread,
+                        startMessage: message.id,
                       })
 
-                      console.log("Nouveau thread créé :", thread.id)
+                      console.log("Nouveau thread créé :", existingThread.id)
                     }
 
                     const participations = event.eventParticipation.split(";")
@@ -193,7 +174,7 @@ module.exports = async (bot) => {
                       `Événement ${event.eventID} marqué comme fermé.`
                     )
 
-                    await thread.send({
+                    await existingThread.send({
                       content: `## 🟢 L'événement commence à <t:${Math.floor(
                         eventTimestamp / 1000
                       )}:t> (<t:${Math.floor(eventTimestamp / 1000)}:R>)\n${
@@ -660,45 +641,47 @@ module.exports = async (bot) => {
     const timestamp = currentTimestamp()
 
     try {
-      const [rows] = await db
+      // Récupérer tous les utilisateurs avec un lastSanctionID
+      const [users] = await bot.db
         .promise()
-        .query(`SELECT targetID FROM sanctions WHERE returnTimestamp <= ?`, [
-          timestamp,
-        ])
+        .query(
+          `SELECT userID, lastSanctionID FROM users WHERE lastSanctionID IS NOT NULL`
+        )
 
-      if (rows.length === 0) return
+      if (users.length === 0) return // Aucun utilisateur concerné
 
-      for (const row of rows) {
-        await db
+      for (const { userID, lastSanctionID } of users) {
+        // Vérifier si returnTimestamp de cette sanction est atteint
+        const [sanction] = await bot.db
           .promise()
           .query(
-            `UPDATE users SET licencePoints = LEAST(licencePoints + 12, 100) WHERE userID = ?`,
-            [row.targetID]
+            `SELECT sanctionID FROM sanctions WHERE sanctionID = ? AND returnTimestamp <= ?`,
+            [lastSanctionID, timestamp]
           )
 
-        console.log(`Points restaurés pour l'utilisateur ${row.targetID}`)
+        if (sanction.length > 0) {
+          // Mise à jour des licencePoints pour l'utilisateur
+          await bot.db
+            .promise()
+            .query(
+              `UPDATE users SET licencePoints = LEAST(licencePoints + 12, 100) WHERE userID = ?`,
+              [userID]
+            )
+
+          console.log(`Points restaurés pour l'utilisateur ${userID}`)
+        }
       }
     } catch (error) {
       const embedErrorDetectionLog = new Discord.EmbedBuilder()
         .setColor("White")
-        .setTitle("📌 Erreur Détecté :")
+        .setTitle("📌 Erreur Détectée :")
         .setDescription(`\`\`\`${error}\`\`\``)
         .setTimestamp()
-
-      const embedErrorDetected = new Discord.EmbedBuilder()
-        .setColor("FF0000")
-        .setDescription(
-          "💥 **Une erreur a été détecté lors de votre interaction !**"
-        )
 
       console.error(error)
       await bot.channels.cache
         .get("1321920324119560435")
         .send({ embeds: [embedErrorDetectionLog] })
-      await interaction.reply({
-        embeds: [embedErrorDetected],
-        ephemeral: true,
-      })
     }
   }
 

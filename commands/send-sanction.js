@@ -2,8 +2,8 @@ const Discord = require("discord.js")
 const Config = require("../config.json")
 
 module.exports = {
-  name: "Envoyer sanction",
-  type: "USER",
+  name: "send-sanction",
+  type: "APPLICATION",
 
   async run(bot, interaction) {
     if (!interaction.member.roles.cache.has("1321919765140344895")) {
@@ -48,7 +48,7 @@ module.exports = {
         modalPointToRemoveActionRow
       )
 
-      await interaction.showModal(modalSendingSanction)
+      interaction.showModal(modalSendingSanction)
     }
   },
 }

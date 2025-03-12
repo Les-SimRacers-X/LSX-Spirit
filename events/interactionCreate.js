@@ -1,12 +1,7 @@
 const Discord = require("discord.js")
 const Config = require("../config.json")
 const axios = require("axios")
-const {
-  generateID,
-  getXboxId,
-  currentTimestamp,
-  currentTimestamp,
-} = require("../utils")
+const { generateID, getXboxId, currentTimestamp } = require("../utils")
 const {
   exchangeNpssoForCode,
   exchangeCodeForAccessToken,
@@ -829,6 +824,41 @@ module.exports = async (bot, interaction) => {
             ephemeral: true,
           })
         } else {
+          const [users] = await db
+            .promise()
+            .query(`SELECT * FROM users WHERE userID = ?`, [
+              interaction.user.id,
+            ])
+
+          if (users.length === 0) {
+            const embedNoUserFound = new Discord.EmbedBuilder()
+              .setColor(Config.colors.crossColor)
+              .setDescription(
+                `${Config.emojis.crossEmoji} **Vous ne possédez pas de licence LSX ! Pour vous inscrire ➡ <#1339169354989830208>**`
+              )
+
+            return interaction.reply({
+              embeds: [embedNoUserFound],
+              ephemeral: true,
+            })
+          }
+
+          if (
+            category === "Spectateur" &&
+            !interaction.member.roles.cache.has("1342837215109054545")
+          ) {
+            const embedNoPermissions = new Discord.EmbedBuilder()
+              .setColor(Config.colors.crossColor)
+              .setDescription(
+                `${Config.emojis.crossEmoji} **Vous n'avez pas les permissions pour être ${category}**`
+              )
+
+            return interaction.reply({
+              embeds: [embedNoPermissions],
+              ephemeral: true,
+            })
+          }
+
           // Récupérer les informations nécessaire comme le circuit ou les presets !
           const [tracks] = await db
             .promise()
@@ -1553,9 +1583,11 @@ module.exports = async (bot, interaction) => {
       try {
         const [users] = await db
           .promise()
-          .query(`SELECT * FROM users WHERE userID = ?`, [interaction.user.id])
+          .query(`SELECT inGameNumber FROM users WHERE userID = ?`, [
+            interaction.user.id,
+          ])
 
-        if (users.lenght > 0) {
+        if (users.length > 0) {
           const alreadyRegistered = new Discord.EmbedBuilder()
             .setColor(Config.colors.crossColor)
             .setDescription(
@@ -1570,7 +1602,7 @@ module.exports = async (bot, interaction) => {
 
         const embedChoice = new Discord.EmbedBuilder()
           .setColor(Config.colors.mainServerColor)
-          .setDescription(`**📌 Sélectionner une platform...**`)
+          .setDescription(`### 📌 Sélectionner une platform...`)
 
         const actionSelectPlatform =
           new Discord.ActionRowBuilder().addComponents(
@@ -1591,7 +1623,7 @@ module.exports = async (bot, interaction) => {
               )
           )
 
-        await interaction.reply({
+        await interaction.update({
           embeds: [embedChoice],
           components: [actionSelectPlatform],
           ephemeral: true,
@@ -2857,14 +2889,6 @@ module.exports = async (bot, interaction) => {
               `${Config.emojis.checkEmoji} **Utilisateur ${checkChoice} avec succès !**`
             )
 
-          const embedLogAboutUserRegistration = new Discord.EmbedBuilder()
-            .setColor(Config.colors.mainServerColor)
-            .setDescription(
-              `### 📝Entrylist Inscription\n\n- Auteur : ${user} (${
-                user.globalName || user.username
-              })\n- Identification : ${user.id}\n- requestID : ${requestID}`
-            )
-
           let trigramme = user.username.match(/[a-zA-Z]/g) || []
           while (trigramme.length < 3) {
             trigramme.push(String.fromCharCode(65 + Math.random() * 26))
@@ -2885,7 +2909,7 @@ module.exports = async (bot, interaction) => {
             await db
               .promise()
               .query(
-                `INSERT INTO users (userID, discordUsername, inGameUsername, trigramme, inGameNumber, teamID, embedColor, platformID, platformConsole, licencePoints) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                `INSERT INTO users (userID, discordUsername, inGameUsername, trigramme, inGameNumber, teamID, embedColor, platformID, platformConsole, licencePoints, wins, podiums, totalRaces, lastSanctionID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                 [
                   user.id,
                   user.username,
@@ -2897,6 +2921,10 @@ module.exports = async (bot, interaction) => {
                   completPlatformID,
                   platform,
                   12,
+                  0,
+                  0,
+                  0,
+                  "None",
                 ]
               )
           } else {
@@ -2908,9 +2936,6 @@ module.exports = async (bot, interaction) => {
               )
           }
 
-          bot.channels.cache
-            .get(Config.channels.logsChannel)
-            .send({ embeds: [embedLogAboutUserRegistration] })
           await user.send({ embeds: [sendEmbedToUser] })
           await interaction.reply({
             embeds: [interactionReplyEmbed],
@@ -3035,7 +3060,7 @@ module.exports = async (bot, interaction) => {
           let presetsOptions = []
           presets.forEach((preset) => {
             presetsOptions.push({
-              label: `${preset.presetName} (${preset.presetCategory})`,
+              label: `${preset.presetName}`,
               value: `${preset.presetID}`,
             })
           })
@@ -3392,7 +3417,7 @@ module.exports = async (bot, interaction) => {
         const numberFormInput = new Discord.TextInputBuilder()
           .setCustomId(`modalNumberInput`)
           .setLabel("Veuillez entrer un numéro :")
-          .setPlaceholder("Exemple : 657")
+          .setPlaceholder("1-999 Maximum")
           .setRequired(true)
           .setStyle(Discord.TextInputStyle.Short)
 
@@ -3441,10 +3466,16 @@ module.exports = async (bot, interaction) => {
                   //   value: "myTeam",
                   // },
                   {
+                    emoji: "📝",
+                    label: "Inscription",
+                    description: "Inscription dans l'entrylist de la LSX",
+                    value: "entrylist",
+                  },
+                  {
                     emoji: "👤",
                     label: "Votre profil",
                     description:
-                      "Admirer votre profil ou laisser les autres le voir",
+                      "Admirez votre profil ou laissez les autres le voir",
                     value: "personalProfil",
                   }
                 )
@@ -3452,6 +3483,29 @@ module.exports = async (bot, interaction) => {
 
           await interaction.update({
             components: [actionTeamAndPersonnalProfils],
+          })
+        }
+
+        if (reqActionChoice === "entrylist") {
+          const embedEntrylist = new Discord.EmbedBuilder()
+            .setColor(Config.colors.mainServerColor)
+            .setDescription(
+              `## 📝 Entrylist\n\n- Choisissez un numéro libre dans [Entrylist](https://les-simracers.fr/entrylist/)\n- Replissez le fomulaire en cliquant sur le bouton en dessous \`📨\`\n- Votre demande d'adhésion à l'entrylist sera traitée dans les plus brefs délais.\n\n*Merci de bien suivre les étapes du formulaire et de les compléter !*\n\n-# Chaque personne qui quitte le serveur sera retirée de l'entrylist !`
+            )
+
+          const actionEntrylistFormStart =
+            new Discord.ActionRowBuilder().addComponents(
+              new Discord.ButtonBuilder()
+                .setCustomId(`startEntrylistRegistration`)
+                .setEmoji("📨")
+                .setDisabled(false)
+                .setStyle(Discord.ButtonStyle.Secondary)
+            )
+
+          await interaction.reply({
+            embeds: [embedEntrylist],
+            components: [actionEntrylistFormStart],
+            ephemeral: true,
           })
         }
 
@@ -3733,6 +3787,11 @@ module.exports = async (bot, interaction) => {
                 interaction.user.id,
               ])
             const driverProfil = users[0]
+            const [sanctions] = await db
+              .promise()
+              .query(`SELECT * FROM sanctions WHERE targetID = ?`, [
+                interaction.user.id,
+              ])
 
             if (users.length === 0) {
               const noProfilFound = new Discord.EmbedBuilder()
@@ -3766,6 +3825,25 @@ module.exports = async (bot, interaction) => {
             let checkPlatformPseudo =
               driverProfil.platformConsole === "Xbox" ? `Gamertag` : `PSN`
 
+            let checkLicence =
+              driverProfil.licencePoints < 5
+                ? `\`${driverProfil.licencePoints}\` (Risque de perdre votre licence)`
+                : `\`${driverProfil.licencePoints}\``
+
+            const pourcentageWins = (
+              (driverProfil.wins / driverProfil.totalRaces) *
+              100
+            ).toFixed(2)
+            const pourcentagePodiums = (
+              (driverProfil.podiums / driverProfil.totalRaces) *
+              100
+            ).toFixed(2)
+
+            let checkPourcentageWins =
+              pourcentageWins === "NaN" ? `0%` : `${pourcentageWins}%`
+            let checkPourcentagePodiums =
+              pourcentagePodiums === "NaN" ? `0%` : `${pourcentagePodiums}%`
+
             const embedDisplayDriverProfil = new Discord.EmbedBuilder()
               .setColor(
                 driverProfil.embedColor || Config.colors.mainServerColor
@@ -3778,9 +3856,15 @@ module.exports = async (bot, interaction) => {
                   driverProfil.inGameUsername
                 } (***${
                   driverProfil.inGameNumber
-                }***)\n- ${teamInfo}\n- 💳 **Permis :** ${
-                  driverProfil.licencePoints
-                }`
+                }***)\n- ${teamInfo}\n\n- **💳 Licence points :** \`${checkLicence}\`\n- **⛔ Sanctions :** \`${
+                  sanctions.length
+                }\`\n- **🚦 Total courses :** \`${
+                  driverProfil.totalRaces
+                }\`\n- **🏆 Victoires :** \`${
+                  driverProfil.wins
+                }\` (${checkPourcentageWins})\n- **🏅 Podiums :** \`${
+                  driverProfil.podiums
+                }\` (${checkPourcentagePodiums})`
               )
               .setImage(Config.PNG)
 
@@ -3874,6 +3958,7 @@ module.exports = async (bot, interaction) => {
   if (interaction.isModalSubmit()) {
     const [fromSelectPlatform, PlatformChoice] = interaction.customId.split("_")
     if (fromSelectPlatform === "modalFormEntrylist") {
+      await interaction.deferReply({ ephemeral: true })
       const reqPseudocontent =
         interaction.fields.getTextInputValue("modalPseudoInput")
       const reqNumberContent =
@@ -3883,7 +3968,7 @@ module.exports = async (bot, interaction) => {
         const [row] = await db
           .promise()
           .query(
-            `SELECT inGameNumber FROM users WHERE inGameNumber = ${reqNumberContent} UNION select requestInGameNumber FROM requests WHERE requestInGameNumber = ${reqNumberContent}`
+            `SELECT inGameNumber FROM users WHERE inGameNumber = ${reqNumberContent} UNION select requestInGameNumber FROM requests WHERE requestInGameNumber = "waiting"`
           )
 
         if (row.length > 0) {
@@ -3893,7 +3978,7 @@ module.exports = async (bot, interaction) => {
               `${Config.emojis.crossEmoji} **Ce numéro est déjà pris ! Merci de refaire votre demande avec un numéro valide !**`
             )
 
-          return interaction.reply({
+          return interaction.editReply({
             embeds: [embedNumberExist],
             ephemeral: true,
           })
@@ -3932,7 +4017,20 @@ module.exports = async (bot, interaction) => {
               `${Config.emojis.checkEmoji} **Votre demande à bien été enregistrer !**`
             )
 
-          await interaction.update({
+          const embedLogAboutUserRegistration = new Discord.EmbedBuilder()
+            .setColor(Config.colors.mainServerColor)
+            .setDescription(
+              `### 📝Entrylist Inscription\n\n- Auteur : ${interaction.user} (${
+                interaction.user.globalName || interaction.user.username
+              })\n- Identification : ${
+                interaction.user.id
+              }\n- requestID : ${requestID}`
+            )
+
+          bot.channels.cache
+            .get(Config.channels.logsChannel)
+            .send({ embeds: [embedLogAboutUserRegistration] })
+          await interaction.editReply({
             embeds: [embedRequestSuccess],
             components: [],
             ephemeral: true,
@@ -4178,9 +4276,12 @@ module.exports = async (bot, interaction) => {
     // Récupérer l'interaction "sendSanction" pour l'envoi d'une sanction via le bot
     const [fromSendingSanction, userId] = interaction.customId.split("_")
     if (fromSendingSanction === "sendSanction") {
+      await interaction.deferReply({ ephemeral: true })
+
       const user = await interaction.client.users.fetch(userId)
       const reqMessageContent =
         interaction.fields.getTextInputValue("messageContent")
+
       const reqPointRetireContent =
         interaction.fields.getTextInputValue("sanctionPoints")
 
@@ -4196,7 +4297,7 @@ module.exports = async (bot, interaction) => {
       let timestampIn3Month = date.getTime()
 
       try {
-        const [users] = db
+        const [users] = await db
           .promise()
           .query(`SELECT * FROM users WHERE userID = ?`, [user.id])
 
@@ -4210,13 +4311,13 @@ module.exports = async (bot, interaction) => {
               `${Config.colors.crossColor} **Cette utilisateur est déjà à 0**`
             )
 
-          return interaction.reply({ embeds: [embedCannotRemovePoints] })
+          return interaction.editReply({ embeds: [embedCannotRemovePoints] })
         }
 
         await db
           .promise()
           .query(
-            `INSERT INTO sanctions sanctionID, authorID, targetID, sanctionDescription, sanctionPointRemove, timestamp, returnTimestamp) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+            `INSERT INTO sanctions (sanctionID, authorID, targetID, sanctionDescription, sanctionPointRemove, timestamp, returnTimestamp) VALUES (?, ?, ?, ?, ?, ?, ?)`,
             [
               sanctionID,
               interaction.user.id,
@@ -4231,14 +4332,14 @@ module.exports = async (bot, interaction) => {
         await db
           .promise()
           .query(
-            `UPDATE users SET licencePoints = licencePoints - ? WHERE userID = ?`,
-            [checkIfThereIsPointToRemove, user.id]
+            `UPDATE users SET licencePoints = licencePoints - ?, lastSanctionID = ? WHERE userID = ?`,
+            [checkIfThereIsPointToRemove, sanctionID, user.id]
           )
 
         const embedSanctionToUser = new Discord.EmbedBuilder()
           .setColor(Config.colors.mainServerColor)
           .setDescription(
-            `### 👮 Arbitrage LSX\n\n${reqMessageContent}\n\n-# L'équipe LSX`
+            `### 👮 Arbitrage LSX\n\n${reqMessageContent}\n**Vous avez perdu ${checkIfThereIsPointToRemove}**\n-# L'équipe LSX`
           )
           .setTimestamp()
 
@@ -4248,8 +4349,8 @@ module.exports = async (bot, interaction) => {
             `${Config.emojis.checkEmoji} **Le message a bien été envoyer à ${user}**`
           )
 
-        user.send({ embeds: [embedSanctionToUser] })
-        await interaction.reply({
+        await user.send({ embeds: [embedSanctionToUser] })
+        await interaction.editReply({
           embeds: [interactionReplyEmbed],
           ephemeral: true,
         })
@@ -4322,225 +4423,6 @@ module.exports = async (bot, interaction) => {
       } catch (error) {
         errorHandler(bot, interaction, error)
       }
-    }
-
-    const [fromStaffInteractionTeamInformation, teamId] =
-      interaction.customId.split("_")
-    if (fromStaffInteractionTeamInformation === "modifyTeam") {
-      const reqModifiedJsonContent =
-        interaction.fields.getTextInputValue("modifyJsonTeam")
-
-      try {
-        const [teams] = await db
-          .promise()
-          .query(`SELECT * FROM teamsprofil WHERE teamID = ${teamId}`)
-        const currentTeam = teams[0]
-
-        const teamData = JSON.parse(reqModifiedJsonContent)
-
-        const guild = interaction.guild
-        const teamRole = guild.roles.cache.get(currentTeam.teamID)
-
-        const [currentFlag, currentCountry] =
-          currentTeam.teamNationality.split("-")
-
-        // Comparaison et mise à jour des éléments modifier !
-
-        const updatedData = {
-          teamName:
-            teamData.teamName !== currentTeam.teamName
-              ? teamData.teamName
-              : currentTeam.teamName,
-          teamColor:
-            teamData.teamColor !== currentTeam.teamColor
-              ? teamData.teamColor
-              : currentTeam.teamColor,
-          teamNationality: {
-            flag:
-              teamData.teamNationality?.flag !== currentFlag
-                ? teamData.teamNationality?.flag
-                : currentFlag,
-            country:
-              teamData.teamNationality?.country !== currentCountry
-                ? teamData.teamNationality?.country
-                : currentCountry,
-          },
-          teamLogo:
-            teamData.teamLogo !== currentTeam.teamLogo
-              ? teamData.teamLogo
-              : currentTeam.teamLogo,
-        }
-
-        const updatedNationality = `${updatedData.teamNationality.flag}-${updatedData.teamNationality.country}`
-
-        // Mettre à jour le rôle de l'équipe
-        await teamRole.edit({
-          name:
-            teamData.teamName !== currentTeam.teamName
-              ? teamData.teamName
-              : currentTeam.teamName,
-          color:
-            teamData.teamColor !== currentTeam.teamColor
-              ? teamData.teamColor
-              : currentTeam.teamColor,
-        })
-
-        // Update database
-        await db
-          .promise()
-          .query(
-            `UPDATE teamsprofil SET teamName = ?, teamColor = ?, teamLogo = ?, teamNationality = ? WHERE teamID = ?`,
-            [
-              updatedData.teamName,
-              updatedData.teamColor,
-              updatedData.teamLogo,
-              updatedNationality,
-              teamId,
-            ]
-          )
-
-        const embedTeamModified = new Discord.EmbedBuilder()
-          .setColor(Config.colors.checkColor)
-          .setDescription(
-            `${Config.emojis.checkEmoji} **L'équipe et son rôle ont été modifiés avec succès !**`
-          )
-
-        const embedLog = new Discord.EmbedBuilder()
-          .setColor(Config.colors.mainServerColor)
-          .setDescription(
-            `🎨 **Modification d'équipe :**\n\n- Auteur : ${
-              interaction.user
-            } (${
-              interaction.user.globalName || interaction.user.username
-            })\n- Identifiant : ${
-              interaction.user.id
-            }\n- Équipe modifier : <@&${teamId}>\n\n-# ${currentTimestamp()}` /* ✅ La fonction marche avec ce type d'écriture */
-          )
-
-        await bot.channels.cache
-          .get(Config.channels.logsChannel)
-          .send({ embeds: [embedLog] })
-        await interaction.update({
-          embeds: [embedTeamModified],
-          components: [],
-          ephemeral: true,
-        })
-      } catch (error) {
-        errorHandler(bot, interaction, error)
-      }
-    }
-
-    const [fromStaffInteractionInformation, profilTypeID, profilType] =
-      interaction.customId.split("_")
-    if (fromStaffInteractionInformation === "modifyProfil") {
-      const reqModifiedJsonContent =
-        interaction.fields.getTextInputValue("modifyJsonProfil")
-
-      // if (profilType === "T") {
-      //   try {
-      //     const [teams] = await db
-      //       .promise()
-      //       .query(`SELECT * FROM teamsprofil WHERE teamID = ${profilTypeID}`)
-      //     const currentTeam = teams[0]
-
-      //     const teamData = JSON.parse(reqModifiedJsonContent)
-
-      //     const guild = interaction.guild
-      //     const teamRole = guild.roles.cache.get(currentTeam.teamID)
-
-      //     const [currentFlag, currentCountry] =
-      //       currentTeam.teamNationality.split("-")
-
-      //     // Comparaison et mise à jour des éléments modifier !
-
-      //     const updatedData = {
-      //       teamName:
-      //         teamData.teamName !== currentTeam.teamName
-      //           ? teamData.teamName
-      //           : currentTeam.teamName,
-      //       nationality: {
-      //         flag:
-      //           teamData.nationality?.flag !== currentFlag
-      //             ? teamData.nationality?.flag
-      //             : currentFlag,
-      //         country:
-      //           teamData.nationality?.country !== currentCountry
-      //             ? teamData.nationality?.country
-      //             : currentCountry,
-      //       },
-      //       teamCar:
-      //         teamData.teamCar !== currentTeam.teamCar
-      //           ? teamData.teamCar
-      //           : currentTeam.teamCar,
-      //       teamColor:
-      //         teamData.teamColor !== currentTeam.teamColor
-      //           ? teamData.teamColor
-      //           : currentTeam.teamColor,
-      //       teamEmote:
-      //         teamData.teamEmote !== currentTeam.teamEmote
-      //           ? teamData.teamEmote
-      //           : currentTeam.teamEmote,
-      //     }
-
-      //     const updatedNationality = `${updatedData.nationality.flag}-${updatedData.nationality.country}`
-
-      //     // Mettre à jour le rôle de l'équipe
-      //     await teamRole.edit({
-      //       name:
-      //         teamData.teamName !== currentTeam.teamName
-      //           ? teamData.teamName
-      //           : currentTeam.teamName,
-      //       color:
-      //         teamData.teamColor !== currentTeam.teamColor
-      //           ? teamData.teamColor
-      //           : currentTeam.teamColor,
-      //     })
-
-      //     // Update database
-      //     await db
-      //       .promise()
-      //       .query(
-      //         `UPDATE teamsprofil SET teamName = ?, teamNationality = ?, teamCar = ?, teamColor = ?, teamEmote = ? WHERE teamID = ?`,
-      //         [
-      //           updatedData.teamName,
-      //           updatedNationality,
-      //           updatedData.teamCar,
-      //           updatedData.teamColor,
-      //           updatedData.teamEmote,
-      //           profilTypeID,
-      //         ]
-      //       )
-
-      //     const embedTeamModified = new Discord.EmbedBuilder()
-      //       .setColor(Config.colors.success)
-      //       .setDescription(
-      //         `${Config.emotes.success} **L'équipe et son rôle ont été modifiés avec succès !**`
-      //       )
-
-      //     const embedLog = new Discord.EmbedBuilder()
-      //       .setColor(Config.colors.default)
-      //       .setDescription(
-      //         `🎨 **Modification d'équipe :**\n\n- Auteur : ${
-      //           interaction.user
-      //         } (${
-      //           interaction.user.globalName || interaction.user.username
-      //         })\n- Identifiant : ${
-      //           interaction.user.id
-      //         }\n- Équipe modifier : <@&${profilTypeID}>\n\n-# ${currentTimestamp()}` /* ✅ La fonction marche avec ce type d'écriture */
-      //       )
-
-      //     await bot.channels.cache
-      //       .get(Config.channels.logs)
-      //       .send({ embeds: [embedLog] })
-      //     await interaction.update({
-      //       embeds: [embedTeamModified],
-      //       components: [],
-      //       ephemeral: true,
-      //     })
-      //   } catch (error) {
-      //     errorHandler(bot, interaction, error)
-      //   }
-      // }
     }
   }
 

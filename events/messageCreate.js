@@ -180,26 +180,6 @@ module.exports = async (bot, message) => {
           components: [interactionGestionOfAllBotInteractions],
         }) */
 
-        // const embedEntrylist = new Discord.EmbedBuilder()
-        //   .setColor(Config.colors.mainServerColor)
-        //   .setDescription(
-        //     `## 📝 Entrylist\n\n- Choisissez un numéro libre dans [Entrylist](https://les-simracers.fr/entrylist/)\n- Replissez le fomulaire en cliquant sur le bouton en dessous \`📨\`\n- Votre demande d'adhésion à l'entrylist sera traitée dans les plus brefs délais.\n\n*Merci de bien suivre les étapes du formulaire et de les compléter !*\n\n-# Chaque personne qui quitte le serveur sera retirée de l'entrylist !`
-        //   )
-
-        // const actionEntrylistFormStart =
-        //   new Discord.ActionRowBuilder().addComponents(
-        //     new Discord.ButtonBuilder()
-        //       .setCustomId(`startEntrylistRegistration`)
-        //       .setEmoji("📨")
-        //       .setDisabled(false)
-        //       .setStyle(Discord.ButtonStyle.Secondary)
-        //   )
-
-        // await bot.channels.cache.get("1224609366016131153").send({
-        //   embeds: [embedEntrylist],
-        //   components: [actionEntrylistFormStart],
-        // })
-
         const embedTeamAndPersonnalProfils = new Discord.EmbedBuilder()
           .setColor(Config.colors.mainServerColor)
           .setDescription(
