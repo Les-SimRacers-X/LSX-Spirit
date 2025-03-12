@@ -859,7 +859,7 @@ module.exports = async (bot, interaction) => {
             })
           }
 
-          if (users[0].licencePoints === 0) {
+          if (users[0].licencePoints === "0") {
             const embedNoPermissions = new Discord.EmbedBuilder()
               .setColor(Config.colors.crossColor)
               .setDescription(
