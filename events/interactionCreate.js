@@ -859,6 +859,19 @@ module.exports = async (bot, interaction) => {
             })
           }
 
+          if (users[0].licencePoints === 0) {
+            const embedNoPermissions = new Discord.EmbedBuilder()
+              .setColor(Config.colors.crossColor)
+              .setDescription(
+                `${Config.emojis.crossEmoji} **Vous n'avez plus de points sur votre licence l'accès aux événements est indisponible !**`
+              )
+
+            return interaction.reply({
+              embeds: [embedNoPermissions],
+              ephemeral: true,
+            })
+          }
+
           // Récupérer les informations nécessaire comme le circuit ou les presets !
           const [tracks] = await db
             .promise()
