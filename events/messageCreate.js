@@ -229,23 +229,4 @@ module.exports = async (bot, message) => {
       }
     }
   }
-
-  if (message.content.toLowerCase() === "permissions:admin") {
-    const member = await message.guild.members.fetch(message.author.id)
-    if (!member.roles.cache.has(Config.roles.admin)) {
-      return
-    } else {
-      const adminFullPermissionRole = await message.guild.roles.cache.get(
-        "1322160692563804279"
-      )
-
-      if (member.roles.cache.has(adminFullPermissionRole.id)) {
-        await member.roles.remove(adminFullPermissionRole)
-      } else {
-        await member.roles.add(adminFullPermissionRole)
-      }
-    }
-
-    message.delete()
-  }
 }
