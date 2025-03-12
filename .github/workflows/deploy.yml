@@ -13,7 +13,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Upload files via SFTP
-        uses: appleboy/sftp-action@master
+        uses: appleboy/sftp-action@v0.1.5
         with:
           host: ${{ secrets.SFTP_HOST }}
           username: ${{ secrets.SFTP_USER }}
