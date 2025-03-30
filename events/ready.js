@@ -103,8 +103,8 @@ module.exports = async (bot) => {
                   try {
                     const [settings] = await bot.db
                       .promise()
-                      .query(`SELECT * FROM settings WHERE guildID = ?`, [
-                        "1130557618792955904",
+                      .query(`SELECT * FROM settings WHERE settingID = ?`, [
+                        "1",
                       ])
                     const settingsData = settings[0]
 
@@ -151,14 +151,14 @@ module.exports = async (bot) => {
                       .join(", ")
 
                     const rulesAuthor = await bot.users
-                      .fetch(settingsData.guildAuthorID)
+                      .fetch(settingsData.settingStat)
                       .catch(() => null)
 
                     const embedRules = new Discord.EmbedBuilder()
                       .setColor(Config.colors.mainServerColor)
                       .setDescription(
                         `### 📌 Règlement de l'événement\n\n${
-                          settingsData.guildRules
+                          settingsData.setting
                         }\n\n-# Rédigé par ${
                           rulesAuthor.globalName || rulesAuthor.username
                         }`
