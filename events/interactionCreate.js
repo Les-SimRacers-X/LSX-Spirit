@@ -26,7 +26,7 @@ module.exports = async (bot, interaction) => {
 
     console.error(error)
     await bot.channels.cache
-      .get("1321920324119560435")
+      .get(Config.channels.errorlogChannel)
       .send({ embeds: [embedErrorDetectionLog] })
     await interaction.reply({
       embeds: [embedErrorDetected],
@@ -830,17 +830,23 @@ module.exports = async (bot, interaction) => {
               interaction.user.id,
             ])
 
-          if (users.length === 0) {
-            const embedNoUserFound = new Discord.EmbedBuilder()
-              .setColor(Config.colors.crossColor)
-              .setDescription(
-                `${Config.emojis.crossEmoji} **Vous ne possédez pas de licence LSX ! Pour vous inscrire ➡ <#1339169354989830208>**`
-              )
+          const [settings] = await db
+            .promise()
+            .query(`SELECT * FROM settings WHERE settingID = ?`, ["2"])
 
-            return interaction.reply({
-              embeds: [embedNoUserFound],
-              ephemeral: true,
-            })
+          if (settings[0].settingStat === "On") {
+            if (users.length === 0) {
+              const embedNoUserFound = new Discord.EmbedBuilder()
+                .setColor(Config.colors.crossColor)
+                .setDescription(
+                  `${Config.emojis.crossEmoji} **Vous ne possédez pas de licence LSX ! Pour vous inscrire ➡ <#1339169354989830208>**`
+                )
+
+              return interaction.reply({
+                embeds: [embedNoUserFound],
+                ephemeral: true,
+              })
+            }
           }
 
           if (
@@ -1957,27 +1963,245 @@ module.exports = async (bot, interaction) => {
       await interaction.showModal(modalModifyTeam)
     }
 
-    const [fromModifyProfil, profilTypeID, profilType] =
+    const [fromTeamList, TeamID] = interaction.customId.split("_")
+    if (fromTeamList === "joinTeam") {
+      try {
+        const [users] = await db
+          .promise()
+          .query(`SELECT * FROM users WHERE userID = ?`, [interaction.user.id])
+
+        if (users[0].length === 0) {
+          const embedNoLicenceFound = new Discord.EmbedBuilder()
+            .setColor(Config.colors.crossColor)
+            .setDescription(
+              `${Config.emojis.crossEmoji} **Vous ne pouvez pas rejoindre cette équipe si vous n'avez pas de licence !**`
+            )
+
+          return interaction.reply({
+            embeds: [embedNoLicenceFound],
+            ephemeral: true,
+          })
+        }
+
+        if (users[0].teamID !== "None" || "") {
+          const embedDriverHasTeam = new Discord.EmbedBuilder()
+            .setColor(Config.colors.crossColor)
+            .setDescription(
+              `${Config.emojis.crossEmoji} **Vous êtes déjà dans une équipe !**`
+            )
+
+          return interaction.reply({
+            embeds: [embedDriverHasTeam],
+            ephemeral: true,
+          })
+        }
+
+        const [teams] = await db
+          .promise()
+          .query(`SELECT * FROM teamsprofil WHERE teamID = ?`, [TeamID])
+
+        const joinStatus = teams[0].teamStatus
+        let [managerID, driverIDs] = team[0].teamDrivers.split("/")
+        let teamDrivers = driverIDs
+          ? driverIDs.split(";").filter((id) => id.trim() !== "")
+          : []
+
+        switch (joinStatus) {
+          case "Ouvert":
+            // Ajouter directement l'utilisateur
+            teamDrivers.push(interaction.user.id)
+            const newTeamDrivers = `${managerID}/${teamDrivers.join(";")}`
+
+            const member = await interaction.guild.members.fetch(
+              interaction.user.id
+            )
+            await member.roles.add(teams[0].teamRole)
+            await db
+              .promise()
+              .query(
+                `UPDATE teamsprofil SET teamDrivers = ? WHERE teamID = ?`,
+                [newTeamDrivers, TeamID]
+              )
+
+            const embedJoinedSuccessfully = new Discord.EmbedBuilder()
+              .setColor(Config.colors.checkColor)
+              .setDescription(
+                `${Config.emojis.checkEmoji} **Vous êtes actuellement membre de l'équipe <@&${TeamID}>**`
+              )
+
+            return interaction.reply({
+              embeds: [embedJoinedSuccessfully],
+              ephemeral: true,
+            })
+
+          case "Invitation":
+            // Demande une lettre de motivation
+            const modalRequestToJoinTeam = new Discord.ModalBuilder()
+              .setCustomId(`applyToTeam_${TeamID}`)
+              .setTitle("Lettre de motivation")
+              .addComponents(
+                new Discord.ActionRowBuilder().addComponents(
+                  new Discord.TextInputBuilder()
+                    .setCustomId("motivationInput")
+                    .setLabel("Pourquoi voulez-vous rejoindre cette équipe ?")
+                    .setStyle(Discord.TextInputStyle.Paragraph)
+                    .setRequired(true)
+                )
+              )
+
+            return interaction.showModal(modalRequestToJoinTeam)
+
+          case "Fermé":
+            const embedNoJoin = new Discord.EmbedBuilder()
+              .setColor(Config.colors.crossColor)
+              .setDescription(
+                `${Config.emojis.crossEmoji} **L'équipe n'accepte plus personne !**`
+              )
+
+            return interaction.reply({ embeds: [embedNoJoin], ephemeral: true })
+
+          default:
+            return errorHandler(bot, interaction, console.error())
+        }
+      } catch (error) {
+        errorHandler(bot, interaction, error)
+      }
+    }
+
+    if (interaction.customId === "leaveTeam") {
+      try {
+        const [users] = await db
+          .promise()
+          .query(`SELECT * FROM users WHERE userID = ?`, [interaction.user.id])
+        const [teams] = await db
+          .promise()
+          .query(`SELECT * FROM teamsprofil WHERE teamID = ?`, [
+            users[0].teamID,
+          ])
+
+        let [managerID, driverIDs] = teams[0].teamDrivers.split("/")
+        let teamDrivers = driverIDs
+          ? driverIDs.split(";").filter((id) => id.trim() !== "")
+          : []
+
+        teamDrivers = teamDrivers.filter((id) => id !== interaction.user.id)
+        const newTeamDrivers = `${managerID}/${teamDrivers.join(";")}`
+
+        const member = await interaction.guild.members.fetch(
+          interaction.user.id
+        )
+        await member.roles.remove(teams[0].teamRole)
+
+        await db
+          .promise()
+          .query(`UPDATE teamsprofil SET teamDrivers = ? WHERE teamID = ?`, [
+            newTeamDrivers,
+            teams[0].teamID,
+          ])
+        await db
+          .promise()
+          .query(`UPDATE users SET teamID = ? WHERE userID = ?`, [
+            "None",
+            interaction.user.id,
+          ])
+
+        const embedLeftSuccess = new Discord.EmbedBuilder()
+          .setColor(Config.colors.checkColor)
+          .setDescription(
+            `${Config.emojis.checkEmoji} **Vous avez bien quitté l'équipe !**`
+          )
+
+        await interaction.update({
+          embeds: [embedLeftSuccess],
+          components: [],
+          ephemeral: true,
+        })
+      } catch (error) {
+        errorHandler(bot, interaction, error)
+      }
+    }
+
+    const [fromDriverRequest, Option, team, userId] =
       interaction.customId.split("_")
-    if (fromModifyProfil === "editTeam&Profil") {
-      const modalModifyTeam = new Discord.ModalBuilder()
-        .setCustomId(`modifyProfil_${profilTypeID}_${profilType}`)
-        .setTitle(`Modification Profil`)
+    if (fromDriverRequest === "requestStatus") {
+      try {
+        const user = await interaction.client.users.fetch(userId)
+        if (Option === "YES") {
+          await db
+            .promise()
+            .query(
+              `UPDATE teamrequests SET requestStatus = ? WHERE teamID = ? AND targetID = ?`,
+              ["accepted", team, userId]
+            )
 
-      const modalModifyJsonInput = new Discord.TextInputBuilder()
-        .setCustomId(`modifyJsonProfil`)
-        .setLabel("Entrer les nouvelles modifications :")
-        .setPlaceholder("Exemple : Ce que vous avez copier !")
-        .setRequired(true)
-        .setStyle(Discord.TextInputStyle.Paragraph)
+          const [teams] = await db
+            .promise()
+            .query(`SELECT * FROM teamsprofil WHERE teamID = ?`, [team])
 
-      const reqModifyJsonInput = new Discord.ActionRowBuilder().addComponents(
-        modalModifyJsonInput
-      )
+          let [managerID, driverIDs] = team[0].teamDrivers.split("/")
+          let teamDrivers = driverIDs
+            ? driverIDs.split(";").filter((id) => id.trim() !== "")
+            : []
 
-      modalModifyTeam.addComponents(reqModifyJsonInput)
+          teamDrivers.push(user.id)
+          const newTeamDrivers = `${managerID}/${teamDrivers.join(";")}`
 
-      await interaction.showModal(modalModifyTeam)
+          const member = await interaction.guild.members.fetch(user.id)
+          await member.roles.add(teams[0].teamRole)
+          await db
+            .promise()
+            .query(`UPDATE teamsprofil SET teamDrivers = ? WHERE teamID = ?`, [
+              newTeamDrivers,
+              team,
+            ])
+
+          const embedJoinedSuccessfully = new Discord.EmbedBuilder()
+            .setColor(Config.colors.checkColor)
+            .setDescription(
+              `${Config.emojis.checkEmoji} **Vous êtes actuellement membre de l'équipe <@&${team}>**`
+            )
+
+          const embedUserAccepted = new Discord.EmbedBuilder()
+            .setDescription(
+              `${Config.emojis.checkEmoji} **Utilisateur accepter avec succès !**`
+            )
+            .setColor(Config.colors.mainServerColor)
+
+          await user.send({ embeds: [embedJoinedSuccessfully] })
+          await interaction.reply({
+            embeds: [embedUserAccepted],
+            ephemeral: true,
+          })
+        }
+        if (Option === "NO") {
+          await db
+            .promise()
+            .query(
+              `UPDATE teamrequests SET requestStatus = ? WHERE teamID = ? AND targetID = ?`,
+              ["denied", team, userId]
+            )
+
+          const embedJoinedSuccessfully = new Discord.EmbedBuilder()
+            .setColor(Config.colors.checkColor)
+            .setDescription(
+              `${Config.emojis.checkEmoji} **Vous avez été refuser de l'équipe <@&${team}>**`
+            )
+
+          const embedUserAccepted = new Discord.EmbedBuilder()
+            .setDescription(
+              `${Config.emojis.checkEmoji} **Utilisateur refuser avec succès !**`
+            )
+            .setColor(Config.colors.mainServerColor)
+
+          await user.send({ embeds: [embedJoinedSuccessfully] })
+          await interaction.reply({
+            embeds: [embedUserAccepted],
+            ephemeral: true,
+          })
+        }
+      } catch (error) {
+        errorHandler(bot, interaction, error)
+      }
     }
   }
 
@@ -3464,20 +3688,20 @@ module.exports = async (bot, interaction) => {
                     value: "options",
                     default: true,
                   },
-                  // {
-                  //   emoji: "🤝",
-                  //   label: "Équipes",
-                  //   description:
-                  //     "Accéder aux différentes équipes disponibles !",
-                  //   value: "teams",
-                  // },
-                  // {
-                  //   emoji: "👥",
-                  //   label: "Mon équipe",
-                  //   description:
-                  //     "Vous êtes dans une équipe, vous pouvez regarder !",
-                  //   value: "myTeam",
-                  // },
+                  {
+                    emoji: "🤝",
+                    label: "Équipes",
+                    description:
+                      "Accéder aux différentes équipes disponibles !",
+                    value: "teams",
+                  },
+                  {
+                    emoji: "👥",
+                    label: "Mon équipe",
+                    description:
+                      "Vous êtes dans une équipe, vous pouvez regarder !",
+                    value: "myTeam",
+                  },
                   {
                     emoji: "📝",
                     label: "Inscription",
@@ -3672,13 +3896,15 @@ module.exports = async (bot, interaction) => {
             if (users[0].teamID === "None") {
               const embedCreateATeam = new Discord.EmbedBuilder()
                 .setColor(Config.colors.mainServerColor)
-                .setDescription(`Vous voulez créer une équipe ?`)
+                .setDescription(
+                  `Acutellement vous n'avez pas équipe, il est possible d'en rejoindre une ou de créer la votre !\n- **Voulez-vous créer votre équipe ?**`
+                )
 
               const actionStartTeamCreation =
                 new Discord.ActionRowBuilder().addComponents(
                   new Discord.ButtonBuilder()
                     .setCustomId(`startTeamCreation`)
-                    .setEmoji("🆕")
+                    .setEmoji("➕")
                     .setLabel("Créer")
                     .setDisabled(false)
                     .setStyle(Discord.ButtonStyle.Primary)
@@ -3693,10 +3919,16 @@ module.exports = async (bot, interaction) => {
               try {
                 const [teams] = await db
                   .promise()
-                  .query(
-                    `SELECT * FROM teamsprofil WHERE teamID = ${users[0].teamID}`
-                  )
+                  .query(`SELECT * FROM teamsprofil WHERE teamID = ?`, [
+                    users[0].teamID,
+                  ])
                 const team = teams[0]
+                const [teamRequests] = await db
+                  .promise()
+                  .query(
+                    `SELECT * FROM teamrequests WHERE teamID = ? AND requestStatus = ?`,
+                    [team.teamID, "waiting"]
+                  )
 
                 let teamDrivers =
                   team.teamDrivers && team.teamDrivers.trim() !== ""
@@ -3714,7 +3946,17 @@ module.exports = async (bot, interaction) => {
                 const teamsInformationEmbed = new Discord.EmbedBuilder()
                   .setColor(team.teamColor)
                   .setDescription(
-                    `## ${team.teamName}\n- Date de création : **<t:${team.creationTimestamp}:d>**\n- Chef d'équipe : ${creatorUser}\n- Nation représenté : **${flag} ${nationality}**\n\n- Rôle et Couleur d'équipe : <@&${team.teamRole}>\n- Statut d'accueil : **${team.teamStatus}**\n- Membre(s) : **${drivers.length}**\n`
+                    `## ${team.teamName} [${
+                      team.teamAbreviation
+                    }]\n- Date de création : **<t:${
+                      team.creationTimestamp
+                    }:d>**\n- Chef d'équipe : ${creatorUser} (${
+                      creatorUser.globalName || creatorUser.username
+                    })\n- Nation représenté : **${flag} ${nationality}**\n\n- Rôle et Couleur d'équipe : <@&${
+                      team.teamRole
+                    }>\n- Statut d'accueil : **${
+                      team.teamStatus
+                    }**\n- Membre(s) : **${drivers.length}**\n`
                   )
 
                 if (team.teamLogo === "None") {
@@ -3747,10 +3989,9 @@ module.exports = async (bot, interaction) => {
                           value: "2",
                         },
                         {
-                          emoji: "👑",
-                          label: "Propriété",
-                          description:
-                            "Transferet la propriété de l'équipe à un autre utilisateur",
+                          emoji: "📨",
+                          label: `Demande d'adhésion (${teamRequests[0].length})`,
+                          description: "Gérer vos recrutements",
                           value: "3",
                         },
                         {
@@ -3907,11 +4148,12 @@ module.exports = async (bot, interaction) => {
       if (interaction.values && interaction.values.length > 0) {
         let reqActionChoice = interaction.values[0]
 
+        // Modification d'équipe
         if (reqActionChoice === "1") {
           try {
             const [teams] = await db
               .promise()
-              .query(`SELECT * FROM teamsprofil WHERE teamID = ${teamId}`)
+              .query(`SELECT * FROM teamsprofil WHERE teamID = ?`, [teamId])
             const team = teams[0]
 
             const [flag, country] = team.teamNationality.split("-")
@@ -3919,48 +4161,507 @@ module.exports = async (bot, interaction) => {
             let teamLogo =
               team.teamLogo === "None" ? `Aucun Logo` : team.teamLogo
 
-            const embedDisplayInformationHowEdit = new Discord.EmbedBuilder()
-              .setColor(team.teamColor)
-              .setDescription(
-                `### 🎨 Modifier votre équipe\n\n*Voici quelques points à retenir pour la modification*\n- Merci de modifier seulement les valeurs qui sont à droite, Exemple : \`teamName\`: **\`Emerald Racing\`**\n- Pour votre logo, merci d'utiliser un lien !\n- La couleur de votre équipe, merci de prendre un code hexadecimal [ici](https://htmlcolorcodes.com/), exemple : #45FB54\n`
-              )
+            const modalEditTeamProfil = new Discord.ModalBuilder()
+              .setCustomId(`editTeamProfil_${team.teamID}`)
+              .setTitle("Modifier votre équipe")
 
-            const teamData = {
-              teamName: team.teamName,
-              teamColor: team.teamColor,
-              teamNationality: {
-                flag: flag,
-                country: country,
-              },
-              teamLogo: teamLogo,
+            const modalTeamNameInput = new Discord.TextInputBuilder()
+              .setCustomId(`modalTeamNameInput`)
+              .setLabel("Nom d'équipe :")
+              .setPlaceholder("Modifier votre nom d'équipe")
+              .setRequired(true)
+              .setValue(team.teamName.toString())
+              .setStyle(Discord.TextInputStyle.Short)
+
+            const modalTeamColorInput = new Discord.TextInputBuilder()
+              .setCustomId(`modalTeamColorInput`)
+              .setLabel("Couleur d'équipe :")
+              .setPlaceholder("Modifier la couleur votre nom d'équipe")
+              .setRequired(true)
+              .setValue(team.teamColor.toString())
+              .setStyle(Discord.TextInputStyle.Short)
+
+            const modalTeamNationalityInput = new Discord.TextInputBuilder()
+              .setCustomId(`modalTeamNationalityInput`)
+              .setLabel("Nationalité d'équipe :")
+              .setPlaceholder("(merci de respecter le format !)")
+              .setRequired(true)
+              .setValue(`${flag}-${country}`)
+              .setStyle(Discord.TextInputStyle.Short)
+
+            const modalTeamLogoInput = new Discord.TextInputBuilder()
+              .setCustomId(`modalTeamLogoInput`)
+              .setLabel("Logo d'équipe :")
+              .setPlaceholder("Modifier le logo de votre équipe")
+              .setRequired(true)
+              .setValue(teamLogo.toString())
+              .setStyle(Discord.TextInputStyle.Short)
+
+            const reqModalTeamNameInput =
+              new Discord.ActionRowBuilder().addComponents(modalTeamNameInput)
+            const reqModalTeamColorInput =
+              new Discord.ActionRowBuilder().addComponents(modalTeamColorInput)
+            const reqModalTeamNationalityInput =
+              new Discord.ActionRowBuilder().addComponents(
+                modalTeamNationalityInput
+              )
+            const reqModalTeamLogoInput =
+              new Discord.ActionRowBuilder().addComponents(modalTeamLogoInput)
+
+            modalEditTeamProfil.addComponents(
+              reqModalTeamNameInput,
+              reqModalTeamColorInput,
+              reqModalTeamNationalityInput,
+              reqModalTeamLogoInput
+            )
+
+            await interaction.showModal(modalEditTeamProfil)
+          } catch (error) {
+            errorHandler(bot, interaction, error)
+          }
+        }
+
+        // Gestion  d'équipe
+        if (reqActionChoice === "2") {
+          try {
+            const [team] = await db
+              .promise()
+              .query(`SELECT * FROM teamsprofil WHERE teamID = ?`, [teamId])
+
+            const [managerID, driversID] = team[0].teamDrivers.split("/")
+            const teamDrivers = driversID
+              ? driversID
+                  .split(";")
+                  .filter((driverID) => driverID.trim() !== "")
+              : []
+
+            if (teamDrivers.length === 0) {
+              const embedNoDrivers = new Discord.EmbedBuilder()
+                .setColor(Config.colors.crossColor)
+                .setDescription(
+                  `${Config.emojis.crossEmoji} **Aucun pilote n'a été trouvé !**`
+                )
+
+              return interaction.reply({
+                embeds: [embedNoDrivers],
+                ephemeral: true,
+              })
             }
 
-            const jsonString = JSON.stringify(teamData, null, 2)
+            const options = await Promise.all(
+              teamDrivers.map(async (driverID) => {
+                const user = await interaction.client.users.fetch(driverID)
+                return {
+                  emoji: "👤",
+                  label: user.globalName || user.username,
+                  value: user.id,
+                }
+              })
+            )
 
-            const jsonModifyTeamEmbed = new Discord.EmbedBuilder()
-              .setColor(team.teamColor)
-              .setDescription(
-                `### 📋 Données à copier\n\nPour valider vos modifications merci de cliquer sur le bouton ci-dessous !\n\n\`\`\`json\n${jsonString}\n\`\`\``
-              )
-
-            const actionEditTeamInteraction =
+            const interactionSelectMemberProfilManaging =
               new Discord.ActionRowBuilder().addComponents(
-                new Discord.ButtonBuilder()
-                  .setCustomId(`editTeamProfil_${team.teamID}`)
-                  .setEmoji(`📝`)
-                  .setLabel("Modifications")
-                  .setDisabled(false)
-                  .setStyle(Discord.ButtonStyle.Secondary)
+                new Discord.StringSelectMenuBuilder()
+                  .setCustomId(`SelectMemberProfilAction_${teamId}`)
+                  .setPlaceholder("📌 Sélectionner une option...")
+                  .addOptions(options)
               )
 
             await interaction.update({
-              embeds: [embedDisplayInformationHowEdit, jsonModifyTeamEmbed],
-              components: [actionEditTeamInteraction],
+              components: [interactionSelectMemberProfilManaging],
               ephemeral: true,
             })
           } catch (error) {
             errorHandler(bot, interaction, error)
           }
+        }
+
+        // Gestion des demandes de recrutement
+        if (reqActionChoice === "3") {
+          try {
+            const [teamRequests] = await db
+              .promise()
+              .query(
+                `SELECT * FROM teamrequests WHERE teamID = ? AND requestStatus = ?`,
+                [teamId, "waiting"]
+              )
+
+            if (!teamRequests.length) {
+              const embedNoRequest = new Discord.EmbedBuilder()
+                .setColor(Config.colors.crossColor)
+                .setDescription(
+                  `${Config.emojis.crossEmoji} **Aucune demande en attente.**`
+                )
+
+              await interaction.reply({
+                embeds: [embedNoRequest],
+                ephemeral: true,
+              })
+            }
+
+            let options = []
+            teamRequests.forEach(async (request) => {
+              const user = await interaction.client.users.fetch(
+                request.targetID
+              )
+              options.push({
+                emoji: "📨",
+                label: user.globalName || user.username,
+                value: user.id,
+              })
+            })
+
+            const actionSelecterMenu =
+              new Discord.ActionRowBuilder().addComponents(
+                new Discord.StringSelectMenuBuilder()
+                  .setCustomId(`manageRequest_${teamId}`)
+                  .setPlaceholder("📌 Sélectionner une option...")
+                  .addOptions(options)
+              )
+
+            await interaction.update({
+              components: [actionSelecterMenu],
+              ephemeral: true,
+            })
+          } catch (error) {
+            errorHandler(bot, interaction, error)
+          }
+        }
+
+        // Dissolution d'une équipe
+        if (reqActionChoice === "4") {
+          const embedVerification = new Discord.EmbedBuilder()
+            .setColor("Yellow")
+            .setDescription(
+              `### :warning: Êtes-vous sur de vouloir dissourdre votre équipe ?`
+            )
+
+          const actionOnDissolutionTeam =
+            new Discord.ActionRowBuilder().addComponents(
+              new Discord.StringSelectMenuBuilder()
+                .setCustomId(`validationDissolutionOfTheTeam_${teamId}`)
+                .setPlaceholder("📌 Sélectionner une option...")
+                .addOptions(
+                  {
+                    emoji: `${Config.emojis.checkEmoji}`,
+                    label: "Oui",
+                    value: "acceptDissolution",
+                  },
+                  {
+                    emoji: `${Config.emojis.crossEmoji}`,
+                    label: "Non",
+                    value: "refuseDissolution",
+                  }
+                )
+            )
+
+          await interaction.reply({
+            embeds: [embedVerification],
+            components: [actionOnDissolutionTeam],
+            ephemeral: true,
+          })
+        }
+      }
+    }
+
+    const [fromManagingListRequest, TeamiD] = interaction.customId.split("_")
+    if (fromManagingListRequest === "manage_request") {
+      if (interaction.values && interaction.values.length > 0) {
+        let reqRequestChoice = interaction.values[0]
+
+        try {
+          const [userRequest] = await db
+            .promise()
+            .query(
+              `SELECT * FROM teamrequests WHERE targetID = ? AND teamID = ?`,
+              [reqRequestChoice, TeamiD]
+            )
+          const [teamRequests] = await db
+            .promise()
+            .query(
+              `SELECT * FROM teamrequests WHERE teamID = ? AND requestStatus = ?`,
+              [TeamiD, "waiting"]
+            )
+
+          const userToDisplay = await interaction.client.users.fetch(
+            userRequest[0].targetID
+          )
+
+          let options = []
+          teamRequests.forEach(async (request) => {
+            const user = await interaction.client.users.fetch(request.targetID)
+            options.push({
+              emoji: "📨",
+              label: user.globalName || user.username,
+              value: user.id,
+            })
+          })
+
+          const embedDisplayUserRequest = new Discord.EmbedBuilder()
+            .setColor(Config.colors.mainServerColor)
+            .setDescription(
+              `### Demande de ${
+                userToDisplay.globalName || userToDisplay.username
+              }\n Lettre de motivation:\n${userRequest[0].coverLettre}`
+            )
+
+          const actionSelecterMenu =
+            new Discord.ActionRowBuilder().addComponents(
+              new Discord.StringSelectMenuBuilder()
+                .setCustomId(`manageRequest_${teamId}`)
+                .setPlaceholder("📌 Sélectionner une option...")
+                .addOptions(options)
+            )
+
+          const actionToAcceptOrRefuse =
+            new Discord.ActionRowBuilder().addComponents(
+              new Discord.ButtonBuilder()
+                .setCustomId(`requestStatus_YES_${TeamiD}_${userToDisplay.id}`)
+                .setEmoji(Config.emojis.checkEmoji)
+                .setDisabled(false)
+                .setStyle(Discord.ButtonStyle.Secondary),
+
+              new Discord.ButtonBuilder()
+                .setCustomId(`requestStatus_NO_${TeamiD}_${userToDisplay.id}`)
+                .setEmoji(Config.emojis.checkEmoji)
+                .setDisabled(false)
+                .setStyle(Discord.ButtonStyle.Secondary)
+            )
+
+          await interaction.update({
+            embeds: [embedDisplayUserRequest],
+            components: [actionSelecterMenu, actionToAcceptOrRefuse],
+            ephemeral: true,
+          })
+        } catch (error) {
+          errorHandler(bot, interaction, error)
+        }
+      }
+    }
+
+    const [fromTeamManagingSelection, teamID] = interaction.customId.split("_")
+    if (fromTeamManagingSelection === "validationDissolutionOfTheTeam") {
+      if (interaction.values && interaction.values.length > 0) {
+        let reqActionChoice = interaction.values[0]
+
+        if (reqActionChoice === "acceptDissolution") {
+          try {
+            await db
+              .promise()
+              .query(`DELETE * FROM teamsprofil WHERE teamID = ?`, [teamID])
+
+            const embedValidationTeamDissolution = new Discord.EmbedBuilder()
+              .setColor(Config.colors.checkColor)
+              .setDescription(
+                `${Config.emojis.checkEmoji} **Votre équipe à été supprimée !**`
+              )
+
+            await interaction.reply({
+              embeds: [embedValidationTeamDissolution],
+              components: [],
+              ephemeral: true,
+            })
+          } catch (error) {
+            errorHandler(bot, interaction, error)
+          }
+        }
+
+        if (reqActionChoice === "refuseDissolution") {
+          const embedNoTeamDissolution = new Discord.EmbedBuilder()
+            .setColor(Config.colors.checkColor)
+            .setDescription(
+              `${Config.emojis.checkEmoji} **Votre équipe ne sera pas dissout**`
+            )
+
+          await interaction.reply({
+            embeds: [embedNoTeamDissolution],
+            components: [],
+            ephemeral: true,
+          })
+        }
+      }
+    }
+
+    const [fromManagingDriverForTeam, TeamId] = interaction.customId.split("_")
+    if (fromManagingDriverForTeam === "SelectMemberProfilAction") {
+      if (interaction.values && interaction.values.length > 0) {
+        let reqUserId = interaction.values[0]
+
+        try {
+          const [users] = await db
+            .promise()
+            .query(`SELECT * FROM users WHERE userID = ?`, [reqUserId])
+          const driverProfil = users[0]
+          const [sanctions] = await db
+            .promise()
+            .query(`SELECT * FROM sanctions WHERE targetID = ?`, [
+              interaction.user.id,
+            ])
+
+          if (users.length === 0) {
+            const noProfilFound = new Discord.EmbedBuilder()
+              .setColor(Config.colors.crossColor)
+              .setDescription(
+                `${Config.emojis.crossEmoji} **Vous n'êtes pas inscrit à l'entrylist !**`
+              )
+
+            return interaction.reply({
+              embeds: [noProfilFound],
+              ephemeral: true,
+            })
+          }
+
+          let checkIfUserHasTeam =
+            driverProfil.teamID !== "None"
+              ? await db
+                  .promise()
+                  .query(`SELECT * FROM teamsprofil WHERE teamID = ?`, [
+                    driverProfil.teamID,
+                  ])
+              : null
+
+          let teamInfo =
+            checkIfUserHasTeam && checkIfUserHasTeam[0]
+              ? `👥 **Équipe :** <@${checkIfUserHasTeam[0].teamRole}>`
+              : `👥 **Équipe :** Aucune équipe associée`
+
+          const user = await bot.users.fetch(driverProfil.userID)
+
+          let checkPlatformPseudo =
+            driverProfil.platformConsole === "Xbox" ? `Gamertag` : `PSN`
+
+          let checkLicence =
+            driverProfil.licencePoints < 5
+              ? `\`${driverProfil.licencePoints}\` (Risque de perdre votre licence)`
+              : `\`${driverProfil.licencePoints}\``
+
+          const pourcentageWins = (
+            (driverProfil.wins / driverProfil.totalRaces) *
+            100
+          ).toFixed(2)
+          const pourcentagePodiums = (
+            (driverProfil.podiums / driverProfil.totalRaces) *
+            100
+          ).toFixed(2)
+
+          let checkPourcentageWins =
+            pourcentageWins === "NaN" ? `0%` : `${pourcentageWins}%`
+          let checkPourcentagePodiums =
+            pourcentagePodiums === "NaN" ? `0%` : `${pourcentagePodiums}%`
+
+          const embedDisplayDriverProfil = new Discord.EmbedBuilder()
+            .setColor(driverProfil.embedColor || Config.colors.mainServerColor)
+            .setThumbnail(user.displayAvatarURL({ dynamic: true }))
+            .setDescription(
+              `### 👤 Informations ${
+                user.globalName || user.username
+              }\n\n- **${checkPlatformPseudo} :** ${
+                driverProfil.inGameUsername
+              } (***${
+                driverProfil.inGameNumber
+              }***)\n- ${teamInfo}\n\n- **💳 Licence points :** \`${checkLicence}\`\n- **⛔ Sanctions :** \`${
+                sanctions.length
+              }\`\n- **🚦 Total courses :** \`${
+                driverProfil.totalRaces
+              }\`\n- **🏆 Victoires :** \`${
+                driverProfil.wins
+              }\` (${checkPourcentageWins})\n- **🏅 Podiums :** \`${
+                driverProfil.podiums
+              }\` (${checkPourcentagePodiums})`
+            )
+            .setImage(Config.PNG)
+
+          const actionOnDriverOfTeam =
+            new Discord.ActionRowBuilder().addComponents(
+              new Discord.StringSelectMenuBuilder()
+                .setCustomId(`actionOnDriver_${TeamId}_${user.id}`)
+                .setPlaceholder("📌 Sélectionner une option...")
+                .addOptions(
+                  {
+                    emoji: `👑`,
+                    label: "Transfert de propriété",
+                    description: "Aucune validation demandée !!!",
+                    value: "1",
+                  },
+                  {
+                    emoji: "⛔",
+                    label: `Expulser ${user.globalName || user.username}`,
+                    description: "Cette option est en cours de construction",
+                    value: "2",
+                  }
+                )
+            )
+
+          await interaction.update({
+            embeds: [embedDisplayDriverProfil],
+            components: [actionOnDriverOfTeam],
+            ephemeral: true,
+          })
+        } catch (error) {
+          errorHandler(bot, interaction, error)
+        }
+      }
+    }
+
+    const [fromActionOnDriver, TeamID, TargetUserID] =
+      interaction.customId.split("_")
+    if (fromActionOnDriver === "actionOnDriver") {
+      if (interaction.values && interaction.values.length > 0) {
+        let reqActionChoice = interaction.values[0]
+
+        // Transfert de propriété
+        if (reqActionChoice === "1") {
+          try {
+            const [team] = await db
+              .promise()
+              .query(`SELECT * FROM teamsprofil WHERE teamID = ?`, [TeamID])
+
+            let [managerID, driversID] = team[0].teamDrivers.split("/")
+            let teamDrivers = driversID
+              ? driversID.split(";").filter((id) => id.trim() !== "")
+              : []
+
+            const selectedDriverID = TargetUserID
+
+            teamDrivers = teamDrivers.filter((id) => id !== selectedDriverID)
+            teamDrivers.push(managerID)
+
+            const newTeamDrivers = `${selectedDriverID}/${teamDrivers.join(
+              ";"
+            )}`
+
+            await db
+              .promise()
+              .query(
+                `UPDATE teamsprofil SET teamDrivers = ? WHERE teamID = ?`,
+                [newTeamDrivers, TeamID]
+              )
+
+            const targetUser = await bot.users.fetch(TargetUserID)
+
+            const embedProprietyTransferedSuccess = new Discord.EmbedBuilder()
+              .setColor(Config.colors.checkColor)
+              .setDescription(
+                `${
+                  Config.emojis.checkEmoji
+                } **La propriété de l'équipe a été transférer à ${targetUser} (${
+                  targetUser.globalName || targetUser.username
+                })**`
+              )
+
+            await interaction.update({
+              embeds: [embedProprietyTransferedSuccess],
+              components: [],
+              ephemeral: true,
+            })
+          } catch (error) {
+            errorHandler(bot, interaction, error)
+          }
+        }
+
+        // Expulsion de pilote
+        if (reqActionChoice === "2") {
+          return
         }
       }
     }
@@ -3969,6 +4670,63 @@ module.exports = async (bot, interaction) => {
   /*************************************************************************************************************************/
 
   if (interaction.isModalSubmit()) {
+    const [fromTeamProfil, teamID] = interaction.customId.split("_")
+    if (fromTeamProfil === "editTeamProfil") {
+      const reqModalTeamNameContent =
+        interaction.fields.getTextInputValue("modalTeamNameInput")
+      const reqModalTeamColorContent = interaction.fields.getTextInputValue(
+        "modalTeamColorInput"
+      )
+      const reqModalTeamNationalityContent =
+        interaction.fields.getTextInputValue("modalTeamNationalityInput")
+      const reqModalTeamLogoContent =
+        interaction.fields.getTextInputValue("modalTeamLogoInput")
+
+      try {
+        const [teamsProfil] = await db
+          .promise()
+          .query(`SELECT * FROM teamsprofil WHERE teamID = ?`, [teamID])
+        const abbreviation = reqModalTeamNameContent
+          .split(/\s+/)
+          .map((word) => word[0])
+          .join("")
+          .toUpperCase()
+
+        const editRole = await interaction.guild.roles.fetch(
+          teamsProfil[0].teamRole
+        )
+
+        await editRole.edit({
+          name: `[${abbreviation}]・${reqModalTeamNameContent}`,
+          color: `${reqModalTeamColorContent}`,
+        })
+
+        await db
+          .promise()
+          .query(
+            `UPDATE teamsprofil SET teamName = ?, teamAbreviation = ?, teamColor = ?, teamLogo = ?, teamNationality = ? WHERE teamID = ?`,
+            [
+              reqModalTeamNameContent,
+              abbreviation,
+              reqModalTeamColorContent,
+              reqModalTeamLogoContent,
+              reqModalTeamNationalityContent,
+              teamID,
+            ]
+          )
+
+        const embedReplyToUser = new Discord.EmbedBuilder()
+          .setColor(Config.colors.checkColor)
+          .setDescription(
+            `${Config.emojis.checkEmoji} **Données de l'équipe modifier avec succès !**`
+          )
+
+        await interaction.reply({ embeds: [embedReplyToUser], ephemeral: true })
+      } catch (error) {
+        errorHandler(bot, interaction, error)
+      }
+    }
+
     const [fromSelectPlatform, PlatformChoice] = interaction.customId.split("_")
     if (fromSelectPlatform === "modalFormEntrylist") {
       await interaction.deferReply({ ephemeral: true })
@@ -4267,8 +5025,8 @@ module.exports = async (bot, interaction) => {
         await db
           .promise()
           .query(
-            `UPDATE settings SET guildRules = ?, guildAuthorID = ? WHERE guildID = ?`,
-            [reqRulesContent, interaction.user.id, interaction.guild.id]
+            `UPDATE settings SET setting = ?, settingStat = ? WHERE settingID = ?`,
+            [reqRulesContent, interaction.user.id, "1"]
           )
 
         const embedRulesUpdatedSuccessfully = new Discord.EmbedBuilder()
@@ -4378,6 +5136,9 @@ module.exports = async (bot, interaction) => {
 
       try {
         let abbreviation = reqTeamNameContent.replace(/[^A-Z]/g, "")
+        const member = await interaction.guild.members.fetch(
+          interaction.user.id
+        )
 
         if (abbreviation.length === 0) {
           // Si pas de majuscules, prendre première lettre
@@ -4397,6 +5158,8 @@ module.exports = async (bot, interaction) => {
 
         const teamID = generateID()
         const timestamp = currentTimestamp()
+
+        await member.roles.add(teamRole.id)
 
         await db
           .promise()
@@ -4432,6 +5195,42 @@ module.exports = async (bot, interaction) => {
         await interaction.reply({
           embeds: [embedTeamCreated],
           components: [],
+          ephemeral: true,
+        })
+      } catch (error) {
+        errorHandler(bot, interaction, error)
+      }
+    }
+
+    const [fromJoiningTeam, TeamId] = interaction.customId.split("_")
+    if (fromJoiningTeam === "applyToTeam") {
+      const reqMotivationContent =
+        interaction.fields.getTextInputValue("motivationInput")
+
+      try {
+        const requestID = generateID()
+
+        await db
+          .promise()
+          .query(
+            `INSERT INTO teamrequests (requestID, targetID, teamID, coverLettre, requestStatus) VALUES (?, ?, ?, ?, ?)`,
+            [
+              requestID,
+              interaction.user.id,
+              TeamId,
+              reqMotivationContent,
+              "waiting",
+            ]
+          )
+
+        const embedDemandeSended = new Discord.EmbedBuilder()
+          .setColor(Config.colors.checkColor)
+          .setDescription(
+            `${Config.emojis.checkEmoji} **Votre demande à bien été envoyé !**`
+          )
+
+        await interaction.reply({
+          embeds: [embedDemandeSended],
           ephemeral: true,
         })
       } catch (error) {
