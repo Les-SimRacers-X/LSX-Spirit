@@ -5189,7 +5189,7 @@ module.exports = async (bot, interaction) => {
         const embedTeamCreated = new Discord.EmbedBuilder()
           .setColor(Config.colors.checkColor)
           .setDescription(
-            `${Config.emojis.checkEmoji} **Votre équipe a été créer avec succès !**`
+            `${Config.emojis.checkEmoji} **Votre équipes a été créer avec succès !**`
           )
 
         await interaction.reply({
