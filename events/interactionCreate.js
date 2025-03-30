@@ -4418,9 +4418,10 @@ module.exports = async (bot, interaction) => {
 
         await db
           .promise()
-          .query(
-            `UPDATE users SET teamID = ${teamID} WHERE userID = ${interaction.user.id}`
-          )
+          .query(`UPDATE users SET teamID = ? WHERE userID = ?`, [
+            teamID,
+            interaction.user.id,
+          ])
 
         const embedTeamCreated = new Discord.EmbedBuilder()
           .setColor(Config.colors.checkColor)
@@ -4428,7 +4429,7 @@ module.exports = async (bot, interaction) => {
             `${Config.emojis.checkEmoji} **Votre équipe a été créer avec succès !**`
           )
 
-        await interaction.update({
+        await interaction.reply({
           embeds: [embedTeamCreated],
           components: [],
           ephemeral: true,
