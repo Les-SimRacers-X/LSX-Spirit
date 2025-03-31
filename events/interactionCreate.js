@@ -3880,7 +3880,7 @@ module.exports = async (bot, interaction) => {
                 `SELECT * FROM users WHERE userID = ${interaction.user.id}`
               )
 
-            if (!users.length) {
+            if (users.length === 0) {
               const embedNoUserFound = new Discord.EmbedBuilder()
                 .setColor(Config.colors.crossColor)
                 .setDescription(
