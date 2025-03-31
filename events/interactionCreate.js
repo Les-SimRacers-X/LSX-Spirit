@@ -4446,7 +4446,7 @@ module.exports = async (bot, interaction) => {
           try {
             await db
               .promise()
-              .query(`DELETE * FROM teamsprofil WHERE teamID = ?`, [teamID])
+              .query(`DELETE FROM teamsprofil WHERE teamID = ?`, [teamID])
 
             const embedValidationTeamDissolution = new Discord.EmbedBuilder()
               .setColor(Config.colors.checkColor)
