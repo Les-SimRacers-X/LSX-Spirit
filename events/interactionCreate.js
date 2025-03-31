@@ -1823,6 +1823,8 @@ module.exports = async (bot, interaction) => {
         checkNextTeamIndex =
           currentTeamIndex === 0 && checkCurrentTeamIndex + 1 === totalTeams
             ? true
+            : checkCurrentTeamIndex + 1 === totalTeams
+            ? true
             : false
 
         let teamDrivers =
@@ -3688,20 +3690,20 @@ module.exports = async (bot, interaction) => {
                     value: "options",
                     default: true,
                   },
-                  // {
-                  //   emoji: "🤝",
-                  //   label: "Équipes",
-                  //   description:
-                  //     "Accéder aux différentes équipes disponibles !",
-                  //   value: "teams",
-                  // },
-                  // {
-                  //   emoji: "👥",
-                  //   label: "Mon équipe",
-                  //   description:
-                  //     "Vous êtes dans une équipe ? vous pouvez regarder !",
-                  //   value: "myTeam",
-                  // },
+                  {
+                    emoji: "🤝",
+                    label: "Équipes",
+                    description:
+                      "Accéder aux différentes équipes disponibles !",
+                    value: "teams",
+                  },
+                  {
+                    emoji: "👥",
+                    label: "Mon équipe",
+                    description:
+                      "Vous êtes dans une équipe ? vous pouvez regarder !",
+                    value: "myTeam",
+                  },
                   {
                     emoji: "📝",
                     label: "Inscription",
@@ -3787,6 +3789,8 @@ module.exports = async (bot, interaction) => {
               checkNextTeamIndex =
                 currentTeamIndex === 0 &&
                 checkCurrentTeamIndex + 1 === totalTeams
+                  ? true
+                  : checkCurrentTeamIndex + 1 === totalTeams
                   ? true
                   : false
 
@@ -3990,7 +3994,7 @@ module.exports = async (bot, interaction) => {
                         },
                         {
                           emoji: "📨",
-                          label: `Demande d'adhésion (${teamRequests[0].length})`,
+                          label: `Demande d'adhésion (${teamRequests.length})`,
                           description: "Gérer vos recrutements",
                           value: "3",
                         },
