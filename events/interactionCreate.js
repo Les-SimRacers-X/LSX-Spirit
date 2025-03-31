@@ -3695,13 +3695,13 @@ module.exports = async (bot, interaction) => {
                   //     "Accéder aux différentes équipes disponibles !",
                   //   value: "teams",
                   // },
-                  // {
-                  //   emoji: "👥",
-                  //   label: "Mon équipe",
-                  //   description:
-                  //     "Vous êtes dans une équipe, vous pouvez regarder !",
-                  //   value: "myTeam",
-                  // },
+                  {
+                    emoji: "👥",
+                    label: "Mon équipe",
+                    description:
+                      "Vous êtes dans une équipe, vous pouvez regarder !",
+                    value: "myTeam",
+                  },
                   {
                     emoji: "📝",
                     label: "Inscription",
