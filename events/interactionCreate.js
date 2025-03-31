@@ -4317,7 +4317,7 @@ module.exports = async (bot, interaction) => {
                   .addOptions(options)
               )
 
-            await interaction.update({
+            await interaction.reply({
               components: [actionSelecterMenu],
               ephemeral: true,
             })
