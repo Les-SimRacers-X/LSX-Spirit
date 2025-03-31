@@ -1857,22 +1857,20 @@ module.exports = async (bot, interaction) => {
             break
         }
 
+        let logo =
+          currentTeam.teamLogo === "None"
+            ? "https://cdn-icons-png.flaticon.com/512/9706/9706583.png"
+            : currentTeam.teamLogo
+
         const teamsInformationEmbed = new Discord.EmbedBuilder()
           .setColor(currentTeam.teamColor)
+          .setThumbnail(logo)
           .setDescription(
             `## ${currentTeam.teamName}\n- Date de création : **<t:${currentTeam.creationTimestamp}:d>**\n- Chef d'équipe : ${creatorUser}\n- Nation représenté : **${flag} ${nationality}**\n\n- Rôle et Couleur d'équipe : <@&${currentTeam.teamRole}>\n- Statut d'accueil : **${currentTeam.teamStatus}**\n- Membre(s) : **${drivers.length}**\n`
           )
           .setFooter({
             text: `Équipe : ${currentTeamIndex + 1} sur ${totalTeams}`,
           })
-
-        if (currentTeam.teamLogo === "None") {
-          teamsInformationEmbed.setThumbnail(
-            "https://i.ibb.co/cX0vRd9/KRL-Logo-PNG.png"
-          )
-        } else {
-          teamsInformationEmbed.setThumbnail(currentTeam.teamLogo)
-        }
 
         const interactionTeamsInformationAction = new Discord.ActionRowBuilder()
           .addComponents(
@@ -3824,22 +3822,20 @@ module.exports = async (bot, interaction) => {
                   break
               }
 
+              let logo =
+                currentTeam.teamLogo === "None"
+                  ? "https://cdn-icons-png.flaticon.com/512/9706/9706583.png"
+                  : currentTeam.teamLogo
+
               const teamsInformationEmbed = new Discord.EmbedBuilder()
                 .setColor(currentTeam.teamColor)
+                .setThumbnail(logo)
                 .setDescription(
                   `## ${currentTeam.teamName}\n- Date de création : **<t:${currentTeam.creationTimestamp}:d>**\n- Chef d'équipe : ${creatorUser}\n- Nation représenté : **${flag} ${nationality}**\n\n- Rôle et Couleur d'équipe : <@&${currentTeam.teamRole}>\n- Statut d'accueil : **${currentTeam.teamStatus}**\n- Membre(s) : **${drivers.length}**\n`
                 )
                 .setFooter({
                   text: `Équipe : ${currentTeamIndex + 1} sur ${totalTeams}`,
                 })
-
-              if (currentTeam.teamLogo === "None") {
-                teamsInformationEmbed.setThumbnail(
-                  "https://cdn-icons-png.flaticon.com/512/9706/9706583.png"
-                )
-              } else {
-                teamsInformationEmbed.setThumbnail(currentTeam.teamLogo)
-              }
 
               const interactionTeamsInformationAction =
                 new Discord.ActionRowBuilder()
