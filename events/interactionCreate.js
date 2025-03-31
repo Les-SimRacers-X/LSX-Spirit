@@ -3699,7 +3699,7 @@ module.exports = async (bot, interaction) => {
                     emoji: "👥",
                     label: "Mon équipe",
                     description:
-                      "Vous êtes dans une équipe, vous pouvez regarder !",
+                      "Vous êtes dans une équipe ? vous pouvez regarder !",
                     value: "myTeam",
                   },
                   {
