@@ -1,5 +1,5 @@
 // Function to generate a random ID (for database entries)
-function generateID() {
+export function generateID() {
   let characters = [
     ..."ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
   ]
@@ -17,13 +17,13 @@ function generateID() {
 }
 
 // Function to generate current timestamp
-function currentTimestamp() {
+export function currentTimestamp() {
   const currentTime = Math.floor(Date.now() / 1000)
 
   return currentTime
 }
 
-async function getXboxId(axios, gamertag, apikey) {
+export async function getXboxId(axios, gamertag, apikey) {
   try {
     const response = await axios.get(
       `https://xbl.io/api/v2/search/${gamertag}`,
@@ -44,5 +44,3 @@ async function getXboxId(axios, gamertag, apikey) {
     )
   }
 }
-
-module.exports = { generateID, currentTimestamp, getXboxId }
