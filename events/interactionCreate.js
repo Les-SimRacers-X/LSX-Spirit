@@ -2001,7 +2001,7 @@ module.exports = async (bot, interaction) => {
           .query(`SELECT * FROM teamsprofil WHERE teamID = ?`, [TeamID])
 
         const joinStatus = teams[0].teamStatus
-        let [managerID, driverIDs] = team[0].teamDrivers.split("/")
+        let [managerID, driverIDs] = teams[0].teamDrivers.split("/")
         let teamDrivers = driverIDs
           ? driverIDs.split(";").filter((id) => id.trim() !== "")
           : []
