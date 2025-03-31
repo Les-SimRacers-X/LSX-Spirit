@@ -3947,8 +3947,14 @@ module.exports = async (bot, interaction) => {
 
                 const [flag, nationality] = team.teamNationality.split("-")
 
+                let logo =
+                  team.teamLogo === "None"
+                    ? "https://cdn-icons-png.flaticon.com/512/9706/9706583.png"
+                    : team.teamLogo
+
                 const teamsInformationEmbed = new Discord.EmbedBuilder()
                   .setColor(team.teamColor)
+                  .setThumbnail(logo)
                   .setDescription(
                     `## ${team.teamName} [${
                       team.teamAbreviation
@@ -3962,14 +3968,6 @@ module.exports = async (bot, interaction) => {
                       team.teamStatus
                     }**\n- Membre(s) : **${drivers.length}**\n`
                   )
-
-                if (team.teamLogo === "None") {
-                  teamsInformationEmbed.setThumbnail(
-                    "https://cdn-icons-png.flaticon.com/512/9706/9706583.png"
-                  )
-                } else {
-                  teamsInformationEmbed.setThumbnail(team.teamLogo)
-                }
 
                 const actionOnTeamInteraction = new Discord.ActionRowBuilder()
 
