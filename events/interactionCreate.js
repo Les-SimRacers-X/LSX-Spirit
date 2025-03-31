@@ -4386,14 +4386,14 @@ module.exports = async (bot, interaction) => {
           )
 
           let options = []
-          teamRequests.forEach(async (request) => {
+          for (const request of teamRequests) {
             const user = await interaction.client.users.fetch(request.targetID)
             options.push({
               emoji: "📨",
               label: user.globalName || user.username,
               value: user.id,
             })
-          })
+          }
 
           const embedDisplayUserRequest = new Discord.EmbedBuilder()
             .setColor(Config.colors.mainServerColor)
