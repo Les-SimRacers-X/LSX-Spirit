@@ -4298,7 +4298,7 @@ module.exports = async (bot, interaction) => {
             }
 
             let options = []
-            teamRequests.forEach(async (request) => {
+            for (const request of teamRequests) {
               const user = await interaction.client.users.fetch(
                 request.targetID
               )
@@ -4307,7 +4307,7 @@ module.exports = async (bot, interaction) => {
                 label: user.globalName || user.username,
                 value: user.id,
               })
-            })
+            }
 
             const actionSelecterMenu =
               new Discord.ActionRowBuilder().addComponents(
