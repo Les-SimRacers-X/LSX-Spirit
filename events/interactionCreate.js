@@ -4075,7 +4075,7 @@ module.exports = async (bot, interaction) => {
 
             let teamInfo =
               checkIfUserHasTeam && checkIfUserHasTeam[0]
-                ? `👥 **Équipe :** <@${checkIfUserHasTeam[0].teamRole}>`
+                ? `👥 **Équipe :** <@&${checkIfUserHasTeam[0][0].teamRole}>`
                 : `👥 **Équipe :** Aucune équipe associée`
 
             const user = await bot.users.fetch(driverProfil.userID)
