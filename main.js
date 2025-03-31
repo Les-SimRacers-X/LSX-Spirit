@@ -10,7 +10,6 @@ require("dotenv").config()
 bot.commands = new Discord.Collection()
 
 // Gestion des logs du bot
-
 process.on("unhandledRejection", (err, origin) => {
   console.log(err, origin)
 
@@ -21,7 +20,7 @@ process.on("unhandledRejection", (err, origin) => {
     .setTimestamp()
 
   bot.channels.cache
-    .get(Config.channels.logsChannel)
+    .get(Config.channels.errorlogChannel)
     .send({ embeds: [embedBotLogs] })
 })
 
@@ -35,7 +34,7 @@ process.on("unhandledRejectionMonitor", (err, origin) => {
     .setTimestamp()
 
   bot.channels.cache
-    .get(Config.channels.logsChannel)
+    .get(Config.channels.errorlogChannel)
     .send({ embeds: [embedBotLogs] })
 })
 
