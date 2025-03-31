@@ -4448,6 +4448,13 @@ module.exports = async (bot, interaction) => {
               .promise()
               .query(`DELETE FROM teamsprofil WHERE teamID = ?`, [teamID])
 
+            await db
+              .promise()
+              .query(`UPDATE users SET teamID = ? WHERE userID = ?`, [
+                "None",
+                interaction.user.id,
+              ])
+
             const embedValidationTeamDissolution = new Discord.EmbedBuilder()
               .setColor(Config.colors.checkColor)
               .setDescription(
