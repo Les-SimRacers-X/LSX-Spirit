@@ -3688,20 +3688,20 @@ module.exports = async (bot, interaction) => {
                     value: "options",
                     default: true,
                   },
-                  {
-                    emoji: "🤝",
-                    label: "Équipes",
-                    description:
-                      "Accéder aux différentes équipes disponibles !",
-                    value: "teams",
-                  },
-                  {
-                    emoji: "👥",
-                    label: "Mon équipe",
-                    description:
-                      "Vous êtes dans une équipe ? vous pouvez regarder !",
-                    value: "myTeam",
-                  },
+                  // {
+                  //   emoji: "🤝",
+                  //   label: "Équipes",
+                  //   description:
+                  //     "Accéder aux différentes équipes disponibles !",
+                  //   value: "teams",
+                  // },
+                  // {
+                  //   emoji: "👥",
+                  //   label: "Mon équipe",
+                  //   description:
+                  //     "Vous êtes dans une équipe ? vous pouvez regarder !",
+                  //   value: "myTeam",
+                  // },
                   {
                     emoji: "📝",
                     label: "Inscription",
