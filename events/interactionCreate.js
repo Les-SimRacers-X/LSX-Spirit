@@ -2189,7 +2189,7 @@ module.exports = async (bot, interaction) => {
 
           const embedUserAccepted = new Discord.EmbedBuilder()
             .setDescription(
-              `${Config.emojis.checkEmoji} **Utilisateur refuser avec succès !**`
+              `${Config.emojis.checkEmoji} **Utilisateur refusé avec succès !**`
             )
             .setColor(Config.colors.mainServerColor)
 
