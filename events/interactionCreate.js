@@ -12,7 +12,7 @@ module.exports = async (bot, interaction) => {
   let db = bot.db
   // Fonction pour gérer les erreurs
   async function errorHandler(bot, interaction, error) {
-    const embedErrorDetectionLog = new Discord.EmbedBuilder()&
+    const embedErrorDetectionLog = new Discord.EmbedBuilder()
       .setColor("White")
       .setTitle("📌 Erreur Détecté :")
       .setDescription(`\`\`\`${error}\`\`\``)
