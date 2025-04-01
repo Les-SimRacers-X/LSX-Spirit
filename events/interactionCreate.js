@@ -2138,7 +2138,8 @@ module.exports = async (bot, interaction) => {
             .promise()
             .query(`SELECT * FROM teamsprofil WHERE teamID = ?`, [team])
 
-          let [managerID, driverIDs] = team[0].teamDrivers.split("/")
+          let teamDriversRaw = teams[0].teamDrivers || ""
+          let [managerID, driverIDs] = teamDriversRaw.split("/")
           let teamDrivers = driverIDs
             ? driverIDs.split(";").filter((id) => id.trim() !== "")
             : []
