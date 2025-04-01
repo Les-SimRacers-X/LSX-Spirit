@@ -4422,7 +4422,7 @@ module.exports = async (bot, interaction) => {
 
               new Discord.ButtonBuilder()
                 .setCustomId(`requestStatus_NO_${TeamiD}_${userToDisplay.id}`)
-                .setEmoji(Config.emojis.checkEmoji)
+                .setEmoji(Config.emojis.crossEmoji)
                 .setDisabled(false)
                 .setStyle(Discord.ButtonStyle.Secondary)
             )
