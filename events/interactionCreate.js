@@ -4377,7 +4377,7 @@ module.exports = async (bot, interaction) => {
           const [teamRequests] = await db
             .promise()
             .query(
-              `SELECT * FROM teamrequests WHERE targetID = ? OR teamID = ? AND requestStatus = ?`,
+              `SELECT * FROM teamrequests WHERE teamID = ? AND requestStatus = ?`,
               [TeamiD, "waiting"]
             )
 
