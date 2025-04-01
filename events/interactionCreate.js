@@ -12,7 +12,7 @@ module.exports = async (bot, interaction) => {
   let db = bot.db
   // Fonction pour gérer les erreurs
   async function errorHandler(bot, interaction, error) {
-    const embedErrorDetectionLog = new Discord.EmbedBuilder()
+    const embedErrorDetectionLog = new Discord.EmbedBuilder()&
       .setColor("White")
       .setTitle("📌 Erreur Détecté :")
       .setDescription(`\`\`\`${error}\`\`\``)
@@ -4317,7 +4317,7 @@ module.exports = async (bot, interaction) => {
                   .addOptions(options)
               )
 
-            await interaction.reply({
+            await interaction.update({
               components: [actionSelecterMenu],
               ephemeral: true,
             })
@@ -4363,7 +4363,7 @@ module.exports = async (bot, interaction) => {
     }
 
     const [fromManagingListRequest, TeamiD] = interaction.customId.split("_")
-    if (fromManagingListRequest === "manage_request") {
+    if (fromManagingListRequest === "manageRequest") {
       if (interaction.values && interaction.values.length > 0) {
         let reqRequestChoice = interaction.values[0]
 
@@ -4377,7 +4377,7 @@ module.exports = async (bot, interaction) => {
           const [teamRequests] = await db
             .promise()
             .query(
-              `SELECT * FROM teamrequests WHERE teamID = ? AND requestStatus = ?`,
+              `SELECT * FROM teamrequests WHERE targetID = ? OR teamID = ? AND requestStatus = ?`,
               [TeamiD, "waiting"]
             )
 
