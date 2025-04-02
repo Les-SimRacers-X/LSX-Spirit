@@ -4157,8 +4157,7 @@ module.exports = async (bot, interaction) => {
 
             const [flag, country] = team.teamNationality.split("-")
 
-            let teamLogo =
-              team.teamLogo === "None" ? `Aucun Logo` : team.teamLogo
+            let teamLogo = team.teamLogo === "None" ? `None` : team.teamLogo
 
             const modalEditTeamProfil = new Discord.ModalBuilder()
               .setCustomId(`editTeamProfil_${team.teamID}`)
