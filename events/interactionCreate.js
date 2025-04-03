@@ -4951,7 +4951,7 @@ module.exports = async (bot, interaction) => {
 
         // Créer un timestamp en UTC
         const timestamp = Math.floor(
-          Date.UTC(year, month - 1, day, hours - 1, minutes) / 1000
+          Date.UTC(year, month - 1, day, hours - 2, minutes) / 1000
         )
 
         //  Embed de suivi pour l'utilisateur !
