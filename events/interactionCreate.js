@@ -4688,7 +4688,7 @@ module.exports = async (bot, interaction) => {
         interaction.fields.getTextInputValue("modalTeamLogoInput")
 
       try {
-        const regex = /^([\uD83C][\uDDE6-\uDDFF]{2})-([A-Za-zÀ-ÖØ-öø-ÿ\s]+)$/
+        const regex = /^(\uD83C[\uDDE6-\uDDFF]\uD83C[\uDDE6-\uDDFF])\-([A-Za-zÀ-ÖØ-öø-ÿ\s]+)$/ // La regex respect ce format flagMoji-CountryName
 
         if (!regex.test(reqModalTeamNationalityContent)) {
           const embedNotValidTeamNationality = new Discord.EmbedBuilder()
