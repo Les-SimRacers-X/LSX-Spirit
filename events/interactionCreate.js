@@ -4695,45 +4695,63 @@ module.exports = async (bot, interaction) => {
         interaction.fields.getTextInputValue("modalTeamLogoInput")
 
       try {
-        const [teamsProfil] = await db
-          .promise()
-          .query(`SELECT * FROM teamsprofil WHERE teamID = ?`, [teamID])
-        const abbreviation = reqModalTeamNameContent
-          .split(/\s+/)
-          .map((word) => word[0])
-          .join("")
-          .toUpperCase()
+        const regex = /^(\uD83C[\uDDE6-\uDDFF]\uD83C[\uDDE6-\uDDFF])\-([A-Za-zÀ-ÖØ-öø-ÿ\s]+)$/ // La regex respect ce format flagMoji-CountryName
 
-        const editRole = await interaction.guild.roles.fetch(
-          teamsProfil[0].teamRole
-        )
+        if (!regex.test(reqModalTeamNationalityContent)) {
+          const embedNotValidTeamNationality = new Discord.EmbedBuilder()
+            .setColor(Config.colors.mainServerColor)
+            .setDescription(
+              `${Config.emojis.crossEmoji} **Le format de la nationalité de l'équipe n'a pas été respecté !**`
+            )
 
-        await editRole.edit({
-          name: `[${abbreviation}]・${reqModalTeamNameContent}`,
-          color: `${reqModalTeamColorContent}`,
-        })
+          return interaction.reply({
+            embeds: [embedNotValidTeamNationality],
+            ephemeral: true,
+          })
+        } else {
+          const [teamsProfil] = await db
+            .promise()
+            .query(`SELECT * FROM teamsprofil WHERE teamID = ?`, [teamID])
+          const abbreviation = reqModalTeamNameContent
+            .split(/\s+/)
+            .map((word) => word[0])
+            .join("")
+            .toUpperCase()
 
-        await db
-          .promise()
-          .query(
-            `UPDATE teamsprofil SET teamName = ?, teamAbreviation = ?, teamColor = ?, teamLogo = ?, teamNationality = ? WHERE teamID = ?`,
-            [
-              reqModalTeamNameContent,
-              abbreviation,
-              reqModalTeamColorContent,
-              reqModalTeamLogoContent,
-              reqModalTeamNationalityContent,
-              teamID,
-            ]
+          const editRole = await interaction.guild.roles.fetch(
+            teamsProfil[0].teamRole
           )
 
-        const embedReplyToUser = new Discord.EmbedBuilder()
-          .setColor(Config.colors.checkColor)
-          .setDescription(
-            `${Config.emojis.checkEmoji} **Données de l'équipe modifier avec succès !**`
-          )
+          await editRole.edit({
+            name: `[${abbreviation}]・${reqModalTeamNameContent}`,
+            color: `${reqModalTeamColorContent}`,
+          })
 
-        await interaction.reply({ embeds: [embedReplyToUser], ephemeral: true })
+          await db
+            .promise()
+            .query(
+              `UPDATE teamsprofil SET teamName = ?, teamAbreviation = ?, teamColor = ?, teamLogo = ?, teamNationality = ? WHERE teamID = ?`,
+              [
+                reqModalTeamNameContent,
+                abbreviation,
+                reqModalTeamColorContent,
+                reqModalTeamLogoContent,
+                reqModalTeamNationalityContent,
+                teamID,
+              ]
+            )
+
+          const embedReplyToUser = new Discord.EmbedBuilder()
+            .setColor(Config.colors.checkColor)
+            .setDescription(
+              `${Config.emojis.checkEmoji} **Données de l'équipe modifier avec succès !**`
+            )
+
+          await interaction.reply({
+            embeds: [embedReplyToUser],
+            ephemeral: true,
+          })
+        }
       } catch (error) {
         errorHandler(bot, interaction, error)
       }
@@ -4940,7 +4958,7 @@ module.exports = async (bot, interaction) => {
 
         // Créer un timestamp en UTC
         const timestamp = Math.floor(
-          Date.UTC(year, month - 1, day, hours - 1, minutes) / 1000
+          Date.UTC(year, month - 1, day, hours - 2, minutes) / 1000
         )
 
         //  Embed de suivi pour l'utilisateur !
