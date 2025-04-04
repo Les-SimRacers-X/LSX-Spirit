@@ -2156,6 +2156,13 @@ module.exports = async (bot, interaction) => {
               team,
             ])
 
+          await db
+            .promise()
+            .query(`UPDATE users SET teamID = ? WHERE userID = ?`, [
+              team,
+              user.id,
+            ])
+
           const embedJoinedSuccessfully = new Discord.EmbedBuilder()
             .setColor(Config.colors.checkColor)
             .setDescription(
