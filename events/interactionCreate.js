@@ -830,11 +830,14 @@ module.exports = async (bot, interaction) => {
               interaction.user.id,
             ])
 
-          const [settings] = await db
+          const [presets] = await db
             .promise()
-            .query(`SELECT * FROM settings WHERE settingID = ?`, ["2"])
+            .query(`SELECT * FROM presets WHERE presetID = ?`, [
+              eventBeforeUpdate.eventPresetID,
+            ])
+          const preset = presets[0]
 
-          if (settings[0].settingStat === "On") {
+          if (preset.presetLicence === "Oui") {
             if (users.length === 0) {
               const embedNoUserFound = new Discord.EmbedBuilder()
                 .setColor(Config.colors.crossColor)
@@ -885,13 +888,6 @@ module.exports = async (bot, interaction) => {
               eventBeforeUpdate.eventTrackID,
             ])
           const track = tracks[0]
-
-          const [presets] = await db
-            .promise()
-            .query(`SELECT * FROM presets WHERE presetID = ?`, [
-              eventBeforeUpdate.eventPresetID,
-            ])
-          const preset = presets[0]
 
           // Étape 1 : Diviser les catégories en fonction de ";"
           const categoryEntries = preset.presetCategory
@@ -2434,14 +2430,26 @@ module.exports = async (bot, interaction) => {
             .setRequired(true)
             .setStyle(Discord.TextInputStyle.Short)
 
+          const modalPresetLicence = new Discord.TextInputBuilder()
+            .setCustomId(`modalPresetLicenceInput`)
+            .setLabel("Obliger une licence ?")
+            .setPlaceholder("Exemple : Oui ou Non")
+            .setMinLength(3)
+            .setMaxLength(3)
+            .setRequired(true)
+            .setStyle(Discord.TextInputStyle.Short)
+
           const reqModalPresetNameInput =
             new Discord.ActionRowBuilder().addComponents(modalPresetName)
           const reqModalPresetCategoryInput =
             new Discord.ActionRowBuilder().addComponents(modalPresetCategory)
+          const reqModalPresetLicenceInput =
+            new Discord.ActionRowBuilder().addComponents(modalPresetLicence)
 
           modalPresetCreation.addComponents(
             reqModalPresetNameInput,
-            reqModalPresetCategoryInput
+            reqModalPresetCategoryInput,
+            reqModalPresetLicenceInput
           )
 
           await interaction.showModal(modalPresetCreation)
@@ -4695,7 +4703,8 @@ module.exports = async (bot, interaction) => {
         interaction.fields.getTextInputValue("modalTeamLogoInput")
 
       try {
-        const regex = /^(\uD83C[\uDDE6-\uDDFF]\uD83C[\uDDE6-\uDDFF])\-([A-Za-zÀ-ÖØ-öø-ÿ\s]+)$/ // La regex respect ce format flagMoji-CountryName
+        const regex =
+          /^(\uD83C[\uDDE6-\uDDFF]\uD83C[\uDDE6-\uDDFF])\-([A-Za-zÀ-ÖØ-öø-ÿ\s]+)$/ // La regex respect ce format flagMoji-CountryName
 
         if (!regex.test(reqModalTeamNationalityContent)) {
           const embedNotValidTeamNationality = new Discord.EmbedBuilder()
@@ -5005,6 +5014,9 @@ module.exports = async (bot, interaction) => {
       const reqPresetCategoryContent = interaction.fields.getTextInputValue(
         "modalPresetCategoryInput"
       )
+      const reqPresetLicenceContent = interaction.fields.getTextInputValue(
+        "modalPresetLicenceInput"
+      )
 
       try {
         // Générer un ID pour inseret le circuit dans la base de données
@@ -5014,8 +5026,13 @@ module.exports = async (bot, interaction) => {
         await db
           .promise()
           .query(
-            `INSERT INTO presets (presetID, presetName, presetCategory) VALUES(?, ?, ?)`,
-            [presetID, reqPresetNameContent, reqPresetCategoryContent]
+            `INSERT INTO presets (presetID, presetName, presetCategory, presetLicence) VALUES(?, ?, ?, ?)`,
+            [
+              presetID,
+              reqPresetNameContent,
+              reqPresetCategoryContent,
+              reqPresetLicenceContent,
+            ]
           )
 
         // Embed signalant à l'utilisateur que le circuit a été ajouter avec succès
