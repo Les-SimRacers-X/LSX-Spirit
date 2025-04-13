@@ -850,6 +850,18 @@ module.exports = async (bot, interaction) => {
                 ephemeral: true,
               })
             }
+            if (users[0].licencePoints === "0") {
+              const embedNoPermissions = new Discord.EmbedBuilder()
+                .setColor(Config.colors.crossColor)
+                .setDescription(
+                  `${Config.emojis.crossEmoji} **Vous n'avez plus de points sur votre licence l'accès aux événements est indisponible !**`
+                )
+
+              return interaction.reply({
+                embeds: [embedNoPermissions],
+                ephemeral: true,
+              })
+            }
           }
 
           if (
@@ -860,19 +872,6 @@ module.exports = async (bot, interaction) => {
               .setColor(Config.colors.crossColor)
               .setDescription(
                 `${Config.emojis.crossEmoji} **Vous n'avez pas les permissions pour être ${category}**`
-              )
-
-            return interaction.reply({
-              embeds: [embedNoPermissions],
-              ephemeral: true,
-            })
-          }
-
-          if (users[0].licencePoints === "0") {
-            const embedNoPermissions = new Discord.EmbedBuilder()
-              .setColor(Config.colors.crossColor)
-              .setDescription(
-                `${Config.emojis.crossEmoji} **Vous n'avez plus de points sur votre licence l'accès aux événements est indisponible !**`
               )
 
             return interaction.reply({
