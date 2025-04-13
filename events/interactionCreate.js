@@ -854,7 +854,7 @@ module.exports = async (bot, interaction) => {
               const embedNoPermissions = new Discord.EmbedBuilder()
                 .setColor(Config.colors.crossColor)
                 .setDescription(
-                  `${Config.emojis.crossEmoji} **Vous n'avez plus de points sur votre licence l'accès aux événements est indisponible !**`
+                  `${Config.emojis.crossEmoji} **Vous n'avez pas de points sur votre licence l'accès aux événements est indisponible !**`
                 )
 
               return interaction.reply({
