@@ -1,9 +1,11 @@
 const fs = require("fs")
 
-module.exports = async bot => {
-    fs.readdirSync("./events").filter(f => f.endsWith(".js")).forEach(async file => {
-        let event = require(`../events/${file}`)
-        bot.on(file.split(".js").join(""), event.bind(null, bot))
-        console.log(`Event ${file} loaded successfully !`)
+module.exports = async (bot) => {
+  fs.readdirSync("./events")
+    .filter((f) => f.endsWith(".js"))
+    .forEach(async (file) => {
+      let event = require(`../events/${file}`)
+      bot.on(event.name, (...args) => event.execute(bot, ...args))
+      console.log(`Event ${file} loaded successfully !`)
     })
 }

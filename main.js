@@ -43,6 +43,8 @@ fs.watchFile("restart.txt", () => {
   process.exit(1)
 })
 
-bot.login(process.env.TOKEN)
+bot.login(process.env.TOKEN).then(() => {
+  global.bot = bot
+})
 loadCommands(bot)
 loadEvents(bot)
