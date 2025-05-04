@@ -3,7 +3,7 @@ const { errorHandler } = require("../functions/utils")
 
 module.exports = {
   name: Events.InteractionCreate,
-  async execute(bot, interaction) {
+  async execute(interaction) {
     /* === Slash Commands === */
     if (interaction.type === InteractionType.ApplicationCommand) {
       try {
