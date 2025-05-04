@@ -1,4 +1,4 @@
-const db = require("../loader/loadDataBase")
+const db = require("../../../loader/loadDataBase")
 
 async function fetchUsersQuery(whereClause = "", values = []) {
   try {
