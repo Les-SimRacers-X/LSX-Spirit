@@ -1,14 +1,14 @@
 const { EmbedBuilder } = require("discord.js")
-const { fetchUserByIdQuery } = require("../../utils/sql/users/queries")
-const { Config } = require("../../config")
+const { fetchUserProfilByIdQuery } = require("../../utils/sql/users/queries")
 const { emoteComposer } = require("../../utils/js/errorHandling")
 const { getDiscordUserInfos } = require("../../utils/js/discordUtils")
 const { insertUserQuery } = require("../../utils/sql/users/mutations")
 const { licenceEvolutionComponent } = require("./licenceEvolution")
 const { licenceDisplay } = require("./licenceDisplay")
+const { Config } = require("../../utils/config")
 
 async function licenceDisplayComponents(userId) {
-  const users = await fetchUserByIdQuery(userId)
+  const users = await fetchUserProfilByIdQuery(userId)
   const user = getDiscordUserInfos(userId)
   let intialEmbed
 
@@ -41,7 +41,7 @@ async function licenceDisplayComponents(userId) {
     }
   }
 
-  if (users.accounts_config === "{}") {
+  if (users.gameConfig === "{}") {
     const { embedEvolution, interactionEvolution } = licenceEvolutionComponent(
       1,
       userId

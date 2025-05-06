@@ -80,7 +80,8 @@ async function fetchUserProfilByIdQuery(id) {
         users.podiums AS nbPodiums,
         users.total_races AS nbRaces,
         teams.role AS teamRoleId,
-        (SELECT COUNT(*) FROM sanctions WHERE sanctions.target_id = users.id) AS nbSanctions
+        (SELECT COUNT(*) FROM sanctions WHERE sanctions.target_id = users.id) AS nbSanctions,
+        JSON_EXTRACT(account_config, '$') AS gameConfig
       FROM users
       LEFT JOIN teams ON users.team_id = teams.id
       WHERE users.id = ?
