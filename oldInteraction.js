@@ -1,11 +1,7 @@
 const Discord = require("discord.js")
 const Config = require("../config.json")
 const axios = require("axios")
-const {
-  generateID,
-  getXboxId,
-  currentTimestamp,
-} = require("../functions/utils")
+const { generateID, getXboxId, currentTimestamp } = require("../utils/utils")
 const {
   exchangeNpssoForCode,
   exchangeCodeForAccessToken,
