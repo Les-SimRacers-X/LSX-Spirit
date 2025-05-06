@@ -21,4 +21,13 @@ function currentTimestamp() {
   return currentTime
 }
 
-module.exports = { generateID, currentTimestamp }
+function calculatePercentage(value, total) {
+  const percentage = ((value / total) * 100).toFixed(2)
+  if (percentage === "NaN") {
+    return "0%"
+  }
+
+  return `${percentage}%`
+}
+
+module.exports = { generateID, currentTimestamp, calculatePercentage }

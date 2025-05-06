@@ -5,6 +5,7 @@ const { emoteComposer } = require("../../utils/js/errorHandling")
 const { getDiscordUserInfos } = require("../../utils/js/discordUtils")
 const { insertUserQuery } = require("../../utils/sql/users/mutations")
 const { licenceEvolutionComponent } = require("./licenceEvolution")
+const { licenceDisplay } = require("./licenceDisplay")
 
 async function licenceDisplayComponents(userId) {
   const users = await fetchUserByIdQuery(userId)
@@ -49,6 +50,13 @@ async function licenceDisplayComponents(userId) {
       embeds: [embedEvolution],
       components: [interactionEvolution],
     }
+  }
+
+  const { displayProfil } = licenceDisplay(userId)
+
+  return {
+    embeds: [displayProfil],
+    components: [],
   }
 }
 

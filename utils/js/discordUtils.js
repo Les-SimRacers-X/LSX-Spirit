@@ -5,6 +5,7 @@ function getDiscordUserInfos(id) {
     if (user) {
       return {
         id: user.id,
+        globalName: user.globalName,
         username: user.username,
         avatarURL: user.displayAvatarURL({ dynamic: true, size: 256 }),
         accountCreationTimestamp: user.createdTimestamp,

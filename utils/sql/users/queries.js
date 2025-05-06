@@ -69,6 +69,35 @@ async function fetchNumberInAccountConfig(gameIdentifier, number) {
   }
 }
 
+async function fetchUserProfilByIdQuery(id) {
+  try {
+    const [rows] = await db.query(
+      `
+      SELECT
+        users.team_id AS teamId
+        users.licence_points AS licencePoints,
+        users.wins AS nbWins,
+        users.podiums AS nbPodiums,
+        users.total_races AS nbRaces,
+        teams.role AS teamRoleId,
+        (SELECT COUNT(*) FROM sanctions WHERE sanctions.target_id = users.id) AS nbSanctions
+      FROM users
+      LEFT JOIN teams ON users.team_id = teams.id
+      WHERE users.id = ?
+      `,
+      [id]
+    )
+
+    return [rows]
+  } catch (error) {
+    console.error(
+      `Erreur lors de la requête 'fetchUserProfilByIdQuery' :`,
+      error
+    )
+    throw error
+  }
+}
+
 async function fetchUserByIdQuery(id) {
   return await fetchUsersQuery("WHERE id = ?", [id])
 }
@@ -78,5 +107,6 @@ module.exports = {
   fetchUserAccountConfigByIdQuery,
   fetchUserAccountConfigDetailsByIdQuery,
   fetchNumberInAccountConfig,
+  fetchUserProfilByIdQuery,
   fetchUserByIdQuery,
 }
