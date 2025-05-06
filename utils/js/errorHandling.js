@@ -1,5 +1,5 @@
 const { EmbedBuilder } = require("discord.js")
-const { Config } = require("../../config")
+const { Config } = require("../config")
 
 async function errorHandler(interaction, error) {
   const embedErrorDetectionLog = new EmbedBuilder()

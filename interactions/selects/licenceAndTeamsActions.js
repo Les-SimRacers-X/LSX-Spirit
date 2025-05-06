@@ -1,6 +1,6 @@
 const {
   licenceAndTeamActionsComponent,
-} = require("../../components/licenceAndTeamActions")
+} = require("../../components/Licence/licenceAndTeamActions")
 
 module.exports = {
   customId: "teamsAndPersonnalProfilsActions",

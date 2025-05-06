@@ -49,6 +49,50 @@ const Config = {
     errorLogs: "1321920324119560435",
   },
   roles: {},
+  platforms: [
+    {
+      name: "PC",
+      emote: {
+        id: "",
+        name: "",
+      },
+      value: "pc",
+    },
+    {
+      name: "Playstation",
+      emote: {
+        id: "",
+        name: "",
+      },
+      value: "ps",
+    },
+    {
+      name: "Xbox",
+      emote: {
+        id: "",
+        name: "",
+      },
+      value: "xb",
+    },
+  ],
+  games: [
+    {
+      name: "Assetto Corsa Competizione",
+      emote: {
+        id: "",
+        name: "",
+      },
+      value: "acc",
+    },
+    {
+      name: "Le Mans Ultimate",
+      emote: {
+        id: "",
+        name: "",
+      },
+      value: "lmu",
+    },
+  ],
   countries: [
     {
       name: "Australie",
