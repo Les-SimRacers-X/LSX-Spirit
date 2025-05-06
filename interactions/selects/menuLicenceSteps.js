@@ -1,3 +1,4 @@
+const { EmbedBuilder } = require("discord.js")
 const {
   gameSelectionComponent,
 } = require("../../components/Licence/gameSelectionComponent")
@@ -7,6 +8,8 @@ const {
 const {
   usernameAndNumberComponent,
 } = require("../../components/Licence/usernameAndNumberComponent")
+const { Config } = require("../../utils/config")
+const { emoteComposer } = require("../../utils/js/errorHandling")
 
 module.exports = {
   customId: "menuLicenceSteps",
@@ -39,7 +42,19 @@ module.exports = {
       }
 
       default:
-        break
+        const embed = new EmbedBuilder()
+          .setColor(Config.colors.error)
+          .setDescription(
+            `### ${emoteComposer(
+              Config.emotes.failure.id,
+              Config.emotes.failure.name
+            )} Vous avez sauté une étape !`
+          )
+
+        return interaction.reply({
+          embeds: [embed],
+          ephemeral: true,
+        })
     }
   },
 }

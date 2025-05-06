@@ -1,6 +1,9 @@
 const {
   licenceAndTeamActionsComponent,
 } = require("../../components/Licence/licenceAndTeamActions")
+const {
+  licenceDisplayComponents,
+} = require("../../components/Licence/licenceComponents")
 
 module.exports = {
   customId: "teamsAndPersonnalProfilsActions",
@@ -9,6 +12,14 @@ module.exports = {
 
     switch (selectedAction) {
       case "personalLicence": {
+        const { embeds, components } = licenceDisplayComponents(
+          interaction.user.id
+        )
+        return interaction.reply({
+          embeds: embeds,
+          components: components,
+          ephemeral: true,
+        })
       }
 
       default:
