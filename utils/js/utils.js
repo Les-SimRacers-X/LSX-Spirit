@@ -30,4 +30,13 @@ function calculatePercentage(value, total) {
   return `${percentage}%`
 }
 
-module.exports = { generateID, currentTimestamp, calculatePercentage }
+async function emoteComposer(emoteObject) {
+  return `<:${emoteObject.name}:${emoteObject.id}>`
+}
+
+module.exports = {
+  generateID,
+  currentTimestamp,
+  calculatePercentage,
+  emoteComposer,
+}

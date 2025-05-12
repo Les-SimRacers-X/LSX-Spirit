@@ -1,15 +1,5 @@
 const db = require("../../../loader/loadDataBase")
 
-async function fetchUsersQuery(whereClause = "", values = []) {
-  try {
-    const [rows] = await db.query(`SELECT * FROM users ${whereClause}`, values)
-    return rows
-  } catch (error) {
-    console.error(`Erreur lors de la requête 'fetchUsers' :`, error)
-    throw error
-  }
-}
-
 async function fetchUserAccountConfigByIdQuery(id) {
   try {
     const [rows] = await db.query(
@@ -77,7 +67,7 @@ async function fetchUserProfilByIdQuery(id) {
         users.team_id AS teamId
         users.licence_points AS licencePoints,
         users.wins AS nbWins,
-        users.podiums AS nbPodiums,
+        users.podiums AS nbPodiums,&
         users.total_races AS nbRaces,
         teams.role AS teamRoleId,
         (SELECT COUNT(*) FROM sanctions WHERE sanctions.target_id = users.id) AS nbSanctions,
@@ -97,10 +87,6 @@ async function fetchUserProfilByIdQuery(id) {
     )
     throw error
   }
-}
-
-async function fetchUserByIdQuery(id) {
-  return await fetchUsersQuery("WHERE id = ?", [id])
 }
 
 module.exports = {

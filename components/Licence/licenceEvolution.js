@@ -1,10 +1,11 @@
 const { ActionRowBuilder, StringSelectMenuBuilder } = require("discord.js")
 const { fetchUserProfilByIdQuery } = require("../../utils/sql/users/queries")
+const { Config } = require("../../utils/config")
 
 async function licenceEvolutionComponent(currentStep, userId, gameSelected) {
   const users = await fetchUserProfilByIdQuery(userId)
   const embedEvolution = new EmbedBuilder().setColor(Config.colors.default)
-    .setDescription(`### 🪪 Finaliser votre inscription\n
+    .setDescription(`### ⚙️ Votre configuration\n
       \`\`\`json
       ${users.gameConfig}
       \`\`\``)

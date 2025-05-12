@@ -3,6 +3,7 @@ const { getDiscordUserInfos } = require("../../utils/js/discordUtils")
 const { calculatePercentage } = require("../../utils/js/utils")
 const { fetchUserProfilByIdQuery } = require("../../utils/sql/users/queries")
 const { Config } = require("../../utils/config")
+const { interactionOnProfil } = require("./interactionOnProfil")
 
 async function licenceDisplay(userId) {
   const userInfos = await fetchUserProfilByIdQuery(userId)
@@ -10,7 +11,7 @@ async function licenceDisplay(userId) {
 
   let userHasTeam =
     userInfos.teamId !== "None" || ""
-      ? `👥 **Équipe :** <@${userInfos.teamRoleId}>`
+      ? `👥 **Équipe :** <@&${userInfos.teamRoleId}>`
       : `👥 **Équipe :** Aucune équipe associée`
 
   let checkLicence =
@@ -26,6 +27,27 @@ async function licenceDisplay(userId) {
     userInfos.nbPodiums,
     userInfos.nbRaces
   )
+
+  const options = Config.games
+    .filter((game) =>
+      Object.prototype.hasOwnProperty.call(userInfos.gameConfig, game.value)
+    )
+    .map((game) => {
+      const data = userInfos.gameConfig[game.value]
+      return {
+        emoji: game.emote,
+        label: game.name,
+        description: `[${data.trigram}] - ${data.name}`,
+        value: game.value,
+      }
+    })
+
+  options.unshift({
+    emoji: { name: "➕" },
+    label: "Ajouter un jeu",
+    description: "Ceci vous permettra d'ajouter une configuration pour un jeu.",
+    value: "add",
+  })
 
   const driverProfil = new EmbedBuilder()
     .setColor(Config.colors.default)
@@ -45,8 +67,11 @@ async function licenceDisplay(userId) {
     )
     .setImage(Config.PNG)
 
+  const interactions = interactionOnProfil(userId, options)
+
   return {
     driverProfil,
+    interactions,
   }
 }
 

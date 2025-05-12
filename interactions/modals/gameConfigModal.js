@@ -2,7 +2,7 @@ const { EmbedBuilder } = require("discord.js")
 const {
   usernameAndNumberComponent,
 } = require("../../components/Licence/usernameAndNumberComponent")
-const { errorHandler, emoteComposer } = require("../../utils/js/errorHandling")
+const { errorHandler } = require("../../utils/js/errorHandling")
 const { getConsoleUXID } = require("../../utils/js/userGameUXID")
 const { updateUserQuery } = require("../../utils/sql/users/mutations")
 const {
@@ -10,6 +10,7 @@ const {
   fetchUserAccountConfigByIdQuery,
 } = require("../../utils/sql/users/queries")
 const { Config } = require("../../utils/config")
+const { emoteComposer } = require("../../utils/js/utils")
 
 module.exports = {
   customId: "gameConfigModal",
@@ -85,8 +86,7 @@ module.exports = {
         .setColor(Config.colors.success)
         .setDescription(
           `### ${emoteComposer(
-            Config.emotes.success.id,
-            Config.emotes.success.name
+            Config.emotes.success
           )} Votre licence a été correctement configurée ! Veuillez cliquer de nouveau sur \`Licence LSX\` pour consulter votre licence.`
         )
 

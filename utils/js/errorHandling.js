@@ -28,8 +28,4 @@ async function errorHandler(interaction, error) {
   })
 }
 
-async function emoteComposer(id, name) {
-  return `<:${name}:${id}>`
-}
-
-module.exports = { errorHandler, emoteComposer }
+module.exports = errorHandler

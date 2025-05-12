@@ -9,7 +9,7 @@ const {
   usernameAndNumberComponent,
 } = require("../../components/Licence/usernameAndNumberComponent")
 const { Config } = require("../../utils/config")
-const { emoteComposer } = require("../../utils/js/errorHandling")
+const { emoteComposer } = require("../../utils/js/utils")
 
 module.exports = {
   customId: "menuLicenceSteps",
@@ -46,8 +46,7 @@ module.exports = {
           .setColor(Config.colors.error)
           .setDescription(
             `### ${emoteComposer(
-              Config.emotes.failure.id,
-              Config.emotes.failure.name
+              Config.emotes.failure
             )} Vous avez sauté une étape !`
           )
 

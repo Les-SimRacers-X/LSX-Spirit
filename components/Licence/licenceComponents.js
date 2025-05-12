@@ -1,11 +1,11 @@
 const { EmbedBuilder } = require("discord.js")
 const { fetchUserProfilByIdQuery } = require("../../utils/sql/users/queries")
-const { emoteComposer } = require("../../utils/js/errorHandling")
 const { getDiscordUserInfos } = require("../../utils/js/discordUtils")
 const { insertUserQuery } = require("../../utils/sql/users/mutations")
 const { licenceEvolutionComponent } = require("./licenceEvolution")
 const { licenceDisplay } = require("./licenceDisplay")
 const { Config } = require("../../utils/config")
+const { emoteComposer } = require("../../utils/js/utils")
 
 async function licenceDisplayComponents(userId) {
   const users = await fetchUserProfilByIdQuery(userId)
@@ -17,8 +17,7 @@ async function licenceDisplayComponents(userId) {
       .setColor(Config.colors.success)
       .setDescription(
         `### ${emoteComposer(
-          Config.emotes.success.id,
-          Config.emotes.success.name
+          Config.emotes.success
         )} Votre licence a bien été créée ! Veuillez cliquer de nouveau sur l'option **\`Licence LSX\`**.`
       )
 
@@ -52,11 +51,11 @@ async function licenceDisplayComponents(userId) {
     }
   }
 
-  const { displayProfil } = licenceDisplay(userId)
+  const { displayProfil, interactionOnProfil } = licenceDisplay(userId)
 
   return {
     embeds: [displayProfil],
-    components: [],
+    components: [interactionOnProfil],
   }
 }
 

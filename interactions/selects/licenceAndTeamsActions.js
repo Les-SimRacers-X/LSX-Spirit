@@ -22,6 +22,9 @@ module.exports = {
         })
       }
 
+      case "teams": {
+      }
+
       default:
         return interaction.update({
           components: [licenceAndTeamActionsComponent()],
