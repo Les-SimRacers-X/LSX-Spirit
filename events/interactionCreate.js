@@ -1,5 +1,5 @@
 const { Events, InteractionType } = require("discord.js")
-const { errorHandler } = require("../utils/utils")
+const { errorHandler } = require("../utils/js/errorHandling")
 
 module.exports = {
   name: Events.InteractionCreate,

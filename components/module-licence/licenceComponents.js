@@ -1,7 +1,9 @@
 const { EmbedBuilder } = require("discord.js")
-const { fetchUserProfilByIdQuery } = require("../../utils/sql/users/queries")
+const {
+  fetchUserProfilByIdQuery,
+} = require("../../utils/sql/data-users/queries")
 const { getDiscordUserInfos } = require("../../utils/js/discordUtils")
-const { insertUserQuery } = require("../../utils/sql/users/mutations")
+const { insertUserQuery } = require("../../utils/sql/data-users/mutations")
 const { licenceEvolutionComponent } = require("./licenceEvolution")
 const { licenceDisplay } = require("./licenceDisplay")
 const { Config } = require("../../utils/config")

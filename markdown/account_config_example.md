@@ -1,5 +1,5 @@
 ```json
-[
+{
   "acc": {
     "id": "M49209682722358",
     "name": "Zeikrom250",
@@ -7,5 +7,5 @@
     "platform": "Xbox",
     "number": 403
   }
-]
+}
 ```

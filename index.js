@@ -4,7 +4,7 @@ const bot = new Discord.Client({ intents })
 const fs = require("fs")
 const loadCommands = require("./loader/loadCommands")
 const loadEvents = require("./loader/loadEvents")
-const { Config } = require("./config.json")
+const { Config } = require("./utils/config")
 require("dotenv").config()
 
 bot.commands = new Discord.Collection()

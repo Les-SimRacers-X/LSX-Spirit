@@ -1,5 +1,7 @@
 const { ActionRowBuilder, StringSelectMenuBuilder } = require("discord.js")
-const { fetchUserProfilByIdQuery } = require("../../utils/sql/users/queries")
+const {
+  fetchUserProfilByIdQuery,
+} = require("../../utils/sql/data-users/queries")
 const { Config } = require("../../utils/config")
 
 async function licenceEvolutionComponent(currentStep, userId, gameSelected) {

@@ -1,7 +1,7 @@
 const { ModalBuilder, TextInputBuilder, TextInputStyle } = require("discord.js")
 const {
   fetchUserAccountConfigDetailsByIdQuery,
-} = require("../../utils/sql/users/queries")
+} = require("../../utils/sql/data-users/queries")
 const { Config } = require("../../utils/config")
 
 async function usernameAndNumberComponent(

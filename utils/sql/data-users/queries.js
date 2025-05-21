@@ -64,7 +64,7 @@ async function fetchUserProfilByIdQuery(id) {
     const [rows] = await db.query(
       `
       SELECT
-        users.team_id AS teamId
+        users.team_id AS teamId,
         users.licence_points AS licencePoints,
         users.wins AS nbWins,
         users.podiums AS nbPodiums,&
@@ -90,10 +90,8 @@ async function fetchUserProfilByIdQuery(id) {
 }
 
 module.exports = {
-  fetchUsersQuery,
   fetchUserAccountConfigByIdQuery,
   fetchUserAccountConfigDetailsByIdQuery,
   fetchNumberInAccountConfig,
   fetchUserProfilByIdQuery,
-  fetchUserByIdQuery,
 }

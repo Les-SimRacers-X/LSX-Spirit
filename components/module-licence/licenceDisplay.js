@@ -1,7 +1,9 @@
 const { EmbedBuilder } = require("discord.js")
 const { getDiscordUserInfos } = require("../../utils/js/discordUtils")
 const { calculatePercentage } = require("../../utils/js/utils")
-const { fetchUserProfilByIdQuery } = require("../../utils/sql/users/queries")
+const {
+  fetchUserProfilByIdQuery,
+} = require("../../utils/sql/data-users/queries")
 const { Config } = require("../../utils/config")
 const { interactionOnProfil } = require("./interactionOnProfil")
 
