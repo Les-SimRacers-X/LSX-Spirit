@@ -1,21 +1,19 @@
-const Config = require("../config")
 const Papa = require("papaparse")
 const axios = require("axios")
+const { Events, EmbedBuilder } = require("discord.js")
+const { Config } = require("../utils/config")
+const db = require("../loader/loadDataBase")
 const {
-  Events,
-  EmbedBuilder,
-  ActionRowBuilder,
-  StringSelectMenuBuilder,
-} = require("discord.js")
+  interactionGlobalBotGestion,
+} = require("../components/module-events/interactionGlobalGestion")
 const {
   licenceAndTeamActionsComponent,
-} = require("../components/licenceAndTeamActions")
+} = require("../components/module-licence/licenceAndTeamActions")
 require("dotenv").config()
 
 module.exports = {
   name: Events.MessageCreate,
-  async execute(bot, message) {
-    let db = bot.db
+  async execute(message) {
     if (message.author.bot) return
 
     if (message.content.toLowerCase() === "!import") {
@@ -93,116 +91,61 @@ module.exports = {
 
     if (message.content.toLowerCase() === "send:embeds") {
       const member = await message.guild.members.fetch(message.author.id)
-      if (!member.roles.cache.has(Config.roles.admin)) {
+      if (!member.roles.cache.has()) {
         return
       } else {
-        try {
-          const [rows] = await db
-            .promise()
-            .query(`SELECT * FROM requests WHERE requestStat = ?`, ["waiting"])
-          const embedGestionOfAllBotInteractions = new Discord.EmbedBuilder()
-            .setColor(Config.colors.mainServerColor)
-            .setDescription(
-              `## 📊 GESTION GLOBAL\n\n\n ➡️ ***Utilisez le sélecteur ci-dessous pour gérer le bot et accéder aux différentes interactions disponibles.***\n\n*__Liste des drapeaux :__ [Cliquez ici](https://emojipedia.org/fr/drapeaux)*`
-            )
+        const embedConfiguration = new EmbedBuilder()
+          .setColor(Config.colors.default)
+          .setDescription(
+            `## 🤖 Gestion du bot\nLe sélecteur ci-dessous vous donne accès à la gestion des événements et des différents paramètres qui les accompagnent.`
+          )
 
-          const interactionGestionOfAllBotInteractions =
-            new Discord.ActionRowBuilder().addComponents(
-              new Discord.StringSelectMenuBuilder()
-                .setCustomId(`gestionAllBot_Interactions`)
-                .setPlaceholder("📌 Séléctionner une option...")
-                .addOptions(
-                  {
-                    emoji: "📌",
-                    label: "Séléctionner une option",
-                    description: "...",
-                    value: "0",
-                    default: true,
-                  },
-                  {
-                    emoji: "📆",
-                    label: "Créer un événement",
-                    description: "Créer un nouvel événement !",
-                    value: "7",
-                  },
-                  {
-                    emoji: "⚙️",
-                    label: "Gestion des événements",
-                    description:
-                      "Gérer vos événements (Fermer, supprimer, etc...)",
-                    value: "8",
-                  },
-                  {
-                    emoji: "📨",
-                    label: `Demande d'Adhésion (${rows.length})`,
-                    description:
-                      "Visualisez les demandes d'adhésion à l'entrylist",
-                    value: "10",
-                  },
-                  {
-                    emoji: "💬",
-                    label: "Ajouter un salon",
-                    description: "Ajouter des salons pour vos événements",
-                    value: "1",
-                  },
-                  {
-                    emoji: "🗯️",
-                    label: "Gestion des salons",
-                    description: "Gérer vos salons (supprimer, modifier)",
-                    value: "2",
-                  },
-                  {
-                    emoji: "🚦",
-                    label: "Ajouter un preset",
-                    description: "Créer vos propres présets",
-                    value: "3",
-                  },
-                  {
-                    emoji: "🎨",
-                    label: "Gestion des presets",
-                    description: "Gérer les différents presets d'évenement",
-                    value: "4",
-                  },
-                  {
-                    emoji: "🏁",
-                    label: "Ajouter un circuit",
-                    description:
-                      "Ajouter des circuits (Drapeau, Pays, Circuit, Longueur, Image)",
-                    value: "5",
-                  },
-                  {
-                    emoji: "🚧",
-                    label: "Gestion des circuits",
-                    description: "Gérer vos circuits (Activer ou Désactiver)",
-                    value: "6",
-                  },
-                  {
-                    emoji: "🔨",
-                    label: "Règlement",
-                    description: "Modifier le règlement de course",
-                    value: "9",
-                  }
-                )
-            )
+        bot.channels.cache.get(Config.channels.botGestion).send({
+          embeds: [embedConfiguration],
+          components: [interactionGlobalBotGestion()],
+        })
 
-          /* await bot.channels.cache.get(Config.channels.gestionChannel).send({
-            embeds: [embedGestionOfAllBotInteractions],
-            components: [interactionGestionOfAllBotInteractions],
-          }) */
+        const embedLSXFunction = new EmbedBuilder()
+          .setColor(Config.colors.default)
+          .setDescription(
+            `## ✨ Fonctionnalités LSX\n Utilisez le menu déroulant ci-dessous pour accéder à diverses fonctionnalités liées ) votre licence et aux équipes.`
+          )
 
-          const embedTeamAndPersonnalProfils = new EmbedBuilder()
-            .setColor(Config.colors.mainServerColor)
-            .setDescription(
-              `## 📘 Informations\n \n- **Créer et personnaliser son profil** avec des infos comme Pseudo, Platform, Numéro de joueur, etc...\n- **Consulter son profil et celui des autres** pour voir leurs historique et leurs équipes.\n- **Créer et gérer une équipe** en définissant un nom, un logo et éventuellement un objectif.\n- **Rejoindre une équipe existante** en envoyant une demande ou en étant invité.\n-# Si vous avez le moindre soucis, merci d'ouvrir un ticket !`
-            )
+        bot.channels.cache.get(Config.channels.licence).send({
+          embeds: [embedLSXFunction],
+          components: [licenceAndTeamActionsComponent()],
+        })
+      }
+    }
 
-          await bot.channels.cache.get("1339169354989830208").send({
-            embeds: [embedTeamAndPersonnalProfils],
-            components: [licenceAndTeamActionsComponent()],
-          })
-        } catch (error) {
-          console.error(error)
+    if (message.content.toLowerCase() === "convert") {
+      try {
+        const [rows] = await db.query(
+          `SELECT id, inGameUsername, trigram, inGameNumber, platformID, platformConsole FROM users`
+        )
+        for (const row of rows) {
+          let checkPlatform = row.platformConsole === "Xbox" ? "xb" : "ps"
+
+          const accountConfig = {
+            acc: {
+              id: row.platformID,
+              name: row.inGameUsername,
+              trigram: row.trigram,
+              platform: checkPlatform,
+              number: row.inGameNumber,
+            },
+          }
+
+          await db.query(`UPDATE users SET accounts_config = ? WHERE id = ?`, [
+            JSON.stringify(accountConfig),
+            row.id,
+          ])
         }
+
+        message.reply("Conversion terminée avec succès !")
+      } catch (error) {
+        console.error(error)
+        message.reply("Une erreur est survenue pendant la conversion.")
       }
     }
   },

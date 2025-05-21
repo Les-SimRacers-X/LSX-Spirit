@@ -1,9 +1,9 @@
 const loadSlashCommand = require("../loader/loadSlashCommand")
-const loadDatabase = require("../loader/loadDataBase")
-const Config = require("../config.json")
+const db = require("../loader/loadDataBase")
+const { Config } = require("../utils/config")
 const ftp = require("basic-ftp")
 const { Writable } = require("stream")
-const { currentTimestamp } = require("../utils")
+const { currentTimestamp } = require("../utils/js/utils")
 const { Events } = require("discord.js")
 
 module.exports = {
@@ -63,7 +63,7 @@ module.exports = {
     async function getEventOfTheDay() {
       try {
         // Récupération des événements depuis la base de données
-        const [events] = await bot.db.promise().query(`SELECT * FROM events`)
+        const [events] = await db.query(`SELECT * FROM events`)
         const currentTimestamp = Date.now() // Timestamp actuel en millisecondes
 
         // console.log("Timestamp actuel :", currentTimestamp, new Date(currentTimestamp).toISOString());
@@ -482,7 +482,7 @@ module.exports = {
     async function updateAllServers() {
       try {
         // Récupérer tous les serveurs depuis la base de données
-        const [servers] = await bot.db.promise().query(`SELECT * FROM servers`)
+        const [servers] = await db.query(`SELECT * FROM servers`)
 
         // Traiter chaque serveur
         for (const serverConfig of servers) {
@@ -505,7 +505,7 @@ module.exports = {
 
     async function sendOrUpdateServerEmbedDisplay() {
       try {
-        const [servers] = await bot.db.promise().query(`SELECT * FROM servers`)
+        const [servers] = await db.query(`SELECT * FROM servers`)
 
         // Pour chaque ligne dans la table servers
         for (const server of servers) {
