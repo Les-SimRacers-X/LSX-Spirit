@@ -1,9 +1,9 @@
 const {
   licenceAndTeamActionsComponent,
-} = require("../../components/Licence/licenceAndTeamActions")
+} = require("../../components/module-licence/licenceAndTeamActions")
 const {
   licenceDisplayComponents,
-} = require("../../components/Licence/licenceComponents")
+} = require("../../components/module-licence/licenceComponents")
 
 module.exports = {
   customId: "teamsAndPersonnalProfilsActions",

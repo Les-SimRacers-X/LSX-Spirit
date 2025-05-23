@@ -38,8 +38,7 @@ const Config = {
     },
   },
   categories: {
-    eventConsoles: "1179353258070917180",
-    eventPC: "1355941419864555640",
+    events: ["1179353258070917180", "1355941419864555640"],
   },
   channels: {
     monitoringServer: "1132938881411596379",

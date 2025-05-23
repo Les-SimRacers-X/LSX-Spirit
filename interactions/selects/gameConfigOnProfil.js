@@ -1,12 +1,16 @@
 const { EmbedBuilder } = require("discord.js")
 const { Config } = require("../../utils/config")
-const { fetchUserProfilByIdQuery } = require("../../utils/sql/users/queries")
+const {
+  fetchUserProfilByIdQuery,
+} = require("../../utils/sql/data-users/queries")
 const { emoteComposer } = require("../../utils/js/utils")
 const {
   interactionOnProfil,
-} = require("../../components/Licence/interactionOnProfil")
-const errorHandler = require("../../utils/js/errorHandling")
-const { licenceDisplay } = require("../../components/Licence/licenceDisplay")
+} = require("../../components/module-licence/interactionOnProfil")
+const { errorHandler } = require("../../utils/js/errorHandling")
+const {
+  licenceDisplay,
+} = require("../../components/module-licence/licenceDisplay")
 
 // Faire un component modifier une config, trouver un moyen simple de modifier une config
 

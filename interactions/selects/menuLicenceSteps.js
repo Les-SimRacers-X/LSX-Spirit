@@ -1,13 +1,13 @@
 const { EmbedBuilder } = require("discord.js")
 const {
   gameSelectionComponent,
-} = require("../../components/Licence/gameSelectionComponent")
+} = require("../../components/module-licence/gameSelectionComponent")
 const {
   platformSelectionComponent,
-} = require("../../components/Licence/platformSelectionComponent")
+} = require("../../components/module-licence/platformSelectionComponent")
 const {
   usernameAndNumberComponent,
-} = require("../../components/Licence/usernameAndNumberComponent")
+} = require("../../components/module-licence/usernameAndNumberComponent")
 const { Config } = require("../../utils/config")
 const { emoteComposer } = require("../../utils/js/utils")
 

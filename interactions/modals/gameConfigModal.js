@@ -1,14 +1,14 @@
 const { EmbedBuilder } = require("discord.js")
 const {
   usernameAndNumberComponent,
-} = require("../../components/Licence/usernameAndNumberComponent")
+} = require("../../components/module-licence/usernameAndNumberComponent")
 const { errorHandler } = require("../../utils/js/errorHandling")
 const { getConsoleUXID } = require("../../utils/js/userGameUXID")
-const { updateUserQuery } = require("../../utils/sql/users/mutations")
+const { updateUserQuery } = require("../../utils/sql/data-users/mutations")
 const {
   fetchNumberInAccountConfig,
   fetchUserAccountConfigByIdQuery,
-} = require("../../utils/sql/users/queries")
+} = require("../../utils/sql/data-users/queries")
 const { Config } = require("../../utils/config")
 const { emoteComposer } = require("../../utils/js/utils")
 

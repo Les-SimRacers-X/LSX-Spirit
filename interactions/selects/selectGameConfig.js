@@ -1,11 +1,11 @@
 const {
   licenceEvolutionComponent,
-} = require("../../components/Licence/licenceEvolution")
+} = require("../../components/module-licence/licenceEvolution")
 const { errorHandler } = require("../../utils/js/errorHandling")
-const { updateUserQuery } = require("../../utils/sql/users/mutations")
+const { updateUserQuery } = require("../../utils/sql/data-users/mutations")
 const {
   fetchUserAccountConfigByIdQuery,
-} = require("../../utils/sql/users/queries")
+} = require("../../utils/sql/data-users/queries")
 
 module.exports = {
   customId: "selectGameConfig",

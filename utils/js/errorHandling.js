@@ -1,5 +1,6 @@
 const { EmbedBuilder } = require("discord.js")
 const { Config } = require("../config")
+const { emoteComposer } = require("./utils")
 
 async function errorHandler(interaction, error) {
   const embedErrorDetectionLog = new EmbedBuilder()
@@ -11,10 +12,9 @@ async function errorHandler(interaction, error) {
   const embedErrorDetected = new EmbedBuilder()
     .setColor(Config.colors.error)
     .setDescription(
-      `${emoteComposer(
-        Config.emotes.error.id,
-        Config.emotes.error.name
-      )} **Une erreur a été détecté lors de votre interaction !**`
+      `### ${emoteComposer(
+        Config.emotes.error
+      )} Une erreur a été détecté lors de votre interaction !`
     )
 
   console.error(error)
@@ -28,4 +28,4 @@ async function errorHandler(interaction, error) {
   })
 }
 
-module.exports = errorHandler
+module.exports = { errorHandler }

@@ -1,19 +1,18 @@
-const Discord = require("discord.js")
-const intents = new Discord.IntentsBitField(3276799)
-const bot = new Discord.Client({ intents })
+const intents = new IntentsBitField(3276799)
+const bot = new Client({ intents })
 const fs = require("fs")
 const loadCommands = require("./loader/loadCommands")
 const loadEvents = require("./loader/loadEvents")
 const { Config } = require("./utils/config")
+const { IntentsBitField, Client, Collection, EmbedBuilder } = require("discord.js")
 require("dotenv").config()
 
-bot.commands = new Discord.Collection()
+bot.commands = new Collection()
 
-// Gestion des logs du bot
 process.on("unhandledRejection", (err, origin) => {
   console.log(err, origin)
 
-  let embedBotLogs = new Discord.EmbedBuilder()
+  let embedBotLogs = new EmbedBuilder()
     .setColor(Config.colors.mainServerColor)
     .setTitle(`📌 Erreur détecté :`)
     .setDescription(`\`\`\`${err}\n\n\n${origin}\`\`\``)
@@ -27,7 +26,7 @@ process.on("unhandledRejection", (err, origin) => {
 process.on("unhandledRejectionMonitor", (err, origin) => {
   console.log(err, origin)
 
-  let embedBotLogs = new Discord.EmbedBuilder()
+  let embedBotLogs = new EmbedBuilder()
     .setColor(Config.mainServerColor)
     .setTitle(`📌 Erreur détecté :`)
     .setDescription(`\`\`\`${err}\n\n\n${origin}\`\`\``)
