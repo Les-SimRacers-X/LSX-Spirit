@@ -3,7 +3,7 @@ const { Config } = require("../../utils/config")
 
 async function platformSelectionComponent(currentStep, userId, gameSelected) {
   const options = Config.platforms.map((platform) => ({
-    emoji: { id: platform.emote.id, name: platform.emote.name },
+    emoji: platform.emote,
     label: platform.name,
     value: platform.value,
   }))

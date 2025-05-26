@@ -8,8 +8,10 @@ const { Config } = require("../../utils/config")
 const { interactionOnProfil } = require("./interactionOnProfil")
 
 async function licenceDisplay(userId) {
-  const userInfos = await fetchUserProfilByIdQuery(userId)
+  const [userInfos] = await fetchUserProfilByIdQuery(userId)
   const discordUser = getDiscordUserInfos(userId)
+
+  const gameConfigObject = JSON.parse(userInfos.gameConfig)
 
   let userHasTeam =
     userInfos.teamId !== "None" || ""
@@ -32,7 +34,7 @@ async function licenceDisplay(userId) {
 
   const options = Config.games
     .filter((game) =>
-      Object.prototype.hasOwnProperty.call(userInfos.gameConfig, game.value)
+      Object.prototype.hasOwnProperty.call(gameConfigObject, game.value)
     )
     .map((game) => {
       const data = userInfos.gameConfig[game.value]

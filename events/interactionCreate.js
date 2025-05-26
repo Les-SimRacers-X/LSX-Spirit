@@ -1,30 +1,20 @@
 const { Events, InteractionType } = require("discord.js")
 const { errorHandler } = require("../utils/js/errorHandling")
+const fs = require("fs")
+const path = require("path")
 
 module.exports = {
   name: Events.InteractionCreate,
-  async execute(interaction) {
+  async execute(bot, interaction) {
     /* === Slash Commands === */
     if (interaction.type === InteractionType.ApplicationCommand) {
       try {
         let command = require(`../commands/${interaction.commandName}`)
         command.run(bot, interaction, interaction.options)
       } catch (err) {
-        errorHandler(interaction, err)
+        await errorHandler(interaction, err)
       }
       return
-    }
-
-    /* === Applications Commands === */
-    if (interaction.type === InteractionType.ApplicationCommand) {
-      const command = bot.commands.get(interaction.commandName)
-      if (!command) return
-
-      try {
-        await command.run(bot, interaction, interaction.options)
-      } catch (error) {
-        errorHandler(interaction, error)
-      }
     }
 
     /* === Buttons, Modals, Selectors === */
@@ -49,7 +39,7 @@ module.exports = {
           try {
             return await handler.execute(interaction)
           } catch (err) {
-            errorHandler(interaction, err)
+            await errorHandler(interaction, err)
           }
         }
       }

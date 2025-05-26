@@ -30,7 +30,7 @@ function calculatePercentage(value, total) {
   return `${percentage}%`
 }
 
-async function emoteComposer(emoteObject) {
+function emoteComposer(emoteObject) {
   return `<:${emoteObject.name}:${emoteObject.id}>`
 }
 

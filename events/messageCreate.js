@@ -13,7 +13,7 @@ require("dotenv").config()
 
 module.exports = {
   name: Events.MessageCreate,
-  async execute(message) {
+  async execute(bot, message) {
     if (message.author.bot) return
 
     if (message.content.toLowerCase() === "!import") {
@@ -91,7 +91,7 @@ module.exports = {
 
     if (message.content.toLowerCase() === "send:embeds") {
       const member = await message.guild.members.fetch(message.author.id)
-      if (!member.roles.cache.has()) {
+      if (!member.roles.cache.has("1349479229234090138")) {
         return
       } else {
         const embedConfiguration = new EmbedBuilder()

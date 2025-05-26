@@ -10,12 +10,13 @@ const { Config } = require("../../utils/config")
 const { emoteComposer } = require("../../utils/js/utils")
 
 async function licenceDisplayComponents(userId) {
-  const users = await fetchUserProfilByIdQuery(userId)
-  const user = getDiscordUserInfos(userId)
-  let intialEmbed
+  const [users] = await fetchUserProfilByIdQuery(userId)
+  const user = await getDiscordUserInfos(userId)
 
-  if (!users.length) {
-    intialEmbed = new EmbedBuilder()
+  // console.log(users?.gameConfig)
+
+  if (!users) {
+    const intialEmbed = new EmbedBuilder()
       .setColor(Config.colors.success)
       .setDescription(
         `### ${emoteComposer(
@@ -25,14 +26,14 @@ async function licenceDisplayComponents(userId) {
 
     const userData = {
       id: user.id,
-      username: user.username,
+      username: user.globalName,
       team_id: "",
       accounts_config: "{}",
       licence_points: 12,
       wins: 0,
       podiums: 0,
       total_races: 0,
-      last_sanction_id: "",
+      sanction_id: "",
     }
 
     await insertUserQuery(userData)

@@ -41,7 +41,7 @@ module.exports = {
         ephemeral: true,
       })
     } catch (error) {
-      errorHandler(interaction, error)
+      await errorHandler(interaction, error)
     }
   },
 }

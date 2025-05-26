@@ -1,6 +1,6 @@
-function getDiscordUserInfos(id) {
+async function getDiscordUserInfos(id) {
   try {
-    const user = bot.users.fetch(id)
+    const user = await bot.users.fetch(id)
 
     if (user) {
       return {

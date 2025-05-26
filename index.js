@@ -1,10 +1,15 @@
+const {
+  IntentsBitField,
+  Client,
+  Collection,
+  EmbedBuilder,
+} = require("discord.js")
 const intents = new IntentsBitField(3276799)
 const bot = new Client({ intents })
 const fs = require("fs")
 const loadCommands = require("./loader/loadCommands")
 const loadEvents = require("./loader/loadEvents")
 const { Config } = require("./utils/config")
-const { IntentsBitField, Client, Collection, EmbedBuilder } = require("discord.js")
 require("dotenv").config()
 
 bot.commands = new Collection()
@@ -42,8 +47,9 @@ fs.watchFile("restart.txt", () => {
   process.exit(1)
 })
 
+global.bot = bot
+
 bot.login(process.env.TOKEN).then(() => {
-  global.bot = bot
+  loadCommands(bot)
+  loadEvents(bot)
 })
-loadCommands(bot)
-loadEvents(bot)
