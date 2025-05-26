@@ -1,4 +1,4 @@
-const Config = {
+module.exports = {
   PNG: "https://i.ibb.co/vZRrf9d/fond-sans-fond.png",
   colors: {
     mainServerColor: "#273e8d",
@@ -47,7 +47,9 @@ const Config = {
     botGestion: "1317894969222103093",
     errorLogs: "1321920324119560435",
   },
-  roles: {},
+  roles: {
+    spectator: "1342837215109054545",
+  },
   platforms: [
     {
       name: "PC",
@@ -220,5 +222,3 @@ const Config = {
     },
   ],
 }
-
-module.exports = { Config }
