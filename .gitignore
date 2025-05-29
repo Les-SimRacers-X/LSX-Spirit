@@ -2,3 +2,6 @@
 node_modules/
 .vscode/
 .env
+
+oldInteraction.js
+oldReady.js

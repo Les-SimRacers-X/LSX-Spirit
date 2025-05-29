@@ -1,5 +1,5 @@
 const { Events, InteractionType } = require("discord.js")
-const { errorHandler } = require("../utils/js/errorHandling")
+const { errorHandler } = require("../context/utils/errorHandling")
 const fs = require("fs")
 const path = require("path")
 
@@ -20,7 +20,7 @@ module.exports = {
     /* === Buttons, Modals, Selectors === */
     const folders = ["buttons", "modals", "selects"]
     for (const folder of folders) {
-      const folderPath = path.join(__dirname, `../interactions/${folder}`)
+      const folderPath = path.join(__dirname, `../components/interactions/${folder}`)
       const files = fs.readdirSync(folderPath)
 
       for (const file of files) {

@@ -1,9 +1,9 @@
 const loadSlashCommand = require("../loader/loadSlashCommand")
 const db = require("../loader/loadDataBase")
-const { Config } = require("../utils/config")
+const { Config } = require("../context/config")
 const ftp = require("basic-ftp")
 const { Writable } = require("stream")
-const { currentTimestamp } = require("../utils/js/utils")
+const { currentTimestamp } = require("../context/utils/utils")
 const { Events, ChannelType, EmbedBuilder } = require("discord.js")
 
 module.exports = {

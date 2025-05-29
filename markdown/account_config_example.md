@@ -8,4 +8,10 @@
     "number": 403
   }
 }
+
+
+[
+  { "id": "123", "category": "tank", "waiting": false },
+  { "id": "456", "category": "heal", "waiting": true },
+]
 ```

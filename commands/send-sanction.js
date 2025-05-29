@@ -1,5 +1,5 @@
 const Discord = require("discord.js")
-const { Config } = require("../utils/config")
+const { Config } = require("../context/config")
 
 module.exports = {
   name: "send-sanction",

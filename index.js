@@ -9,7 +9,7 @@ const bot = new Client({ intents })
 const fs = require("fs")
 const loadCommands = require("./loader/loadCommands")
 const loadEvents = require("./loader/loadEvents")
-const { Config } = require("./utils/config")
+const { Config } = require("./context/config")
 require("dotenv").config()
 
 bot.commands = new Collection()
