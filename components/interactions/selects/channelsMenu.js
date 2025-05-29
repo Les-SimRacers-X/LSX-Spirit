@@ -1,8 +1,10 @@
 const {
   eventCreationTracking,
 } = require("../../modules/module-events/eventCreationTracking")
-const { errorHandler } = require("../../context/utils/errorHandling")
-const { updateEventQuery } = require("../../context/data/data-events/mutations")
+const { errorHandler } = require("../../../context/utils/errorHandling")
+const {
+  updateEventQuery,
+} = require("../../../context/data/data-events/mutations")
 
 module.exports = {
   customId: "channelsMenu",

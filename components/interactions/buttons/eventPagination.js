@@ -1,7 +1,7 @@
 const {
   eventGestionDisplay,
 } = require("../../modules/module-events/eventGestionDisplay")
-const { errorHandler } = require("../../context/utils/errorHandling")
+const { errorHandler } = require("../../../context/utils/errorHandling")
 
 module.exports = {
   customId: ["previousEvent", "nextEvent"],

@@ -7,9 +7,9 @@ const {
 } = require("discord.js")
 const {
   getAllEventsQueryQuery,
-} = require("../../context/data/data-events/queries")
-const { Config } = require("../../context/config")
-const { emoteComposer } = require("../../context/utils/utils")
+} = require("../../../context/data/data-events/queries")
+const { Config } = require("../../../context/config")
+const { emoteComposer } = require("../../../context/utils/utils")
 
 async function eventGestionDisplay(currentIndex) {
   const event = await getAllEventsQueryQuery()

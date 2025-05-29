@@ -1,5 +1,5 @@
 const { ActionRowBuilder, StringSelectMenuBuilder } = require("discord.js")
-const { Config } = require("../../context/config")
+const { Config } = require("../../../context/config")
 
 async function platformSelectionComponent(currentStep, userId, gameSelected) {
   const options = Config.platforms.map((platform) => ({

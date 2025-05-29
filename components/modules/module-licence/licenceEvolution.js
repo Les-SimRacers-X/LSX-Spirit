@@ -5,8 +5,8 @@ const {
 } = require("discord.js")
 const {
   fetchUserProfilByIdQuery,
-} = require("../../context/data/data-users/queries")
-const { Config } = require("../../context/config")
+} = require("../../../context/data/data-users/queries")
+const { Config } = require("../../../context/config")
 
 async function licenceEvolutionComponent(currentStep, userId, gameSelected) {
   const [users] = await fetchUserProfilByIdQuery(userId)

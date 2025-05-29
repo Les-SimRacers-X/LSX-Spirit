@@ -1,11 +1,13 @@
 const {
   licenceEvolutionComponent,
 } = require("../../modules/module-licence/licenceEvolution")
-const { errorHandler } = require("../../context/utils/errorHandling")
-const { updateUserQuery } = require("../../context/data/data-users/mutations")
+const { errorHandler } = require("../../../context/utils/errorHandling")
+const {
+  updateUserQuery,
+} = require("../../../context/data/data-users/mutations")
 const {
   fetchUserProfilByIdQuery,
-} = require("../../context/data/data-users/queries")
+} = require("../../../context/data/data-users/queries")
 
 module.exports = {
   customId: "selectPlatformConfig",

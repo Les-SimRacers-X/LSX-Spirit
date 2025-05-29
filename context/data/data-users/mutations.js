@@ -1,4 +1,4 @@
-const db = require("../../../loader/loadDataBase")
+const db = require("../../../handlers/loadDataBase")
 
 async function insertUserQuery(userData) {
   try {

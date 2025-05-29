@@ -6,11 +6,15 @@ const {
   StringSelectMenuBuilder,
   ChannelType,
 } = require("discord.js")
-const { fetchTracksQuery } = require("../../context/data/data-tracks/queries")
-const { fetchPresetsQuery } = require("../../context/data/data-presets/queries")
-const { chunkOptions } = require("../../context/utils/chunkedSelector")
-const { errorHandler } = require("../../context/utils/errorHandling")
-const { Config } = require("../../context/config")
+const {
+  fetchTracksQuery,
+} = require("../../../context/data/data-tracks/queries")
+const {
+  fetchPresetsQuery,
+} = require("../../../context/data/data-presets/queries")
+const { chunkOptions } = require("../../../context/utils/chunkedSelector")
+const { errorHandler } = require("../../../context/utils/errorHandling")
+const { Config } = require("../../../context/config")
 
 module.exports = {
   customId: "eventCreationSteps",

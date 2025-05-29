@@ -1,13 +1,15 @@
 const { EmbedBuilder } = require("discord.js")
 const {
   fetchUserProfilByIdQuery,
-} = require("../../context/data/data-users/queries")
-const { getDiscordUserInfos } = require("../../context/utils/discordUtils")
-const { insertUserQuery } = require("../../context/data/data-users/mutations")
+} = require("../../../context/data/data-users/queries")
+const { getDiscordUserInfos } = require("../../../context/utils/discordUtils")
+const {
+  insertUserQuery,
+} = require("../../../context/data/data-users/mutations")
 const { licenceEvolutionComponent } = require("./licenceEvolution")
 const { licenceDisplay } = require("./licenceDisplay")
-const { Config } = require("../../context/config")
-const { emoteComposer } = require("../../context/utils/utils")
+const { Config } = require("../../../context/config")
+const { emoteComposer } = require("../../../context/utils/utils")
 
 async function licenceDisplayComponents(userId) {
   const [users] = await fetchUserProfilByIdQuery(userId)

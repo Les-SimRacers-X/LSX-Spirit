@@ -1,10 +1,10 @@
 const { EmbedBuilder } = require("discord.js")
-const { getDiscordUserInfos } = require("../../context/utils/discordUtils")
-const { calculatePercentage } = require("../../context/utils/utils")
+const { getDiscordUserInfos } = require("../../../context/utils/discordUtils")
+const { calculatePercentage } = require("../../../context/utils/utils")
 const {
   fetchUserProfilByIdQuery,
-} = require("../../context/data/data-users/queries")
-const { Config } = require("../../context/config")
+} = require("../../../context/data/data-users/queries")
+const { Config } = require("../../../context/config")
 const { interactionOnProfil } = require("./interactionOnProfil")
 
 async function licenceDisplay(userId) {

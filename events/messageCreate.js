@@ -5,10 +5,10 @@ const { Config } = require("../context/config")
 const db = require("../handlers/loadDataBase")
 const {
   interactionGlobalBotGestion,
-} = require("../modules/module-events/interactionGlobalGestion")
+} = require("../components/modules/module-events/interactionGlobalGestion")
 const {
   licenceAndTeamActionsComponent,
-} = require("../modules/module-licence/licenceAndTeamActions")
+} = require("../components/modules/module-licence/licenceAndTeamActions")
 require("dotenv").config()
 
 module.exports = {

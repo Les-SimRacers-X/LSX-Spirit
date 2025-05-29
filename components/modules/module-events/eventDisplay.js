@@ -4,18 +4,20 @@ const {
   ButtonBuilder,
   ActionRowBuilder,
 } = require("discord.js")
-const { Config } = require("../../context/config")
+const { Config } = require("../../../context/config")
 const {
   getEventByIdQuery,
   getEventByMessageIdQuery,
-} = require("../../context/data/data-events/queries")
-const { updateEventQuery } = require("../../context/data/data-events/mutations")
-const { emoteComposer } = require("../../context/utils/utils")
-const { errorHandler } = require("../../context/utils/errorHandling")
+} = require("../../../context/data/data-events/queries")
+const {
+  updateEventQuery,
+} = require("../../../context/data/data-events/mutations")
+const { emoteComposer } = require("../../../context/utils/utils")
+const { errorHandler } = require("../../../context/utils/errorHandling")
 const {
   fetchUserProfilByIdQuery,
-} = require("../../context/data/data-users/queries")
-const { getDiscordUserInfos } = require("../../context/utils/discordUtils")
+} = require("../../../context/data/data-users/queries")
+const { getDiscordUserInfos } = require("../../../context/utils/discordUtils")
 
 async function createEventEmbed(event, categories, registrations) {
   const [flag, country] = event?.trackNationality.split("-")

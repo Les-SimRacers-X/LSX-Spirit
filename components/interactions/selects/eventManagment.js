@@ -1,16 +1,18 @@
-const { generateID, emoteComposer } = require("../../context/utils/utils")
-const { errorHandler } = require("../../context/utils/errorHandling")
+const { generateID, emoteComposer } = require("../../../context/utils/utils")
+const { errorHandler } = require("../../../context/utils/errorHandling")
 const {
   insertEventQuery,
   updateEventQuery,
   deleteEventByIdQuery,
-} = require("../../context/data/data-events/mutations")
-const { getEventByIdQuery } = require("../../context/data/data-events/queries")
+} = require("../../../context/data/data-events/mutations")
+const {
+  getEventByIdQuery,
+} = require("../../../context/data/data-events/queries")
 const {
   eventCreationTracking,
 } = require("../../modules/module-events/eventCreationTracking")
 const { EmbedBuilder } = require("discord.js")
-const { Config } = require("../../context/config")
+const { Config } = require("../../../context/config")
 
 module.exports = {
   customId: "eventManagment",

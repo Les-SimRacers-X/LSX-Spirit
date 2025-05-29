@@ -1,5 +1,5 @@
-const loadSlashCommand = require("../loader/loadSlashCommand")
-const db = require("../loader/loadDataBase")
+const loadSlashCommand = require("../handlers/loadSlashCommand")
+const db = require("../handlers/loadDataBase")
 const { Config } = require("../context/config")
 const ftp = require("basic-ftp")
 const { Writable } = require("stream")

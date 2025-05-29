@@ -8,8 +8,8 @@ const {
 const {
   usernameAndNumberComponent,
 } = require("../../modules/module-licence/usernameAndNumberComponent")
-const { Config } = require("../../context/config")
-const { emoteComposer } = require("../../context/utils/utils")
+const { Config } = require("../../../context/config")
+const { emoteComposer } = require("../../../context/utils/utils")
 
 module.exports = {
   customId: "menuLicenceSteps",

@@ -1,6 +1,8 @@
-const { Config } = require("../../context/config")
-const { emoteComposer } = require("../../context/utils/utils")
-const { getEventByIdQuery } = require("../../context/data/data-events/queries")
+const { Config } = require("../../../context/config")
+const { emoteComposer } = require("../../../context/utils/utils")
+const {
+  getEventByIdQuery,
+} = require("../../../context/data/data-events/queries")
 const {
   ActionRowBuilder,
   StringSelectMenuBuilder,

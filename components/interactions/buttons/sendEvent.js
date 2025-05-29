@@ -1,5 +1,5 @@
 const { generateEvent } = require("../../modules/module-events/eventDisplay")
-const { errorHandler } = require("../../context/utils/errorHandling")
+const { errorHandler } = require("../../../context/utils/errorHandling")
 
 module.exports = {
   customId: "sendEvent",

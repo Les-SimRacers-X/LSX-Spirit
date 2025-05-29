@@ -7,8 +7,8 @@ const {
 const intents = new IntentsBitField(3276799)
 const bot = new Client({ intents })
 const fs = require("fs")
-const loadCommands = require("./loader/loadCommands")
-const loadEvents = require("./loader/loadEvents")
+const loadCommands = require("./handlers/loadCommands")
+const loadEvents = require("./handlers/loadEvents")
 const { Config } = require("./context/config")
 require("dotenv").config()
 

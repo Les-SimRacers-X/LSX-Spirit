@@ -1,13 +1,13 @@
 const { EmbedBuilder } = require("discord.js")
-const { Config } = require("../../context/config")
+const { Config } = require("../../../context/config")
 const {
   fetchUserProfilByIdQuery,
-} = require("../../context/data/data-users/queries")
-const { emoteComposer } = require("../../context/utils/utils")
+} = require("../../../context/data/data-users/queries")
+const { emoteComposer } = require("../../../context/utils/utils")
 const {
   interactionOnProfil,
 } = require("../../modules/module-licence/interactionOnProfil")
-const { errorHandler } = require("../../context/utils/errorHandling")
+const { errorHandler } = require("../../../context/utils/errorHandling")
 const {
   licenceDisplay,
 } = require("../../modules/module-licence/licenceDisplay")

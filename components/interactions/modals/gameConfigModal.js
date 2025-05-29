@@ -2,15 +2,17 @@ const { EmbedBuilder } = require("discord.js")
 const {
   usernameAndNumberComponent,
 } = require("../../modules/module-licence/usernameAndNumberComponent")
-const { errorHandler } = require("../../context/utils/errorHandling")
-const { getConsoleUXID } = require("../../context/utils/userGameUXID")
-const { updateUserQuery } = require("../../context/data/data-users/mutations")
+const { errorHandler } = require("../../../context/utils/errorHandling")
+const { getConsoleUXID } = require("../../../context/utils/userGameUXID")
+const {
+  updateUserQuery,
+} = require("../../../context/data/data-users/mutations")
 const {
   fetchNumberInAccountConfig,
   fetchUserAccountConfigByIdQuery,
-} = require("../../context/data/data-users/queries")
-const { Config } = require("../../context/config")
-const { emoteComposer } = require("../../context/utils/utils")
+} = require("../../../context/data/data-users/queries")
+const { Config } = require("../../../context/config")
+const { emoteComposer } = require("../../../context/utils/utils")
 
 module.exports = {
   customId: "gameConfigModal",
