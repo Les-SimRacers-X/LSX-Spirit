@@ -25,6 +25,16 @@ async function fetchPresetsQuery() {
   }
 }
 
+async function fetchPresetByIdQuery(id) {
+  try {
+    return await fetchPresets("WHERE presets.id = ?", [id])
+  } catch (error) {
+    console.error("Erreur lors de la requête 'fetchPresetByIdQuery' : ", error)
+    throw error
+  }
+}
+
 module.exports = {
   fetchPresetsQuery,
+  fetchPresetByIdQuery,
 }

@@ -26,6 +26,16 @@ async function fetchTracksQuery() {
   }
 }
 
+async function fetchTrackByIdQuery(id) {
+  try {
+    return await fetchTracks("WHERE tracks.id = ?", [id])
+  } catch (error) {
+    console.error("Erreur lors de la requête 'fetchTrackByIdQuery' : ", error)
+    throw error
+  }
+}
+
 module.exports = {
   fetchTracksQuery,
+  fetchTrackByIdQuery,
 }
