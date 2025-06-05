@@ -5,7 +5,6 @@ const {
   ActionRowBuilder,
   EmbedBuilder,
 } = require("discord.js")
-const { errorHandler } = require("../../../context/utils/errorHandling")
 const {
   deletePresetByIdQuery,
 } = require("../../../context/data/data-presets/mutations")
@@ -18,75 +17,72 @@ module.exports = {
     const [action, presetId] = interaction.customId.split("_")
     const selectedValue = interaction.value[0]
 
-    try {
-      switch (selectedValue) {
-        case "addPreset": {
-          const modalPresetCreation = new ModalBuilder()
-            .setCustomId(`modalPresetCreation`)
-            .setTitle("Ajouter un nouveau preset")
+    switch (selectedValue) {
+      case "addPreset": {
+        const modalPresetCreation = new ModalBuilder()
+          .setCustomId(`modalPresetCreation`)
+          .setTitle("Ajouter un nouveau preset")
 
-          const modalPresetName = new TextInputBuilder()
-            .setCustomId("modalPresetNameInput")
-            .setLabel("Entrez le nom du preset :")
-            .setPlaceholder("Exemple : GT3")
-            .setRequired(true)
-            .setStyle(TextInputStyle.Short)
+        const modalPresetName = new TextInputBuilder()
+          .setCustomId("modalPresetNameInput")
+          .setLabel("Entrez le nom du preset :")
+          .setPlaceholder("Exemple : GT3")
+          .setRequired(true)
+          .setStyle(TextInputStyle.Short)
 
-          const modalPresetCategory = new TextInputBuilder()
-            .setCustomId(`modalPresetCategoryInput`)
-            .setLabel("Entrez les catégories du preset :")
-            .setPlaceholder("Exemple : GT3-20;GT4-20")
-            .setRequired(true)
-            .setStyle(TextInputStyle.Short)
+        const modalPresetCategory = new TextInputBuilder()
+          .setCustomId(`modalPresetCategoryInput`)
+          .setLabel("Entrez les catégories du preset :")
+          .setPlaceholder("Exemple : GT3-20;GT4-20")
+          .setRequired(true)
+          .setStyle(TextInputStyle.Short)
 
-          const modalPresetLicence = new TextInputBuilder()
-            .setCustomId(`modalPresetLicenceInput`)
-            .setLabel("Obliger une licence ?")
-            .setPlaceholder("Exemple : Oui ou Non")
-            .setMinLength(3)
-            .setMaxLength(3)
-            .setRequired(true)
-            .setStyle(TextInputStyle.Short)
+        const modalPresetLicence = new TextInputBuilder()
+          .setCustomId(`modalPresetLicenceInput`)
+          .setLabel("Obliger une licence ?")
+          .setPlaceholder("Exemple : Oui ou Non")
+          .setMinLength(3)
+          .setMaxLength(3)
+          .setRequired(true)
+          .setStyle(TextInputStyle.Short)
 
-          const reqModalPresetNameInput = new ActionRowBuilder().addComponents(
-            modalPresetName
-          )
-          const reqModalPresetCategoryInput =
-            new ActionRowBuilder().addComponents(modalPresetCategory)
-          const reqModalPresetLicenceInput =
-            new ActionRowBuilder().addComponents(modalPresetLicence)
+        const reqModalPresetNameInput = new ActionRowBuilder().addComponents(
+          modalPresetName
+        )
+        const reqModalPresetCategoryInput =
+          new ActionRowBuilder().addComponents(modalPresetCategory)
+        const reqModalPresetLicenceInput = new ActionRowBuilder().addComponents(
+          modalPresetLicence
+        )
 
-          modalPresetCreation.addComponents(
-            reqModalPresetNameInput,
-            reqModalPresetCategoryInput,
-            reqModalPresetLicenceInput
-          )
+        modalPresetCreation.addComponents(
+          reqModalPresetNameInput,
+          reqModalPresetCategoryInput,
+          reqModalPresetLicenceInput
+        )
 
-          await interaction.showModal(modalPresetCreation)
-        }
-
-        case "deletePreset": {
-          await deletePresetByIdQuery(presetId)
-
-          const presetSuppressed = new EmbedBuilder()
-            .setColor(Config.colors.success)
-            .setDescription(
-              `### ${emoteComposer(
-                Config.emotes.success
-              )} Le preset a était supprimé avec succès !`
-            )
-
-          return interaction.reply({
-            embeds: [presetSuppressed],
-            ephemeral: true,
-          })
-        }
-
-        default:
-          return
+        await interaction.showModal(modalPresetCreation)
       }
-    } catch (error) {
-      await errorHandler(interaction, error)
+
+      case "deletePreset": {
+        await deletePresetByIdQuery(presetId)
+
+        const presetSuppressed = new EmbedBuilder()
+          .setColor(Config.colors.success)
+          .setDescription(
+            `### ${emoteComposer(
+              Config.emotes.success
+            )} Le preset a était supprimé avec succès !`
+          )
+
+        return interaction.reply({
+          embeds: [presetSuppressed],
+          ephemeral: true,
+        })
+      }
+
+      default:
+        return
     }
   },
 }

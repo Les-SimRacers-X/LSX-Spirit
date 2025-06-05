@@ -4,7 +4,6 @@ const {
   insertTrackQuery,
 } = require("../../../context/data/data-tracks/mutations")
 const { generateID, emoteComposer } = require("../../../context/utils/utils")
-const { errorHandler } = require("../../../context/utils/errorHandling")
 
 module.exports = {
   customId: "modalTrackCreation",
@@ -26,34 +25,30 @@ module.exports = {
       "modalTrackImageInput"
     )
 
-    try {
-      const trackID = generateID()
+    const trackID = generateID()
 
-      const data = {
-        id: trackID,
-        flag: reqTrackFlagContent,
-        country: reqTrackCountryContent,
-        name: reqTrackNameContent,
-        duration: reqTrackLengthContent,
-        image: reqTrackImageContent,
-      }
-
-      await insertTrackQuery(data)
-
-      const embedAddedNewRaceTrackSuccessfully = new EmbedBuilder()
-        .setColor(Config.colors.success)
-        .setDescription(
-          `### ${emoteComposer(
-            Config.emotes.success
-          )} Ajout du circuit avec succès !**`
-        )
-
-      await interaction.reply({
-        embeds: [embedAddedNewRaceTrackSuccessfully],
-        ephemeral: true,
-      })
-    } catch (error) {
-      await errorHandler(interaction, error)
+    const data = {
+      id: trackID,
+      flag: reqTrackFlagContent,
+      country: reqTrackCountryContent,
+      name: reqTrackNameContent,
+      duration: reqTrackLengthContent,
+      image: reqTrackImageContent,
     }
+
+    await insertTrackQuery(data)
+
+    const embedAddedNewRaceTrackSuccessfully = new EmbedBuilder()
+      .setColor(Config.colors.success)
+      .setDescription(
+        `### ${emoteComposer(
+          Config.emotes.success
+        )} Ajout du circuit avec succès !**`
+      )
+
+    await interaction.reply({
+      embeds: [embedAddedNewRaceTrackSuccessfully],
+      ephemeral: true,
+    })
   },
 }

@@ -1,4 +1,3 @@
-const { errorHandler } = require("../../../context/utils/errorHandling")
 const {
   presetGestionDisplay,
 } = require("../../modules/module-presets/presetGestionDisplay")
@@ -12,16 +11,12 @@ module.exports = {
     if (type === "previousPreset") currentIndex -= 1
     else if (type === "nextPreset") currentIndex += 1
 
-    try {
-      const { embeds, components } = await presetGestionDisplay(currentIndex)
+    const { embeds, components } = await presetGestionDisplay(currentIndex)
 
-      return interaction.update({
-        embeds,
-        components,
-        ephemeral: true,
-      })
-    } catch (error) {
-      await errorHandler(interaction, error)
-    }
+    return interaction.update({
+      embeds,
+      components,
+      ephemeral: true,
+    })
   },
 }

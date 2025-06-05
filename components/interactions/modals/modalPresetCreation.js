@@ -3,7 +3,6 @@ const { Config } = require("../../../context/config")
 const {
   insertPresetQuery,
 } = require("../../../context/data/data-presets/mutations")
-const { errorHandler } = require("../../../context/utils/errorHandling")
 const { generateID, emoteComposer } = require("../../../context/utils/utils")
 
 module.exports = {
@@ -20,37 +19,33 @@ module.exports = {
       "modalPresetLicenceInput"
     )
 
-    try {
-      const presetID = generateID()
+    const presetID = generateID()
 
-      const checkLicenceObligation =
-        reqPresetLicenceContent === "Oui"
-          ? "true"
-          : reqPresetCategoryContent === "Non"
-          ? "false"
-          : null
+    const checkLicenceObligation =
+      reqPresetLicenceContent === "Oui"
+        ? "true"
+        : reqPresetCategoryContent === "Non"
+        ? "false"
+        : null
 
-      const data = {
-        id: presetID,
-        name: reqPresetNameContent,
-        categories: reqPresetCategoryContent,
-        licence: checkLicenceObligation,
-      }
-
-      await insertPresetQuery(data)
-
-      const embedAddedNewPresetSuccessfully = new EmbedBuilder()
-        .setColor(Config.colors.checkColor)
-        .setDescription(
-          `### ${emoteComposer(Config.emotes.success)} Ajout du preset réussi !`
-        )
-
-      await interaction.reply({
-        embeds: [embedAddedNewPresetSuccessfully],
-        ephemeral: true,
-      })
-    } catch (error) {
-      await errorHandler(interaction, error)
+    const data = {
+      id: presetID,
+      name: reqPresetNameContent,
+      categories: reqPresetCategoryContent,
+      licence: checkLicenceObligation,
     }
+
+    await insertPresetQuery(data)
+
+    const embedAddedNewPresetSuccessfully = new EmbedBuilder()
+      .setColor(Config.colors.checkColor)
+      .setDescription(
+        `### ${emoteComposer(Config.emotes.success)} Ajout du preset réussi !`
+      )
+
+    await interaction.reply({
+      embeds: [embedAddedNewPresetSuccessfully],
+      ephemeral: true,
+    })
   },
 }

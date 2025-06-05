@@ -17,13 +17,10 @@ module.exports = {
         )
 
         return interaction.reply({
-          embeds: embeds,
-          components: components,
+          embeds,
+          components,
           ephemeral: true,
         })
-      }
-
-      case "teams": {
       }
 
       default:

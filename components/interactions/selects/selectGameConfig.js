@@ -1,7 +1,6 @@
 const {
   licenceEvolutionComponent,
 } = require("../../modules/module-licence/licenceEvolution")
-const { errorHandler } = require("../../../context/utils/errorHandling")
 const {
   updateUserQuery,
 } = require("../../../context/data/data-users/mutations")
@@ -17,52 +16,48 @@ module.exports = {
     const currentStep = parseInt(step) + 1
     let accountConfig = {}
 
-    try {
-      const [userConfig] = await fetchUserAccountConfigByIdQuery(userId)
+    const [userConfig] = await fetchUserAccountConfigByIdQuery(userId)
 
-      if (userConfig.gameConfig) {
-        accountConfig = JSON.parse(userConfig.gameConfig)
+    if (userConfig.gameConfig) {
+      accountConfig = JSON.parse(userConfig.gameConfig)
 
-        if (!accountConfig[selectedAction]) {
-          accountConfig[selectedAction] = {
-            id: "",
-            name: "",
-            trigram: "",
-            platform: "",
-            number: null,
-          }
-        }
-      } else {
-        accountConfig = {
-          [selectedAction]: {
-            id: "",
-            name: "",
-            trigram: "",
-            platform: "",
-            number: null,
-          },
+      if (!accountConfig[selectedAction]) {
+        accountConfig[selectedAction] = {
+          id: "",
+          name: "",
+          trigram: "",
+          platform: "",
+          number: null,
         }
       }
-
-      const userData = {
-        accounts_config: JSON.stringify(accountConfig),
+    } else {
+      accountConfig = {
+        [selectedAction]: {
+          id: "",
+          name: "",
+          trigram: "",
+          platform: "",
+          number: null,
+        },
       }
-
-      await updateUserQuery(userId, userData)
-
-      const { embeds, components } = await licenceEvolutionComponent(
-        currentStep,
-        userId,
-        selectedAction
-      )
-
-      return interaction.update({
-        embeds,
-        components,
-        ephemeral: true,
-      })
-    } catch (error) {
-      await errorHandler(interaction, error)
     }
+
+    const userData = {
+      accounts_config: JSON.stringify(accountConfig),
+    }
+
+    await updateUserQuery(userId, userData)
+
+    const { embeds, components } = await licenceEvolutionComponent(
+      currentStep,
+      userId,
+      selectedAction
+    )
+
+    return interaction.update({
+      embeds,
+      components,
+      ephemeral: true,
+    })
   },
 }

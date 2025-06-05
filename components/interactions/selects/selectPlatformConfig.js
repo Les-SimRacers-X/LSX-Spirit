@@ -16,34 +16,30 @@ module.exports = {
     const selectedAction = interaction.values[0]
     const currentStep = parseInt(step) + 1
 
-    try {
-      const [userConfig] = await fetchUserProfilByIdQuery(userId)
+    const [userConfig] = await fetchUserProfilByIdQuery(userId)
 
-      const accountConfig = JSON.parse(userConfig.gameConfig)
+    const accountConfig = JSON.parse(userConfig.gameConfig)
 
-      if (accountConfig[gameSelected]) {
-        accountConfig[gameSelected].platform = selectedAction
-      }
-
-      const userData = {
-        accounts_config: JSON.stringify(accountConfig),
-      }
-
-      await updateUserQuery(userId, userData)
-
-      const { embeds, components } = await licenceEvolutionComponent(
-        currentStep,
-        userId,
-        gameSelected
-      )
-
-      return interaction.update({
-        embeds,
-        components,
-        ephemeral: true,
-      })
-    } catch (error) {
-      await errorHandler(interaction, error)
+    if (accountConfig[gameSelected]) {
+      accountConfig[gameSelected].platform = selectedAction
     }
+
+    const userData = {
+      accounts_config: JSON.stringify(accountConfig),
+    }
+
+    await updateUserQuery(userId, userData)
+
+    const { embeds, components } = await licenceEvolutionComponent(
+      currentStep,
+      userId,
+      gameSelected
+    )
+
+    return interaction.update({
+      embeds,
+      components,
+      ephemeral: true,
+    })
   },
 }
