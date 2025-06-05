@@ -11,22 +11,22 @@ async function databaseMigration() {
 
     // --- Étape 2 : Migrer les données vers accounts_config
     const [rows] = await db.query(
-      `SELECT id, inGameUsername, trigramme, inGameNumber, platformID, platformConsole FROM users`
+      `SELECT userID, inGameUsername, trigramme, inGameNumber, platformID, platformConsole FROM users`
     )
     for (const row of rows) {
       const accountConfig = {
         acc: {
           id: row.platformID,
           name: row.inGameUsername,
-          trigram: row.trigram,
+          trigram: row.trigramme,
           platform: row.platformConsole,
           number: Number(row.inGameNumber),
         },
       }
 
-      await db.query(`UPDATE users SET accounts_config = ? WHERE id = ?`, [
+      await db.query(`UPDATE users SET accounts_config = ? WHERE userID = ?`, [
         JSON.stringify(accountConfig),
-        row.id,
+        row.userID,
       ])
     }
     console.log("Migration des données vers 'accounts_config' terminée.")
@@ -38,6 +38,7 @@ async function databaseMigration() {
           DROP COLUMN trigramme,
           DROP COLUMN inGameNumber,
           DROP COLUMN platformID,
+          DROP COLUMN embedColor,
           DROP COLUMN platformConsole;
           `)
     console.log("Anciennes colonnes supprimées.")
@@ -70,12 +71,17 @@ async function databaseMigration() {
     console.log("Structure de la table 'events' mise à jour.")
 
     // --- Étape 6 : Migrer et transformer les données de eventParticipation
-    const [eventRows] = await db.query(`SELECT id, users FROM events`)
+    const [eventRows] = await db.query(`SELECT id, users, status FROM events`)
 
     for (const row of eventRows) {
       const eventParticipationString = row.users
+      const eventStatus = row.status
 
       let usersArray = []
+      let newstatus
+
+      if (eventStatus === "Ouvert") newstatus = "true"
+      else if (eventStatus === "Fermer") newstatus = "false"
 
       if (eventParticipationString && eventParticipationString.length > 0) {
         const userCategoryPairs = eventParticipationString.split(";")
@@ -84,19 +90,16 @@ async function databaseMigration() {
             let userId = ""
             let category = ""
             let waiting = false
+            let effectivePair = pair
 
             if (pair.startsWith("W_")) {
               waiting = true
-
-              const cleanPair = pair.substring(2)
-              const parts = cleanPair.split("-")
-              userId = parts[0] || ""
-              category = parts[1] || ""
-            } else {
-              const parts = cleanPair.split("-")
-              userId = parts[0] || ""
-              category = parts[1] || ""
+              effectivePair = pair.substring(2)
             }
+
+            const [cat, id] = effectivePair.split("-")
+            userId = id
+            category = cat
 
             if (userId) {
               usersArray.push({
@@ -109,8 +112,9 @@ async function databaseMigration() {
         }
       }
 
-      await db.query(`UPDATE events SET users = ? WHERE id = ?`, [
+      await db.query(`UPDATE events SET users = ?, status = ? WHERE id = ?`, [
         JSON.stringify(usersArray),
+        newstatus,
         row.id,
       ])
     }
@@ -221,6 +225,16 @@ async function databaseMigration() {
         FROM
             users u;
     `)
+
+    // --- Étape 13 : Changement de nom de table
+    await db.query(`ALTER TABLE teamsprofil RENAME TO teams;`)
+    console.log("Renommination de la table 'teamsprofil' terminée.")
+
+    // --- Étape 14 : Suppression des anciennes tables
+    await db.query(`
+      DROP TABLE IF EXISTS channels, requests, servers, settings;
+    `)
+    console.log("Suppression des anciennces tables terminée.")
   } catch (error) {
     console.error(error)
   }
