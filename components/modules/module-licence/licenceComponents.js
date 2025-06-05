@@ -19,7 +19,7 @@ async function licenceDisplayComponents(userId) {
     const userData = {
       id: user.id,
       username: user.globalName,
-      team_id: "",
+      team_id: "None",
       accounts_config: "{}",
       licence_points: 12,
       wins: 0,

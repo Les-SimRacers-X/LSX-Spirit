@@ -14,7 +14,7 @@ async function licenceDisplay(userId) {
   const gameConfigObject = JSON.parse(userInfos.gameConfig)
 
   let userHasTeam =
-    userInfos.teamId === "None" || "" || null
+    userInfos.teamId !== "None" || null
       ? `👥 **Équipe :** <@&${userInfos.teamRoleId}>`
       : `👥 **Équipe :** Aucune équipe associée`
 
@@ -65,9 +65,9 @@ async function licenceDisplay(userId) {
         userInfos.nbWins
       }\` (${percentageWins})\n- **🏅 Podiums :** \`${
         userInfos.nbPodiums
-      }\` (${percentagePodiums})\n- **🚦 Total de courses :** ${
+      }\` (${percentagePodiums})\n- **🚦 Total de courses :** \`${
         userInfos.nbRaces
-      }`
+      }\``
     )
     .setImage(Config.PNG)
 

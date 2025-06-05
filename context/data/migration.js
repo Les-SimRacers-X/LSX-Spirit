@@ -230,7 +230,22 @@ async function databaseMigration() {
     await db.query(`ALTER TABLE teamsprofil RENAME TO teams;`)
     console.log("Renommination de la table 'teamsprofil' terminée.")
 
-    // --- Étape 14 : Suppression des anciennes tables
+    // --- Étape 14 : Transformation de la table 'teams'
+    await db.query(`
+      ALTER TABLE teams
+        CHANGE COLUMN teamID id VARCHAR(20),
+        CHANGE COLUMN teamName name TEXT,
+        CHANGE COLUMN teamAbreviation abrev TEXT,
+        CHANGE COLUMN teamColor color TEXT,
+        CHANGE COLUMN teamRole role TEXT,
+        CHANGE COLUMN teamDrivers drivers LONGTEXT,
+        CHANGE COLUMN teamLogo logo TEXT,
+        CHANGE COLUMN teamNationality nationality TEXT,
+        CHANGE COLUMN creationTimestamp creation_timestamp TEXT,
+        CHANGE COLUMN teamStatus status TEXT;
+    `)
+
+    // --- Étape 15 : Suppression des anciennes tables
     await db.query(`
       DROP TABLE IF EXISTS channels, requests, servers, settings;
     `)
