@@ -129,7 +129,6 @@ async function generateEvent(eventId) {
     embeds,
     components: actionRows,
   })
-  console.log({ sendMessageEvent })
 
   const data = {
     message_id: sendMessageEvent.id,
@@ -160,32 +159,28 @@ async function updateEventMessage(interaction, category) {
     const registrationRules = [
       {
         condition: eventBeforeUpdate.status === "false",
-        message: `### ${emoteComposer(
-          Config.emotes.failure
-        )} Les inscriptions et modifications à l'événement sont actuellement fermé !`,
+        message: `Les inscriptions et modifications à l'événement sont actuellement fermé !`,
       },
       {
         condition:
           eventBeforeUpdate.presetLicence === "true" && userProfil.length === 0,
-        message: `### ${emoteComposer(
-          Config.emotes.failure
-        )} Vous ne possédez pas de super-licence ! Pour vous inscrire ${emoteComposer(
+        message: `Vous ne possédez pas de super-licence ! Pour vous inscrire ${emoteComposer(
           Config.emotes.nextArrow
         )} <#${Config.channels.licence}>`,
+      },
+      {
+        condition: userProfil?.licencePoints === 0,
+        message: `Vous n'avez plus de point sur votre licence, l'accès aux événements est indisponible !`,
+      },
+      {
+        condition: userProfil?.gameConfig === "{}",
+        message: `Vous n'avez pas configurer votre licence !`,
       },
       {
         condition:
           category === "Spectateur" &&
           !interaction.member.roles.cache.has(Config.roles.spectator),
-        message: `### ${emoteComposer(
-          Config.emotes.failure
-        )} Vous n'avez pas les permissions pour être spéctateur !`,
-      },
-      {
-        condition: userProfil[0]?.licencePoints === 0,
-        message: `### ${emoteComposer(
-          Config.emotes.failure
-        )} Vous n'avez plus de point sur votre licence, l'accès aux événements est indisponible !`,
+        message: `Vous n'avez pas les permissions pour être spéctateur !`,
       },
     ]
 
@@ -198,7 +193,11 @@ async function updateEventMessage(interaction, category) {
         embeds: [
           new EmbedBuilder()
             .setColor(Config.colors.error)
-            .setDescription(failedMessage.join("\n\n")),
+            .setDescription(
+              `### ${emoteComposer(Config.emotes.failure)} ${failedMessage.join(
+                "\n\n"
+              )}`
+            ),
         ],
         ephemeral: true,
       })

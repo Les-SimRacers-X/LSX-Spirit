@@ -14,7 +14,7 @@ async function licenceDisplay(userId) {
   const gameConfigObject = JSON.parse(userInfos.gameConfig)
 
   let userHasTeam =
-    userInfos.teamId !== "None" || ""
+    userInfos.teamId === "None" || "" || null
       ? `👥 **Équipe :** <@&${userInfos.teamRoleId}>`
       : `👥 **Équipe :** Aucune équipe associée`
 

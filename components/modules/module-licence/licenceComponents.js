@@ -16,14 +16,6 @@ async function licenceDisplayComponents(userId) {
   const user = await getDiscordUserInfos(userId)
 
   if (!users) {
-    const intialEmbed = new EmbedBuilder()
-      .setColor(Config.colors.success)
-      .setDescription(
-        `### ${emoteComposer(
-          Config.emotes.success
-        )} Votre licence a bien été créée ! Veuillez cliquer de nouveau sur l'option **\`Licence LSX\`**.`
-      )
-
     const userData = {
       id: user.id,
       username: user.globalName,
@@ -37,9 +29,11 @@ async function licenceDisplayComponents(userId) {
     }
 
     await insertUserQuery(userData)
+
+    const { embeds, components } = await licenceEvolutionComponent(1, userId)
     return {
-      embeds: [intialEmbed],
-      components: [],
+      embeds,
+      components,
     }
   }
 
@@ -47,8 +41,8 @@ async function licenceDisplayComponents(userId) {
     const { embeds, components } = await licenceEvolutionComponent(1, userId)
 
     return {
-      embeds: embeds,
-      components: components,
+      embeds,
+      components,
     }
   }
 
