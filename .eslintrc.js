@@ -1,20 +1,30 @@
-module.exports = {
-  env: {
-    node: true,
-    es2022: true,
-    jest: true,
+const js = require('@eslint/js');
+
+export default [
+  js.configs.recommended,
+  {
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'module',
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+        Buffer: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+        exports: 'writable',
+        module: 'writable',
+        require: 'readonly',
+        global: 'readonly',
+      },
+    },
+    rules: {
+      'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      'no-console': 'warn',
+      'prefer-const': 'error',
+    },
   },
-  extends: ["@eslint/js/recommended", "prettier"],
-  plugins: ["prettier"],
-  parserOptions: {
-    ecmaVersion: 2022,
-    sourceType: "module",
+  {
+    ignores: ['node_modules/', 'coverage/', 'dist/', '*.min.js'],
   },
-  rules: {
-    "prettier/prettier": "error",
-    "no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
-    "no-console": "warn",
-    "prefer-const": "error",
-  },
-  ignorePatterns: ["node_modules/", "dist/", "*.min.js"],
-}
+];
