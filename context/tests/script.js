@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 // Mock Discord.js pour les tests
 jest.mock('discord.js', () => ({
   Client: jest.fn().mockImplementation(() => ({
