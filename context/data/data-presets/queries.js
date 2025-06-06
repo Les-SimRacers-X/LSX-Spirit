@@ -20,7 +20,7 @@ async function fetchPresetsQuery() {
   try {
     return await fetchPresets();
   } catch (error) {
-    console.error('Erreur lors de la requête 'fetchPresetsQuery' : ', error);
+    console.error("Erreur lors de la requête 'fetchPresetsQuery' : ", error);
     throw error;
   }
 }
@@ -29,7 +29,7 @@ async function fetchPresetByIdQuery(id) {
   try {
     return await fetchPresets('WHERE presets.id = ?', [id]);
   } catch (error) {
-    console.error('Erreur lors de la requête 'fetchPresetByIdQuery' : ', error);
+    console.error("Erreur lors de la requête 'fetchPresetByIdQuery' : ", error);
     throw error;
   }
 }

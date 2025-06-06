@@ -44,7 +44,7 @@ module.exports = {
 
         const modalEventHour = new TextInputBuilder()
           .setCustomId(`HourInput`)
-          .setLabel('Entrez l'heure de votre l'event :')
+          .setLabel("Entrez l'heure de votre l'event :")
           .setPlaceholder('Exemple : 21:30 (HH:mm)')
           .setRequired(true)
           .setStyle(TextInputStyle.Short);

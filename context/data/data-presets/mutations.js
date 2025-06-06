@@ -12,7 +12,7 @@ async function insertPresetQuery(data) {
 
     await db.query(query, values);
   } catch (error) {
-    console.error('Erreur lors de la requête 'insertPresetQuery' : ', error);
+    console.error("Erreur lors de la requête 'insertPresetQuery' : ", error);
     throw error;
   }
 }
@@ -22,7 +22,7 @@ async function deletePresetByIdQuery(id) {
     await db.query(`DELETE FROM presets WHERE id = ?`, [id]);
   } catch (error) {
     console.error(
-      'Erreur lors de la requête 'deletePresetByIdQuery' : ',
+      "Erreur lors de la requête 'deletePresetByIdQuery' : ",
       error
     );
     throw error;

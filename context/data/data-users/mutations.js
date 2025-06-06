@@ -14,7 +14,7 @@ async function insertUserQuery(userData) {
 
     return result;
   } catch (error) {
-    console.error('Erreur lors de la requête 'insertUserQuery' :', error);
+    console.error("Erreur lors de la requête 'insertUserQuery' :", error);
     throw error;
   }
 }
@@ -31,7 +31,7 @@ async function updateUserQuery(userId, userData) {
     const query = `UPDATE users SET ${setClauses} WHERE id = ?`;
     await db.query(query, values);
   } catch (error) {
-    console.error('Erreur lors de la requête 'updateUserQuery' :', error);
+    console.error("Erreur lors de la requête 'updateUserQuery' :", error);
     throw error;
   }
 }

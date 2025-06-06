@@ -21,7 +21,7 @@ async function fetchTracksQuery() {
   try {
     return await fetchTracks();
   } catch (error) {
-    console.error('Erreur lors de la requête 'fetchTracksQuery' : ', error);
+    console.error("Erreur lors de la requête 'fetchTracksQuery' : ", error);
     throw error;
   }
 }
@@ -30,7 +30,7 @@ async function fetchTrackByIdQuery(id) {
   try {
     return await fetchTracks('WHERE tracks.id = ?', [id]);
   } catch (error) {
-    console.error('Erreur lors de la requête 'fetchTrackByIdQuery' : ', error);
+    console.error("Erreur lors de la requête 'fetchTrackByIdQuery' : ", error);
     throw error;
   }
 }

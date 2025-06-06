@@ -72,7 +72,7 @@ module.exports = {
 
     const UXID = await getConsoleUXID(reqPseudoContent);
     defaultValues = {
-      error: `Votre pseudo '${reqPseudoContent}' n'est pas retrouver !`,
+      error: `Votre pseudo "${reqPseudoContent}" n'est pas retrouver !`,
     };
 
     if (UXID.id === undefined) {

@@ -49,7 +49,7 @@ async function licenceDisplay(userId) {
   options.unshift({
     emoji: { name: '➕' },
     label: 'Ajouter un jeu',
-    description: 'Ceci vous permettra d'ajouter une configuration pour un jeu.',
+    description: "Ceci vous permettra d'ajouter une configuration pour un jeu.",
     value: 'add',
   });
 

@@ -54,7 +54,7 @@ async function usernameAndNumberComponent(
     return modal;
   } catch (error) {
     console.error(
-      'Erreur lors de l'utilisation du component 'usernameAndNumberComponent' : ',
+      "Erreur lors de l'utilisation du component 'usernameAndNumberComponent' : ",
       error
     );
     throw error;
