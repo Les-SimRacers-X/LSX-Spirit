@@ -1,51 +1,51 @@
-const { EmbedBuilder } = require("discord.js")
-const { Config } = require("../../../context/config")
+const { EmbedBuilder } = require('discord.js');
+const { Config } = require('../../../context/config');
 const {
   insertPresetQuery,
-} = require("../../../context/data/data-presets/mutations")
-const { generateID, emoteComposer } = require("../../../context/utils/utils")
+} = require('../../../context/data/data-presets/mutations');
+const { generateID, emoteComposer } = require('../../../context/utils/utils');
 
 module.exports = {
-  customId: "modalPresetCreation",
+  customId: 'modalPresetCreation',
   async execute(interaction) {
-    const [action, presetId] = interaction.customId.split("_")
+    const [action, presetId] = interaction.customId.split('_');
     const reqPresetNameContent = interaction.fields.getTextInputValue(
-      "modalPresetNameInput"
-    )
+      'modalPresetNameInput'
+    );
     const reqPresetCategoryContent = interaction.fields.getTextInputValue(
-      "modalPresetCategoryInput"
-    )
+      'modalPresetCategoryInput'
+    );
     const reqPresetLicenceContent = interaction.fields.getTextInputValue(
-      "modalPresetLicenceInput"
-    )
+      'modalPresetLicenceInput'
+    );
 
-    const presetID = generateID()
+    const presetID = generateID();
 
     const checkLicenceObligation =
-      reqPresetLicenceContent === "Oui"
-        ? "true"
-        : reqPresetCategoryContent === "Non"
-        ? "false"
-        : null
+      reqPresetLicenceContent === 'Oui'
+        ? 'true'
+        : reqPresetCategoryContent === 'Non'
+          ? 'false'
+          : null;
 
     const data = {
       id: presetID,
       name: reqPresetNameContent,
       categories: reqPresetCategoryContent,
       licence: checkLicenceObligation,
-    }
+    };
 
-    await insertPresetQuery(data)
+    await insertPresetQuery(data);
 
     const embedAddedNewPresetSuccessfully = new EmbedBuilder()
       .setColor(Config.colors.checkColor)
       .setDescription(
         `### ${emoteComposer(Config.emotes.success)} Ajout du preset réussi !`
-      )
+      );
 
     await interaction.reply({
       embeds: [embedAddedNewPresetSuccessfully],
       ephemeral: true,
-    })
+    });
   },
-}
+};

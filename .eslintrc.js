@@ -12,7 +12,7 @@ module.exports = {
   },
   rules: {
     'prettier/prettier': 'error',
-    'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    'no-unused-vars': 'off',
     'no-console': 'warn',
     'prefer-const': 'error',
   },

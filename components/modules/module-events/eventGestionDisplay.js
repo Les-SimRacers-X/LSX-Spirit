@@ -4,16 +4,16 @@ const {
   StringSelectMenuBuilder,
   ButtonBuilder,
   ButtonStyle,
-} = require("discord.js")
+} = require('discord.js');
 const {
   getAllEventsQuery,
-} = require("../../../context/data/data-events/queries")
-const { Config } = require("../../../context/config")
-const { emoteComposer } = require("../../../context/utils/utils")
+} = require('../../../context/data/data-events/queries');
+const { Config } = require('../../../context/config');
+const { emoteComposer } = require('../../../context/utils/utils');
 
 async function eventGestionDisplay(currentIndex) {
-  const event = await getAllEventsQuery()
-  const currentEvent = event[currentIndex]
+  const event = await getAllEventsQuery();
+  const currentEvent = event[currentIndex];
 
   if (!currentEvent) {
     const noEvents = new EmbedBuilder()
@@ -22,23 +22,23 @@ async function eventGestionDisplay(currentIndex) {
         `### ${emoteComposer(
           Config.emotes.failure
         )} Aucun événement n'a encore été créer !`
-      )
+      );
 
     const selectEventManagment = new ActionRowBuilder().addComponents(
       new StringSelectMenuBuilder()
         .setCustomId(`eventManagment`)
-        .setPlaceholder("📌 Séléctionner une option...")
+        .setPlaceholder('📌 Séléctionner une option...')
         .addOptions({
-          emoji: "➕",
-          label: "Ajouter un événement",
-          value: "addEvent",
+          emoji: '➕',
+          label: 'Ajouter un événement',
+          value: 'addEvent',
         })
-    )
+    );
 
     return {
       embeds: [noEvents],
       components: [selectEventManagment],
-    }
+    };
   }
 
   let statusEmote,
@@ -47,44 +47,44 @@ async function eventGestionDisplay(currentIndex) {
     checkChannelToSend,
     checkLicenceObligation,
     checkPreviousEventIndex,
-    checkNextEventIndex
-  let checkCurrentEventIndex = currentIndex + 1
+    checkNextEventIndex;
+  const checkCurrentEventIndex = currentIndex + 1;
 
   checkPreviousEventIndex =
     currentIndex === 0 && checkCurrentEventIndex === event.length
       ? true
       : currentIndex === 0
-      ? true
-      : false
+        ? true
+        : false;
   checkNextEventIndex =
     currentIndex === 0 && checkCurrentEventIndex === event.length
       ? true
       : checkCurrentEventIndex === event.length
-      ? true
-      : false
+        ? true
+        : false;
 
-  checkChannelToSend = currentEvent.channelId !== "" ? false : true
+  checkChannelToSend = currentEvent.channelId !== '' ? false : true;
   checkLicenceObligation =
-    currentEvent.presetLicence === "true"
-      ? "Licence obligatoire"
-      : "Licence non obligatoire"
+    currentEvent.presetLicence === 'true'
+      ? 'Licence obligatoire'
+      : 'Licence non obligatoire';
 
   switch (currentEvent.status) {
-    case "true":
-      checkStatus = `🟢 Inscription ouverte`
-      statusEmote = `🔒`
-      statusLabel = `Fermer l'inscription`
-      break
+    case 'true':
+      checkStatus = `🟢 Inscription ouverte`;
+      statusEmote = `🔒`;
+      statusLabel = `Fermer l'inscription`;
+      break;
 
-    case "false":
-      checkStatus = `🔴 Inscription fermé`
-      statusEmote = `🔓`
-      statusLabel = `Ouvrir l'inscription`
-      break
+    case 'false':
+      checkStatus = `🔴 Inscription fermé`;
+      statusEmote = `🔓`;
+      statusLabel = `Ouvrir l'inscription`;
+      break;
   }
 
-  const participations = JSON.parse(currentEvent.registered)
-  const [flag, country] = currentEvent.trackNationality.split("-")
+  const participations = JSON.parse(currentEvent.registered);
+  const [flag, country] = currentEvent.trackNationality.split('-');
 
   const eventInformation = new EmbedBuilder()
     .setColor(Config.colors.default)
@@ -94,31 +94,31 @@ async function eventGestionDisplay(currentIndex) {
     .setImage(Config.PNG)
     .setFooter({
       text: `Événement : ${checkCurrentEventIndex} sur ${event.length}`,
-    })
+    });
 
   const selectEventManagment = new ActionRowBuilder().addComponents(
     new StringSelectMenuBuilder()
       .setCustomId(`eventManagment_${currentEvent.id}`)
-      .setPlaceholder("📌 Séléctionner une option...")
+      .setPlaceholder('📌 Séléctionner une option...')
       .addOptions(
         {
-          emoji: "➕",
-          label: "Ajouter un événement",
-          value: "addEvent",
+          emoji: '➕',
+          label: 'Ajouter un événement',
+          value: 'addEvent',
         },
         {
           emoji: statusEmote,
           label: `${statusLabel}`,
-          value: "changeStatus",
+          value: 'changeStatus',
         },
         {
-          emoji: "🗑️",
+          emoji: '🗑️',
           label: "Supprimer l'événement",
           description: "‼️ Attention, aucune confirmation n'est demandée",
-          value: "deleteEvent",
+          value: 'deleteEvent',
         }
       )
-  )
+  );
 
   const buttonEventManagment = new ActionRowBuilder()
     .addComponents(
@@ -138,18 +138,18 @@ async function eventGestionDisplay(currentIndex) {
     .addComponents(
       new ButtonBuilder()
         .setCustomId(`sendEvent_${currentEvent.id}`)
-        .setEmoji({ name: "📨" })
+        .setEmoji({ name: '📨' })
         .setLabel("Envoyer l'embed")
         .setDisabled(checkChannelToSend)
         .setStyle(ButtonStyle.Primary)
-    )
+    );
 
   return {
     embeds: [eventInformation],
     components: [selectEventManagment, buttonEventManagment],
-  }
+  };
 }
 
 module.exports = {
   eventGestionDisplay,
-}
+};

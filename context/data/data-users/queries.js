@@ -1,18 +1,18 @@
-const db = require("../../../handlers/loadDataBase")
+const db = require('../../../handlers/loadDataBase');
 
 async function fetchUserAccountConfigByIdQuery(id) {
   try {
     const [rows] = await db.query(
       `SELECT accounts_config AS gameConfig FROM users WHERE id = ?`,
       [id]
-    )
-    return rows
+    );
+    return rows;
   } catch (error) {
     console.error(
       `Erreur lors de la requête 'fetchUserAccountConfigByIdQuery' :`,
       error
-    )
-    throw error
+    );
+    throw error;
   }
 }
 
@@ -22,14 +22,14 @@ async function fetchNumberInAccountConfig(gameIdentifier) {
       `
       SELECT JSON_EXTRACT(accounts_config, '$.${gameIdentifier}.number') AS found_number FROM users
       `
-    )
-    return rows
+    );
+    return rows;
   } catch (error) {
     console.error(
       `Erreur lors de la requête 'fetchNumberInAccountConfig' :`,
       error
-    )
-    throw error
+    );
+    throw error;
   }
 }
 
@@ -51,15 +51,15 @@ async function fetchUserProfilByIdQuery(id) {
       WHERE users.id = ?
       `,
       [id]
-    )
+    );
 
-    return rows
+    return rows;
   } catch (error) {
     console.error(
       `Erreur lors de la requête 'fetchUserProfilByIdQuery' :`,
       error
-    )
-    throw error
+    );
+    throw error;
   }
 }
 
@@ -67,4 +67,4 @@ module.exports = {
   fetchUserAccountConfigByIdQuery,
   fetchNumberInAccountConfig,
   fetchUserProfilByIdQuery,
-}
+};

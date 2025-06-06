@@ -1,6 +1,6 @@
-const db = require("../../../handlers/loadDataBase")
+const db = require('../../../handlers/loadDataBase');
 
-async function fetchTracks(whereClause = "", values = []) {
+async function fetchTracks(whereClause = '', values = []) {
   const [rows] = await db.query(
     `
         SELECT
@@ -13,29 +13,29 @@ async function fetchTracks(whereClause = "", values = []) {
         ${whereClause}
         `,
     values
-  )
-  return rows
+  );
+  return rows;
 }
 
 async function fetchTracksQuery() {
   try {
-    return await fetchTracks()
+    return await fetchTracks();
   } catch (error) {
-    console.error("Erreur lors de la requête 'fetchTracksQuery' : ", error)
-    throw error
+    console.error("Erreur lors de la requête 'fetchTracksQuery' : ", error);
+    throw error;
   }
 }
 
 async function fetchTrackByIdQuery(id) {
   try {
-    return await fetchTracks("WHERE tracks.id = ?", [id])
+    return await fetchTracks('WHERE tracks.id = ?', [id]);
   } catch (error) {
-    console.error("Erreur lors de la requête 'fetchTrackByIdQuery' : ", error)
-    throw error
+    console.error("Erreur lors de la requête 'fetchTrackByIdQuery' : ", error);
+    throw error;
   }
 }
 
 module.exports = {
   fetchTracksQuery,
   fetchTrackByIdQuery,
-}
+};

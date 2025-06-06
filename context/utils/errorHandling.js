@@ -1,13 +1,13 @@
-const { EmbedBuilder } = require("discord.js")
-const { Config } = require("../config")
-const { emoteComposer } = require("./utils")
+const { EmbedBuilder } = require('discord.js');
+const { Config } = require('../config');
+const { emoteComposer } = require('./utils');
 
 async function errorHandler(interaction, error) {
   const embedErrorDetectionLog = new EmbedBuilder()
     .setColor(Config.colors.mainServerColor)
-    .setTitle("📌 Error Détecté :")
+    .setTitle('📌 Error Détecté :')
     .setDescription(`\`\`\`${error}\`\`\``)
-    .setTimestamp()
+    .setTimestamp();
 
   const embedErrorDetected = new EmbedBuilder()
     .setColor(Config.colors.error)
@@ -15,17 +15,19 @@ async function errorHandler(interaction, error) {
       `### ${emoteComposer(
         Config.emotes.error
       )} Une erreur a été détecté lors de votre interaction !`
-    )
+    );
 
-  console.error(error)
+  console.error(error);
   await bot.channels.cache
     .get(Config.channels.errorLogs)
-    .send({ embeds: [embedErrorDetectionLog] })
-  return await interaction.reply({
-    embeds: [embedErrorDetected],
-    components: [],
-    ephemeral: true,
-  })
+    .send({ embeds: [embedErrorDetectionLog] });
+  if (interaction !== '') {
+    return await interaction.reply({
+      embeds: [embedErrorDetected],
+      components: [],
+      ephemeral: true,
+    });
+  }
 }
 
-module.exports = { errorHandler }
+module.exports = { errorHandler };

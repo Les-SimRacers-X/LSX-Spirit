@@ -1,58 +1,58 @@
-const { generateID, emoteComposer } = require("../../../context/utils/utils")
+const { generateID, emoteComposer } = require('../../../context/utils/utils');
 const {
   insertEventQuery,
   updateEventQuery,
   deleteEventByIdQuery,
-} = require("../../../context/data/data-events/mutations")
+} = require('../../../context/data/data-events/mutations');
 const {
   getEventByIdQuery,
-} = require("../../../context/data/data-events/queries")
+} = require('../../../context/data/data-events/queries');
 const {
   eventCreationTracking,
-} = require("../../modules/module-events/eventCreationTracking")
-const { EmbedBuilder } = require("discord.js")
-const { Config } = require("../../../context/config")
+} = require('../../modules/module-events/eventCreationTracking');
+const { EmbedBuilder } = require('discord.js');
+const { Config } = require('../../../context/config');
 
 module.exports = {
-  customId: "eventManagment",
+  customId: 'eventManagment',
   async execute(interaction) {
-    const [action, eventId] = interaction.customId.split("_")
-    const [event] = await getEventByIdQuery(eventId)
-    const selectedValue = interaction.values[0]
+    const [action, eventId] = interaction.customId.split('_');
+    const [event] = await getEventByIdQuery(eventId);
+    const selectedValue = interaction.values[0];
 
     switch (selectedValue) {
-      case "addEvent": {
-        const newEvenId = generateID()
+      case 'addEvent': {
+        const newEvenId = generateID();
         const data = {
           id: newEvenId,
-          track_id: "None",
-          preset_id: "None",
-          description: "",
-          users: "[]",
-          timestamp: "",
-          message_id: "",
-          channel_id: "",
-          status: "true",
-        }
+          track_id: 'None',
+          preset_id: 'None',
+          description: '',
+          users: '[]',
+          timestamp: '',
+          message_id: '',
+          channel_id: '',
+          status: 'true',
+        };
 
-        await insertEventQuery(data)
+        await insertEventQuery(data);
 
-        const { embeds, components } = await eventCreationTracking(newEvenId)
+        const { embeds, components } = await eventCreationTracking(newEvenId);
 
         return await interaction.update({
           embeds,
           components,
           ephemeral: true,
-        })
+        });
       }
 
-      case "changeStatus": {
-        const newStatus = event.status === "true" ? "false" : "true"
+      case 'changeStatus': {
+        const newStatus = event.status === 'true' ? 'false' : 'true';
         const data = {
           status: newStatus,
-        }
+        };
 
-        await updateEventQuery(eventId, data)
+        await updateEventQuery(eventId, data);
 
         const changedStatus = new EmbedBuilder()
           .setColor(Config.colors.success)
@@ -60,23 +60,23 @@ module.exports = {
             `${emoteComposer(
               Config.emotes.success
             )} Status d'événement modifier avec succès !`
-          )
+          );
 
         return await interaction.reply({
           embeds: [changedStatus],
           ephemeral: true,
-        })
+        });
       }
 
-      case "deleteEvent": {
+      case 'deleteEvent': {
         const message = await (
           await bot.channels.fetch(event.channelId)
-        ).messages.fetch(event.messageId)
+        ).messages.fetch(event.messageId);
 
-        if (!message) return
+        if (!message) return;
 
-        await message.delete()
-        await deleteEventByIdQuery(eventId)
+        await message.delete();
+        await deleteEventByIdQuery(eventId);
 
         const eventDeleted = new EmbedBuilder()
           .setColor(Config.colors.success)
@@ -84,15 +84,15 @@ module.exports = {
             `### ${emoteComposer(
               Config.emotes.success
             )} L'événement ainsi que son message associé ont été supprimés avec succès.`
-          )
+          );
 
         return await interaction.reply({
           embeds: [eventDeleted],
           ephemeral: true,
-        })
+        });
       }
       default:
-        return
+        return;
     }
   },
-}
+};

@@ -1,5 +1,5 @@
-const mysql = require("mysql2")
-require("dotenv").config()
+const mysql = require('mysql2');
+require('dotenv').config();
 
 const db = mysql
   .createPool({
@@ -10,6 +10,6 @@ const db = mysql
     connectionLimit: 20,
     queueLimit: 0,
   })
-  .promise()
+  .promise();
 
-module.exports = db
+module.exports = db;

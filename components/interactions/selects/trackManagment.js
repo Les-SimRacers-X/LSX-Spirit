@@ -4,76 +4,76 @@ const {
   TextInputStyle,
   ActionRowBuilder,
   EmbedBuilder,
-} = require("discord.js")
+} = require('discord.js');
 const {
   deleteTrackByIdQuery,
-} = require("../../../context/data/data-tracks/mutations")
-const { Config } = require("../../../context/config")
-const { emoteComposer } = require("../../../context/utils/utils")
+} = require('../../../context/data/data-tracks/mutations');
+const { Config } = require('../../../context/config');
+const { emoteComposer } = require('../../../context/utils/utils');
 
 module.exports = {
-  customId: "trackManagment",
+  customId: 'trackManagment',
   async execute(interaction) {
-    const [action, trackId] = interaction.customId.split("_")
-    const selectedValue = interaction.values[0]
+    const [action, trackId] = interaction.customId.split('_');
+    const selectedValue = interaction.values[0];
     switch (selectedValue) {
-      case "addTrack": {
+      case 'addTrack': {
         const modalTrackCreation = new ModalBuilder()
           .setCustomId(`modalTrackCreation`)
-          .setTitle("Ajouter un nouveau circuit")
+          .setTitle('Ajouter un nouveau circuit');
 
         const modalTrackFlag = new TextInputBuilder()
-          .setCustomId("modalTrackFlagInput")
-          .setLabel("Entrez le drapeau du circuit :")
-          .setPlaceholder("Exemple : 🇫🇷")
+          .setCustomId('modalTrackFlagInput')
+          .setLabel('Entrez le drapeau du circuit :')
+          .setPlaceholder('Exemple : 🇫🇷')
           .setRequired(true)
-          .setStyle(TextInputStyle.Short)
+          .setStyle(TextInputStyle.Short);
 
         const modalTrackCountry = new TextInputBuilder()
           .setCustomId(`modalTrackCountryInput`)
-          .setLabel("Entrez le pays du circuit :")
-          .setPlaceholder("Exemple : France")
+          .setLabel('Entrez le pays du circuit :')
+          .setPlaceholder('Exemple : France')
           .setRequired(true)
-          .setStyle(TextInputStyle.Short)
+          .setStyle(TextInputStyle.Short);
 
         const modalTrackName = new TextInputBuilder()
           .setCustomId(`modalTrackNameInput`)
-          .setLabel("Entrez le nom du circuit :")
-          .setPlaceholder("Exemple : Paul Ricard")
+          .setLabel('Entrez le nom du circuit :')
+          .setPlaceholder('Exemple : Paul Ricard')
           .setRequired(true)
-          .setStyle(TextInputStyle.Short)
+          .setStyle(TextInputStyle.Short);
 
         const modalTrackLength = new TextInputBuilder()
           .setCustomId(`modalTrackLengthInput`)
-          .setLabel("Entrez la longueur du circuit :")
-          .setPlaceholder("Exemple : 5.810 KM")
+          .setLabel('Entrez la longueur du circuit :')
+          .setPlaceholder('Exemple : 5.810 KM')
           .setRequired(true)
-          .setStyle(TextInputStyle.Short)
+          .setStyle(TextInputStyle.Short);
 
         const modalTrackImage = new TextInputBuilder()
           .setCustomId(`modalTrackImageInput`)
-          .setLabel("Entrez une image du circuit (lien) :")
+          .setLabel('Entrez une image du circuit (lien) :')
           .setPlaceholder(
-            "Exemple : https://fr.wikipedia.org/Image/PaulRicard-Circuit"
+            'Exemple : https://fr.wikipedia.org/Image/PaulRicard-Circuit'
           )
           .setRequired(true)
-          .setStyle(TextInputStyle.Paragraph)
+          .setStyle(TextInputStyle.Paragraph);
 
         const reqModalTrackFlagInput = new ActionRowBuilder().addComponents(
           modalTrackFlag
-        )
+        );
         const reqModalTrackCountryInput = new ActionRowBuilder().addComponents(
           modalTrackCountry
-        )
+        );
         const reqModalTrackNameInput = new ActionRowBuilder().addComponents(
           modalTrackName
-        )
+        );
         const reqModalTrackLengthInput = new ActionRowBuilder().addComponents(
           modalTrackLength
-        )
+        );
         const reqModalTrackImageInput = new ActionRowBuilder().addComponents(
           modalTrackImage
-        )
+        );
 
         modalTrackCreation.addComponents(
           reqModalTrackFlagInput,
@@ -81,13 +81,13 @@ module.exports = {
           reqModalTrackNameInput,
           reqModalTrackLengthInput,
           reqModalTrackImageInput
-        )
+        );
 
-        await interaction.showModal(modalTrackCreation)
+        await interaction.showModal(modalTrackCreation);
       }
 
-      case "deleteTrack": {
-        await deleteTrackByIdQuery(trackId)
+      case 'deleteTrack': {
+        await deleteTrackByIdQuery(trackId);
 
         const trackSuppressed = new EmbedBuilder()
           .setColor(Config.colors.success)
@@ -95,16 +95,16 @@ module.exports = {
             `### ${emoteComposer(
               Config.emotes.success
             )} Le circuit a était supprimé avec succès !`
-          )
+          );
 
         return interaction.reply({
           embeds: [trackSuppressed],
           ephemeral: true,
-        })
+        });
       }
 
       default:
-        return
+        return;
     }
   },
-}
+};

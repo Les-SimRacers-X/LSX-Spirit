@@ -1,6 +1,6 @@
-const db = require("../../../handlers/loadDataBase")
+const db = require('../../../handlers/loadDataBase');
 
-async function fetchPresets(whereClause = "", values = []) {
+async function fetchPresets(whereClause = '', values = []) {
   const [rows] = await db.query(
     `
         SELECT
@@ -12,29 +12,29 @@ async function fetchPresets(whereClause = "", values = []) {
         ${whereClause}
         `,
     values
-  )
-  return rows
+  );
+  return rows;
 }
 
 async function fetchPresetsQuery() {
   try {
-    return await fetchPresets()
+    return await fetchPresets();
   } catch (error) {
-    console.error("Erreur lors de la requête 'fetchPresetsQuery' : ", error)
-    throw error
+    console.error("Erreur lors de la requête 'fetchPresetsQuery' : ", error);
+    throw error;
   }
 }
 
 async function fetchPresetByIdQuery(id) {
   try {
-    return await fetchPresets("WHERE presets.id = ?", [id])
+    return await fetchPresets('WHERE presets.id = ?', [id]);
   } catch (error) {
-    console.error("Erreur lors de la requête 'fetchPresetByIdQuery' : ", error)
-    throw error
+    console.error("Erreur lors de la requête 'fetchPresetByIdQuery' : ", error);
+    throw error;
   }
 }
 
 module.exports = {
   fetchPresetsQuery,
   fetchPresetByIdQuery,
-}
+};

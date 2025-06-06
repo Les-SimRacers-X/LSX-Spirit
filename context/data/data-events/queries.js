@@ -1,6 +1,6 @@
-const db = require("../../../handlers/loadDataBase")
+const db = require('../../../handlers/loadDataBase');
 
-async function getAllEventsQuery(whereClause = "", values = []) {
+async function getAllEvents(whereClause = '', values = []) {
   const query = `
             SELECT
                 events.id AS id,
@@ -23,44 +23,41 @@ async function getAllEventsQuery(whereClause = "", values = []) {
             LEFT JOIN tracks ON events.track_id = tracks.id
             LEFT JOIN presets ON events.preset_id = presets.id
             ${whereClause}
-            `
+            `;
 
-  const [rows] = await db.query(query, values)
-  return rows
+  const [rows] = await db.query(query, values);
+  return rows;
 }
 
-async function getAllEventsQueryQuery() {
+async function getAllEventsQuery() {
   try {
-    return await getAllEventsQuery()
+    return await getAllEvents();
   } catch (error) {
-    console.error(
-      "Erreur lors de la requête 'getAllEventsQueryQuery' : ",
-      error
-    )
-    throw error
+    console.error("Erreur lors de la requête 'getAllEventsQuery' : ", error);
+    throw error;
   }
 }
 
 async function getEventByIdQuery(id) {
   try {
-    return await getAllEventsQuery("WHERE events.id = ?", [id])
+    return await getAllEventsQuery('WHERE events.id = ?', [id]);
   } catch (error) {
-    console.error("Erreur lors de la requête 'getEventByIdQuery' : ", error)
-    throw error
+    console.error("Erreur lors de la requête 'getEventByIdQuery' : ", error);
+    throw error;
   }
 }
 
 async function getEventByMessageIdQuery(id) {
   try {
-    return await getAllEventsQuery("WHERE events.message_id = ?", [id])
+    return await getAllEventsQuery('WHERE events.message_id = ?', [id]);
   } catch (error) {
-    console.error("Erreur lors de la requête 'getEventByIdQuery' : ", error)
-    throw error
+    console.error("Erreur lors de la requête 'getEventByIdQuery' : ", error);
+    throw error;
   }
 }
 
 module.exports = {
-  getAllEventsQueryQuery,
+  getAllEventsQuery,
   getEventByIdQuery,
   getEventByMessageIdQuery,
-}
+};

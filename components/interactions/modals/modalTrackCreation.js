@@ -1,31 +1,31 @@
-const { EmbedBuilder } = require("discord.js")
-const { Config } = require("../../../context/config")
+const { EmbedBuilder } = require('discord.js');
+const { Config } = require('../../../context/config');
 const {
   insertTrackQuery,
-} = require("../../../context/data/data-tracks/mutations")
-const { generateID, emoteComposer } = require("../../../context/utils/utils")
+} = require('../../../context/data/data-tracks/mutations');
+const { generateID, emoteComposer } = require('../../../context/utils/utils');
 
 module.exports = {
-  customId: "modalTrackCreation",
+  customId: 'modalTrackCreation',
   async execute(interaction) {
-    const [action, trackId] = interaction.customId.split("_")
+    const [action, trackId] = interaction.customId.split('_');
     const reqTrackFlagContent = interaction.fields.getTextInputValue(
-      "modalTrackFlagInput"
-    )
+      'modalTrackFlagInput'
+    );
     const reqTrackCountryContent = interaction.fields.getTextInputValue(
-      "modalTrackCountryInput"
-    )
+      'modalTrackCountryInput'
+    );
     const reqTrackNameContent = interaction.fields.getTextInputValue(
-      "modalTrackNameInput"
-    )
+      'modalTrackNameInput'
+    );
     const reqTrackLengthContent = interaction.fields.getTextInputValue(
-      "modalTrackLengthInput"
-    )
+      'modalTrackLengthInput'
+    );
     const reqTrackImageContent = interaction.fields.getTextInputValue(
-      "modalTrackImageInput"
-    )
+      'modalTrackImageInput'
+    );
 
-    const trackID = generateID()
+    const trackID = generateID();
 
     const data = {
       id: trackID,
@@ -34,9 +34,9 @@ module.exports = {
       name: reqTrackNameContent,
       duration: reqTrackLengthContent,
       image: reqTrackImageContent,
-    }
+    };
 
-    await insertTrackQuery(data)
+    await insertTrackQuery(data);
 
     const embedAddedNewRaceTrackSuccessfully = new EmbedBuilder()
       .setColor(Config.colors.success)
@@ -44,11 +44,11 @@ module.exports = {
         `### ${emoteComposer(
           Config.emotes.success
         )} Ajout du circuit avec succès !**`
-      )
+      );
 
     await interaction.reply({
       embeds: [embedAddedNewRaceTrackSuccessfully],
       ephemeral: true,
-    })
+    });
   },
-}
+};
