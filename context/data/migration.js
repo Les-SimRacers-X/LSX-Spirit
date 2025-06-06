@@ -7,7 +7,7 @@ async function databaseMigration() {
     await db.query(
       `ALTER TABLE users ADD COLUMN accounts_config LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT '{}'`
     );
-    console.log("Colonne 'accounts_config' ajoutée.");
+    console.log('Colonne 'accounts_config' ajoutée.');
 
     // --- Étape 2 : Migrer les données vers accounts_config
     const [rows] = await db.query(
@@ -29,7 +29,7 @@ async function databaseMigration() {
         row.userID,
       ]);
     }
-    console.log("Migration des données vers 'accounts_config' terminée.");
+    console.log('Migration des données vers 'accounts_config' terminée.');
 
     // --- Étape 3 : Suppression des anciennes colonnes
     await db.query(`
@@ -53,7 +53,7 @@ async function databaseMigration() {
           CHANGE COLUMN totalRaces total_races INT(11) NOT NULL DEFAULT 0,
           CHANGE COLUMN lastSanctionID sanction_id VARCHAR(9) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL;
         `);
-    console.log("Colonnes de la table 'users' renommer avec succès");
+    console.log('Colonnes de la table 'users' renommer avec succès');
 
     // --- Étape 5 : Modification des colonnes de la table events
     await db.query(`
@@ -68,7 +68,7 @@ async function databaseMigration() {
           CHANGE COLUMN eventChannelID channel_id VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL, -- Adaptez le type si nécessaire
           CHANGE COLUMN eventStat status TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL;
         `);
-    console.log("Structure de la table 'events' mise à jour.");
+    console.log('Structure de la table 'events' mise à jour.');
 
     // --- Étape 6 : Migrer et transformer les données de eventParticipation
     const [eventRows] = await db.query(`SELECT id, users, status FROM events`);
@@ -128,7 +128,7 @@ async function databaseMigration() {
           CHANGE COLUMN presetCategory categories TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL, -- Renamed
           CHANGE COLUMN presetLicence licence TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL; -- Renamed and data will be transformed
         `);
-    console.log("Structure de la table 'presets' mise à jour.");
+    console.log('Structure de la table 'presets' mise à jour.');
 
     // --- Étape 8 : Migration et transformation de la données de la colonne 'licence'
     const [presetRows] = await db.query(`SELECT id, licence FROM presets`);
@@ -228,7 +228,7 @@ async function databaseMigration() {
 
     // --- Étape 13 : Changement de nom de table
     await db.query(`ALTER TABLE teamsprofil RENAME TO teams;`);
-    console.log("Renommination de la table 'teamsprofil' terminée.");
+    console.log('Renommination de la table 'teamsprofil' terminée.');
 
     // --- Étape 14 : Transformation de la table 'teams'
     await db.query(`

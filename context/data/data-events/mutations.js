@@ -12,7 +12,7 @@ async function insertEventQuery(data) {
 
     await db.query(query, values);
   } catch (error) {
-    console.error("Erreur lors de la requête 'insertEventQuery' : ", error);
+    console.error('Erreur lors de la requête 'insertEventQuery' : ', error);
     throw error;
   }
 }
@@ -29,7 +29,7 @@ async function updateEventQuery(id, data) {
     const query = `UPDATE events SET ${setClauses} WHERE id = ?`;
     await db.query(query, values);
   } catch (error) {
-    console.error("Erreur lors de la requête 'updateEventQuery' : ", error);
+    console.error('Erreur lors de la requête 'updateEventQuery' : ', error);
     throw error;
   }
 }
@@ -38,7 +38,7 @@ async function deleteEventByIdQuery(id) {
   try {
     await db.query(`DELETE FROM events WHERE id = ?`, [id]);
   } catch (error) {
-    console.error("Erreur lors de la requête 'updateEventQuery' : ", error);
+    console.error('Erreur lors de la requête 'updateEventQuery' : ', error);
     throw error;
   }
 }

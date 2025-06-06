@@ -118,7 +118,7 @@ module.exports = {
             }`
           )
           .setFooter({
-            text: "Cette configuration vous permet d'accéder à nos serveurs. Merci de ne pas la casser.",
+            text: 'Cette configuration vous permet d'accéder à nos serveurs. Merci de ne pas la casser.',
           });
 
         const interactions = await interactionOnProfil(

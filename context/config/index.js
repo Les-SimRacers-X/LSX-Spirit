@@ -21,7 +21,7 @@ if (env === 'development') {
   } catch (e) {
     if (e.code !== 'MODULE_NOT_FOUND') {
       console.error(
-        `Erreur lors du chargement de la configuration pour l'environnement "${env}":`,
+        `Erreur lors du chargement de la configuration pour l'environnement '${env}':`,
         e
       );
     }

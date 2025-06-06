@@ -56,25 +56,25 @@ async function eventCreationTracking(id) {
         {
           emoji: { name: '📑' },
           label: 'Description, Date & Heure',
-          description: "Entrez la description et les horaires de l'événement",
+          description: 'Entrez la description et les horaires de l'événement',
           value: '1',
         },
         {
           emoji: { name: '🏁' },
           label: 'Circuits',
-          description: "Sélectionnez un circuit pour l'événement",
+          description: 'Sélectionnez un circuit pour l'événement',
           value: '2',
         },
         {
           emoji: { name: '⚙️' },
           label: 'Presets',
-          description: "Sélectionnez un preset (paramètres) pour l'événement",
+          description: 'Sélectionnez un preset (paramètres) pour l'événement',
           value: '3',
         },
         {
           emoji: { name: '💬' },
           label: 'Salons',
-          description: "Sélectionnez un salon ou envoyez l'événement",
+          description: 'Sélectionnez un salon ou envoyez l'événement',
           value: '4',
         }
       )

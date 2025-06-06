@@ -21,7 +21,7 @@ async function getConsoleUXID(username) {
     }
   } catch (error) {
     console.log(
-      "Erreur lors de la récupération d'un console ID. PSN Sera TEST"
+      'Erreur lors de la récupération d'un console ID. PSN Sera TEST'
     );
   }
 
@@ -34,10 +34,10 @@ async function getConsoleUXID(username) {
       return { platform: 'P', id: userProfile.profile.accountId };
     }
   } catch (error) {
-    console.log("Erreur lors de la récupération de l'ID PSN");
+    console.log('Erreur lors de la récupération de l'ID PSN');
   }
 
-  console.error("Aucun ID n'a été trouver");
+  console.error('Aucun ID n'a été trouver');
   return undefined;
 }
 

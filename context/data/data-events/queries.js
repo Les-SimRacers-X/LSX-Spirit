@@ -33,7 +33,7 @@ async function getAllEventsQuery() {
   try {
     return await getAllEvents();
   } catch (error) {
-    console.error("Erreur lors de la requête 'getAllEventsQuery' : ", error);
+    console.error('Erreur lors de la requête 'getAllEventsQuery' : ', error);
     throw error;
   }
 }
@@ -42,7 +42,7 @@ async function getEventByIdQuery(id) {
   try {
     return await getAllEventsQuery('WHERE events.id = ?', [id]);
   } catch (error) {
-    console.error("Erreur lors de la requête 'getEventByIdQuery' : ", error);
+    console.error('Erreur lors de la requête 'getEventByIdQuery' : ', error);
     throw error;
   }
 }
@@ -51,7 +51,7 @@ async function getEventByMessageIdQuery(id) {
   try {
     return await getAllEventsQuery('WHERE events.message_id = ?', [id]);
   } catch (error) {
-    console.error("Erreur lors de la requête 'getEventByIdQuery' : ", error);
+    console.error('Erreur lors de la requête 'getEventByIdQuery' : ', error);
     throw error;
   }
 }

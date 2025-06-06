@@ -12,7 +12,7 @@ async function insertTrackQuery(data) {
 
     await db.query(query, values);
   } catch (error) {
-    console.error("Erreur lors de la requête 'insertTrackQuery' : ", error);
+    console.error('Erreur lors de la requête 'insertTrackQuery' : ', error);
     throw error;
   }
 }
@@ -21,7 +21,7 @@ async function deleteTrackByIdQuery(id) {
   try {
     await db.query(`DELETE FROM tracks WHERE id = ?`, [id]);
   } catch (error) {
-    console.error("Erreur lors de la requête 'deleteTrackByIdQuery' : ", error);
+    console.error('Erreur lors de la requête 'deleteTrackByIdQuery' : ', error);
     throw error;
   }
 }

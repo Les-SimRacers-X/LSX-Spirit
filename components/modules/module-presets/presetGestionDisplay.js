@@ -85,7 +85,7 @@ async function presetGestionDisplay(currentIndex) {
         {
           emoji: '🗑️',
           label: 'Supprimer le preset',
-          description: "‼️ Attention, aucune confirmation n'est demandée",
+          description: '‼️ Attention, aucune confirmation n'est demandée',
           value: 'deletePreset',
         }
       )

@@ -113,8 +113,8 @@ async function eventGestionDisplay(currentIndex) {
         },
         {
           emoji: '🗑️',
-          label: "Supprimer l'événement",
-          description: "‼️ Attention, aucune confirmation n'est demandée",
+          label: 'Supprimer l'événement',
+          description: '‼️ Attention, aucune confirmation n'est demandée',
           value: 'deleteEvent',
         }
       )
@@ -139,7 +139,7 @@ async function eventGestionDisplay(currentIndex) {
       new ButtonBuilder()
         .setCustomId(`sendEvent_${currentEvent.id}`)
         .setEmoji({ name: '📨' })
-        .setLabel("Envoyer l'embed")
+        .setLabel('Envoyer l'embed')
         .setDisabled(checkChannelToSend)
         .setStyle(ButtonStyle.Primary)
     );
