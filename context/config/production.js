@@ -39,8 +39,12 @@ module.exports = {
   },
   categories: {
     events: ["1179353258070917180", "1355941419864555640"],
+    console: "",
+    general: "",
+    team: "",
   },
   channels: {
+    accChannels: ["1375922411274506260", "1132938881411596379"],
     monitoringServer: "1132938881411596379",
     licence: "1339169354989830208",
     logs: "1321920387126263872",
@@ -49,6 +53,7 @@ module.exports = {
   },
   roles: {
     spectator: "1342837215109054545",
+    team: "",
   },
   platforms: [
     {

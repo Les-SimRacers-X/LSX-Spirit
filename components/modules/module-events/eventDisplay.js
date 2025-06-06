@@ -177,6 +177,40 @@ async function updateEventMessage(interaction, category) {
         message: `Vous n'avez pas configurer votre licence !`,
       },
       {
+        condition: (() => {
+          const targetCategory = Config.categories.console
+          const targetChannels = Config.channels.accChannels
+
+          if (
+            interaction.channel?.parentId !== targetCategory ||
+            !targetChannels.includes(interaction.channelId)
+          ) {
+            return false
+          }
+
+          try {
+            const gameConfigObject = JSON.parse(userProfil?.gameConfig || "{}")
+            const acc = gameConfigObject.acc
+
+            if (!acc) return true
+
+            const requiredFields = [
+              "id",
+              "name",
+              "trigram",
+              "platform",
+              "number",
+            ]
+            return requiredFields.some(
+              (field) => !acc[field] || acc[field] === null || acc[field] === ""
+            )
+          } catch {
+            return true
+          }
+        })(),
+        message: `Configuration ACC obligatoire pour participer à cette événement !`,
+      },
+      {
         condition:
           category === "Spectateur" &&
           !interaction.member.roles.cache.has(Config.roles.spectator),

@@ -27,14 +27,34 @@ module.exports = {
     let defaultValues = {}
 
     if (usedNumbers.includes(reqNumberContent)) {
-      let availableNumber = reqNumberContent + 1
-      while (usedNumbers.includes(availableNumber)) {
-        availableNumber++
-      }
-      defaultValues = {
-        error: `Le numéro ${reqNumberContent} n'est pas disponible. Suggestion ${availableNumber}`,
-        name: reqPseudoContent,
-        suggestionNumber: availableNumber,
+      let availableNumber = null
+
+      for (let offset = 1; offset <= 999; offset++) {
+        const upper = reqNumberContent + offset
+        const lower = reqNumberContent - offset
+
+        if (upper <= 999 && !usedNumbers.includes(upper)) {
+          availableNumber = upper
+          break
+        }
+
+        if (lower >= 1 && !usedNumbers.includes(lower)) {
+          availableNumber = lower
+          break
+        }
+
+        if (availableNumber) {
+          defaultValues = {
+            error: `Le numéro ${reqNumberContent} n'est pas disponible. Suggestion ${availableNumber}`,
+            name: reqPseudoContent,
+            suggestionNumber: availableNumber,
+          }
+        } else {
+          defaultValues = {
+            error: `Aucun numéro disponible entre 1 et 999`,
+            name: reqPseudoContent,
+          }
+        }
       }
 
       const inputModal = await usernameAndNumberComponent(

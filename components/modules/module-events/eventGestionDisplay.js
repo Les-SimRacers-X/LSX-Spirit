@@ -6,13 +6,13 @@ const {
   ButtonStyle,
 } = require("discord.js")
 const {
-  getAllEventsQueryQuery,
+  getAllEventsQuery,
 } = require("../../../context/data/data-events/queries")
 const { Config } = require("../../../context/config")
 const { emoteComposer } = require("../../../context/utils/utils")
 
 async function eventGestionDisplay(currentIndex) {
-  const event = await getAllEventsQueryQuery()
+  const event = await getAllEventsQuery()
   const currentEvent = event[currentIndex]
 
   if (!currentEvent) {
