@@ -1,50 +1,46 @@
-const loadSlashCommand = require("../handlers/loadSlashCommand")
-const db = require("../handlers/loadDataBase")
-const { Config } = require("../context/config")
-const ftp = require("basic-ftp")
-const { Writable } = require("stream")
-const { currentTimestamp } = require("../context/utils/utils")
-const { Events, ChannelType, EmbedBuilder } = require("discord.js")
+const loadSlashCommand = require('../handlers/loadSlashCommand');
+const db = require('../handlers/loadDataBase');
+const { Events } = require('discord.js');
 
 module.exports = {
   name: Events.ClientReady,
   async execute(bot) {
     async function connectToDataBase() {
       try {
-        const connection = await db.getConnection()
+        const connection = await db.getConnection();
 
-        console.log("✅ Database connection established succesfully !")
-        connection.release()
+        console.log('✅ Database connection established succesfully !');
+        connection.release();
 
-        db.on("error", async function (err) {
-          console.log("❌ Database ERROR :", err)
-          if (err.code === "ECONNRESET") {
+        db.on('error', async function (err) {
+          console.log('❌ Database ERROR :', err);
+          if (err.code === 'ECONNRESET') {
             try {
-              const newConnection = await db.getConnection()
-              console.log("✅ Database successfully reconnected !")
-              newConnection.release()
+              const newConnection = await db.getConnection();
+              console.log('✅ Database successfully reconnected !');
+              newConnection.release();
             } catch (errDB) {
               console.error(
-                "❌ Erreur lors de la reconnexion à la base de données :",
+                '❌ Erreur lors de la reconnexion à la base de données :',
                 errDB
-              )
+              );
             }
           } else {
-            throw err
+            throw err;
           }
-        })
+        });
       } catch (error) {
         console.error(
-          "❌ Erreur lors de la connexion à la base de données :",
+          '❌ Erreur lors de la connexion à la base de données :',
           error
-        )
+        );
       }
     }
 
-    await connectToDataBase()
+    await connectToDataBase();
 
-    await loadSlashCommand(bot)
+    await loadSlashCommand(bot);
 
-    console.log(`${bot.user.tag} is now ON !`)
+    console.log(`${bot.user.tag} is now ON !`);
   },
-}
+};
