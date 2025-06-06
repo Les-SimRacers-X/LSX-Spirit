@@ -3,6 +3,6 @@ module.exports = {
   collectCoverage: true,
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'html'],
-  testMatch: ['**/__tests__/**/*.js', '**/?(*.)+(spec|test).js'],
-  setupFilesAfterEnv: ['./context/tests/setup.js'],
+  testMatch: ['**/context/**/*.test.js', '**/context/**/*.spec.js'],
+  setupFilesAfterEnv: ['<rootDir>/context/tests/setup.js'],
 };
