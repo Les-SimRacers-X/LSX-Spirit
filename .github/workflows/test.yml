@@ -32,6 +32,8 @@ jobs:
         continue-on-error: false
 
       - name: Test build/startup
+        env:
+          TOKEN: ${{ secrets.TOKEN }}
         run: |
           timeout 30s npm start || code=$?
           if [[ $code -ne 124 && $code -ne 0 ]]; then
