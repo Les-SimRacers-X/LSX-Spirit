@@ -4,5 +4,5 @@ module.exports = {
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'html'],
   testMatch: ['**/__tests__/**/*.js', '**/?(*.)+(spec|test).js'],
-  setupFilesAfterEnv: ['<rootDir>/context/tests/setup.js'],
+  setupFilesAfterEnv: ['./context/tests/setup.js'],
 };
