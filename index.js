@@ -47,9 +47,8 @@ fs.watchFile('restart.txt', () => {
   process.exit(1);
 });
 
-global.bot = bot;
-
 bot.login(process.env.TOKEN).then(() => {
+  global.bot = bot;
   loadCommands(bot);
   loadEvents(bot);
 });
