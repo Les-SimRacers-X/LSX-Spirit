@@ -16,9 +16,9 @@ jobs:
       - name: Upload des fichiers via SFTP
         uses: Dylan700/sftp-upload-action@latest
         with:
-          server: ${{ secrets.SFTP_HOST }}
-          username: ${{secrets.SFTP_USER}}
-          password: ${{secrets.SFTP_PASS}}
+          server: sftp.ca-node-23.katabump.com
+          username: 855145634737684492.4cf6034e
+          password: 6702af62dd96a
           port: 2022
           uploads: |
             ./ => /
@@ -29,9 +29,9 @@ jobs:
       - name: 🔄 Redémarrage du bot
         uses: Dylan700/sftp-upload-action@latest
         with:
-          server: ${{ secrets.SFTP_HOST }}
-          username: ${{secrets.SFTP_USER}}
-          password: ${{secrets.SFTP_PASS}}
+          server: sftp.ca-node-23.katabump.com
+          username: 855145634737684492.4cf6034e
+          password: 6702af62dd96a
           port: 2022
           uploads: |
             restart.txt => /restart.txt
