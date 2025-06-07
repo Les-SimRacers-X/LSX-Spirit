@@ -3,7 +3,7 @@ name: Deploy main Updates
 on:
   push:
     branches:
-      - main #Déclenchement uniquement sur la branch principal
+      - main
 
 jobs:
   deploy:
@@ -16,22 +16,22 @@ jobs:
       - name: Upload des fichiers via SFTP
         uses: Dylan700/sftp-upload-action@latest
         with:
-          server: sftp.ca-node-23.katabump.com
-          username: 855145634737684492.4cf6034e
-          password: 6702af62dd96a
+          server: ${{ secrets.SFTP_HOST }}
+          username: ${{secrets.SFTP_USER}}
+          password: ${{secrets.SFTP_PASS}}
           port: 2022
           uploads: |
             ./ => /
 
       - name: 🔄 Création du fichier restart.txt
-        run: touch restart.txt # Crée un fichier vide en local
+        run: touch restart.txt
 
       - name: 🔄 Redémarrage du bot
         uses: Dylan700/sftp-upload-action@latest
         with:
-          server: sftp.ca-node-23.katabump.com
-          username: 855145634737684492.4cf6034e
-          password: 6702af62dd96a
+          server: ${{ secrets.SFTP_HOST }}
+          username: ${{secrets.SFTP_USER}}
+          password: ${{secrets.SFTP_PASS}}
           port: 2022
           uploads: |
             restart.txt => /restart.txt

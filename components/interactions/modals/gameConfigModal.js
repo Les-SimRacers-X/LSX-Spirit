@@ -1,0 +1,126 @@
+const { EmbedBuilder } = require('discord.js');
+const {
+  usernameAndNumberComponent,
+} = require('../../modules/module-licence/usernameAndNumberComponent');
+const { getConsoleUXID } = require('../../../context/utils/userGameUXID');
+const {
+  updateUserQuery,
+} = require('../../../context/data/data-users/mutations');
+const {
+  fetchNumberInAccountConfig,
+  fetchUserAccountConfigByIdQuery,
+} = require('../../../context/data/data-users/queries');
+const { Config } = require('../../../context/config');
+const { emoteComposer } = require('../../../context/utils/utils');
+
+module.exports = {
+  customId: 'gameConfigModal',
+  async execute(interaction) {
+    const [action, step, gameSelected, userId] =
+      interaction.customId.split('_');
+    const reqPseudoContent =
+      interaction.fields.getTextInputValue('usernameInput');
+    const reqNumberContent = parseInt(
+      interaction.fields.getTextInputValue('numberInput')
+    );
+
+    const usedNumbers = await fetchNumberInAccountConfig(gameSelected);
+    let defaultValues = {};
+
+    if (usedNumbers.includes(reqNumberContent)) {
+      let availableNumber = null;
+
+      for (let offset = 1; offset <= 999; offset++) {
+        const upper = reqNumberContent + offset;
+        const lower = reqNumberContent - offset;
+
+        if (upper <= 999 && !usedNumbers.includes(upper)) {
+          availableNumber = upper;
+          break;
+        }
+
+        if (lower >= 1 && !usedNumbers.includes(lower)) {
+          availableNumber = lower;
+          break;
+        }
+
+        if (availableNumber) {
+          defaultValues = {
+            error: `Le numéro ${reqNumberContent} n'est pas disponible. Suggestion ${availableNumber}`,
+            name: reqPseudoContent,
+            suggestionNumber: availableNumber,
+          };
+        } else {
+          defaultValues = {
+            error: `Aucun numéro disponible entre 1 et 999`,
+            name: reqPseudoContent,
+          };
+        }
+      }
+
+      const inputModal = await usernameAndNumberComponent(
+        step,
+        userId,
+        gameSelected,
+        defaultValues
+      );
+      return interaction.showModal(inputModal);
+    }
+
+    const [userConfig] = await fetchUserAccountConfigByIdQuery(userId);
+    let accountConfig = {};
+    let UXID = null;
+
+    if (gameSelected === 'acc') {
+      UXID = await getConsoleUXID(reqPseudoContent);
+      defaultValues = {
+        error: `Votre pseudo "${reqPseudoContent}" n'est pas retrouver !`,
+      };
+
+      if (UXID.id === undefined) {
+        const inputModal = await usernameAndNumberComponent(
+          step,
+          userId,
+          gameSelected,
+          defaultValues
+        );
+        return interaction.showModal(inputModal);
+      }
+    }
+
+    const buildTrigram = reqPseudoContent.match(/[a-zA-Z]/g) || [];
+    while (buildTrigram.length < 3) {
+      buildTrigram.push(String.fromCharCode(65 + Math.random() * 26));
+    }
+
+    const trigram = buildTrigram.slice(0, 3).join('').toUpperCase();
+
+    accountConfig = JSON.parse(userConfig.gameConfig);
+    if (accountConfig[gameSelected]) {
+      accountConfig[gameSelected].id = `${UXID.platform}${UXID.id}`;
+      accountConfig[gameSelected].name = reqPseudoContent;
+      accountConfig[gameSelected].trigram = trigram;
+      accountConfig[gameSelected].number = reqNumberContent;
+    }
+
+    const userData = {
+      accounts_config: JSON.stringify(accountConfig),
+    };
+
+    await updateUserQuery(userId, userData);
+
+    const answerUser = new EmbedBuilder()
+      .setColor(Config.colors.success)
+      .setDescription(
+        `### ${emoteComposer(
+          Config.emotes.success
+        )} Votre licence a été correctement configurée ! Veuillez cliquer de nouveau sur \`Licence LSX\` pour consulter votre licence.`
+      );
+
+    return interaction.reply({
+      embeds: [answerUser],
+      components: [],
+      ephemeral: true,
+    });
+  },
+};

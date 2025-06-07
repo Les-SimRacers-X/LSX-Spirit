@@ -1,4 +1,10 @@
 ## Ignorer les dossiers et fichiers suivants
 node_modules/
 .vscode/
+coverage/
+dist/
+*.min.js
 .env
+
+oldInteraction.js
+oldReady.js
