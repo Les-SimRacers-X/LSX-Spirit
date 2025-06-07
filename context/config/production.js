@@ -39,9 +39,9 @@ module.exports = {
   },
   categories: {
     events: ['1179353258070917180', '1355941419864555640'],
-    console: '',
-    general: '',
-    team: '',
+    console: '1179353258070917180',
+    general: '1130557618792955905',
+    team: '1166445624653262898',
   },
   channels: {
     accChannels: ['1375922411274506260', '1132938881411596379'],
@@ -53,48 +53,48 @@ module.exports = {
   },
   roles: {
     spectator: '1342837215109054545',
-    team: '',
+    team: '1166375974435311697',
   },
   platforms: [
     {
       name: 'PC',
       emote: {
-        id: '',
-        name: '',
+        id: '1359254614524035202',
+        name: 'windows',
       },
       value: 'pc',
     },
     {
       name: 'Playstation',
       emote: {
-        id: '',
-        name: '',
+        id: '1381011582771007619',
+        name: 'playLogo',
       },
-      value: 'ps',
+      value: 'PLaystation',
     },
     {
       name: 'Xbox',
       emote: {
-        id: '',
-        name: '',
+        id: '1381011585501364264',
+        name: 'XboxLogo',
       },
-      value: 'xb',
+      value: 'Xbox',
     },
   ],
   games: [
     {
       name: 'Assetto Corsa Competizione',
       emote: {
-        id: '',
-        name: '',
+        id: '1381011589561585856',
+        name: 'acc',
       },
       value: 'acc',
     },
     {
       name: 'Le Mans Ultimate',
       emote: {
-        id: '',
-        name: '',
+        id: '1381011587598385162',
+        name: 'lmu',
       },
       value: 'lmu',
     },
