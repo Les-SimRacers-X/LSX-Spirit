@@ -15,7 +15,7 @@ module.exports = {
   async run(interaction) {
     if (!interaction.member.roles.cache.has('1321919765140344895')) {
       const embedNoPermissions = new EmbedBuilder()
-        .setColor(Config.colors.failure)
+        .setColor(Config.colors.error)
         .setDescription(
           `### ${emoteComposer(Config.emotes.failure)} Vous n'avez pas les permissions nécessaire pour utiliser cette command !`
         );
