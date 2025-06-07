@@ -1,4 +1,10 @@
-const { EmbedBuilder, ModalBuilder, TextInputBuilder, ActionRowBuilder } = require('discord.js');
+const {
+  EmbedBuilder,
+  ModalBuilder,
+  TextInputBuilder,
+  ActionRowBuilder,
+  TextInputStyle,
+} = require('discord.js');
 const { Config } = require('../context/config');
 const { emoteComposer } = require('../context/utils/utils');
 
@@ -6,10 +12,10 @@ module.exports = {
   name: 'send-sanction',
   type: 'APPLICATION',
 
-  async run(bot, interaction) {
+  async run(interaction) {
     if (!interaction.member.roles.cache.has('1321919765140344895')) {
       const embedNoPermissions = new EmbedBuilder()
-        .setColor(Config.colors.crossColor)
+        .setColor(Config.colors.failure)
         .setDescription(
           `### ${emoteComposer(Config.emotes.failure)} Vous n'avez pas les permissions nécessaire pour utiliser cette command !`
         );
@@ -38,11 +44,13 @@ module.exports = {
         .setPlaceholder('Exemple : 5 ou rien aucun points à enlever')
         .setStyle(TextInputStyle.Short);
 
-      const modalMessageActionRow =
-        new ActionRowBuilder().addComponents(modalMessageInput);
+      const modalMessageActionRow = new ActionRowBuilder().addComponents(
+        modalMessageInput
+      );
 
-      const modalPointToRemoveActionRow =
-        new ActionRowBuilder().addComponents(modalPointToRemoveInput);
+      const modalPointToRemoveActionRow = new ActionRowBuilder().addComponents(
+        modalPointToRemoveInput
+      );
 
       modalSendingSanction.addComponents(
         modalMessageActionRow,
