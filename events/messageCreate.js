@@ -92,7 +92,7 @@ module.exports = {
 
     if (message.content.toLowerCase() === 'send:embeds') {
       const member = await message.guild.members.fetch(message.author.id);
-      if (!member.roles.cache.has('1349479229234090138')) {
+      if (!member.roles.cache.has('1324563836619063387')) {
         return;
       } else {
         const embedConfiguration = new EmbedBuilder()
