@@ -9,7 +9,7 @@ const {
 const {
   licenceAndTeamActionsComponent,
 } = require('../components/modules/module-licence/licenceAndTeamActions');
-const { databaseMigration } = require('../context/data/migration');
+const { newMigration } = require('../context/data/viewMigration');
 require('dotenv').config();
 
 module.exports = {
@@ -120,7 +120,7 @@ module.exports = {
     }
 
     if (message.content.toLowerCase() === 'migration:admin') {
-      await databaseMigration();
+      await newMigration();
     }
   },
 };
