@@ -91,32 +91,27 @@ module.exports = {
     }
 
     if (message.content.toLowerCase() === 'send:embeds') {
-      const member = await message.guild.members.fetch(message.author.id);
-      if (!member.roles.cache.has('1324563836619063387')) {
-        return;
-      } else {
-        const embedConfiguration = new EmbedBuilder()
-          .setColor(Config.colors.default)
-          .setDescription(
-            `## 🤖 Gestion du bot\nLe sélecteur ci-dessous vous donne accès à la gestion des événements et des différents paramètres qui les accompagnent.`
-          );
+      const embedConfiguration = new EmbedBuilder()
+        .setColor(Config.colors.default)
+        .setDescription(
+          `## 🤖 Gestion du bot\nLe sélecteur ci-dessous vous donne accès à la gestion des événements et des différents paramètres qui les accompagnent.`
+        );
 
-        bot.channels.cache.get(Config.channels.botGestion).send({
-          embeds: [embedConfiguration],
-          components: [interactionGlobalBotGestion()],
-        });
+      bot.channels.cache.get(Config.channels.botGestion).send({
+        embeds: [embedConfiguration],
+        components: [interactionGlobalBotGestion()],
+      });
 
-        const embedLSXFunction = new EmbedBuilder()
-          .setColor(Config.colors.default)
-          .setDescription(
-            `## ✨ Fonctionnalités LSX\n Utilisez le menu déroulant ci-dessous pour accéder à diverses fonctionnalités liées ) votre licence et aux équipes.`
-          );
+      const embedLSXFunction = new EmbedBuilder()
+        .setColor(Config.colors.default)
+        .setDescription(
+          `## ✨ Fonctionnalités LSX\n Utilisez le menu déroulant ci-dessous pour accéder à diverses fonctionnalités liées ) votre licence et aux équipes.`
+        );
 
-        bot.channels.cache.get(Config.channels.licence).send({
-          embeds: [embedLSXFunction],
-          components: [licenceAndTeamActionsComponent()],
-        });
-      }
+      bot.channels.cache.get(Config.channels.licence).send({
+        embeds: [embedLSXFunction],
+        components: [licenceAndTeamActionsComponent()],
+      });
     }
 
     if (message.content.toLowerCase() === 'migration:admin') {
