@@ -14,11 +14,14 @@ const {
 const {
   licenceEvolutionComponent,
 } = require('../../modules/module-licence/licenceEvolution');
+const {
+  editGameConfig,
+} = require('../../modules/module-licence/editGameConfig');
 
 module.exports = {
   customId: 'interactionOnProfil',
   async execute(interaction) {
-    const [action, userId] = interaction.customId.split('_');
+    const [action, userId, selectedGame] = interaction.customId.split('_');
     const selectedValue = interaction.values[0];
 
     switch (selectedValue) {
@@ -33,18 +36,9 @@ module.exports = {
       }
 
       case 'edit': {
-        const featureNotAvailable = new EmbedBuilder()
-          .setColor(Config.colors.error)
-          .setDescription(
-            `### ${emoteComposer(
-              Config.emotes.failure
-            )} Cette fonctionnalité est indisponible pour l'instant...`
-          );
+        const inputModal = await editGameConfig(userId, selectedGame);
 
-        return interaction.reply({
-          embeds: [featureNotAvailable],
-          ephemeral: true,
-        });
+        return interaction.showModal(inputModal);
       }
 
       case 'return': {

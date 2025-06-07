@@ -8,8 +8,6 @@ const {
 } = require('../../../context/data/data-users/mutations');
 const { licenceEvolutionComponent } = require('./licenceEvolution');
 const { licenceDisplay } = require('./licenceDisplay');
-const { Config } = require('../../../context/config');
-const { emoteComposer } = require('../../../context/utils/utils');
 
 async function licenceDisplayComponents(userId) {
   const [users] = await fetchUserProfilByIdQuery(userId);
