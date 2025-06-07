@@ -31,16 +31,20 @@ jobs:
         run: npm test
         continue-on-error: false
 
-      - name: Test build/startup
+      - name: Test build/startup with fake token
         env:
-          TOKEN: ${{ secrets.TOKEN }}
+          TOKEN: 'fake_token_for_testing'
         run: |
           timeout 30s npm start || code=$?
-          if [[ $code -ne 124 && $code -ne 0 ]]; then
-            echo "❌ Le bot a crashé au démarrage"
+          if [[ $code -eq 124 ]]; then
+            echo "❌ Le bot ne devrait pas démarrer avec un faux token"
             exit 1
+          elif [[ $code -eq 0 ]]; then
+            echo "❌ Le bot ne devrait pas démarrer avec un faux token"
+            exit 1
+          else
+            echo "✅ Le bot échoue correctement avec un faux token"
           fi
-          echo "✅ Le bot démarre correctement"
 
       - name: Check for security vulnerabilities
         run: npm audit --audit-level=high
