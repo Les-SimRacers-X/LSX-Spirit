@@ -49,7 +49,7 @@ async function getEventByIdQuery(id) {
 
 async function getEventByMessageIdQuery(id) {
   try {
-    return await getAllEventsQuery('WHERE events.message_id = ?', [id]);
+    return await getAllEvents('WHERE events.message_id = ?', [id]);
   } catch (error) {
     console.error("Erreur lors de la requête 'getEventByIdQuery' : ", error);
     throw error;

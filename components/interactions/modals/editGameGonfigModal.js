@@ -1,3 +1,4 @@
+const { EmbedBuilder } = require('discord.js');
 const { Config } = require('../../../context/config');
 const {
   updateUserQuery,
