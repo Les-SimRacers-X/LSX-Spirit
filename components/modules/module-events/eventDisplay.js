@@ -125,7 +125,7 @@ async function generateEvent(eventId) {
   }
 
   const sendMessageEvent = await bot.channels.cache.get(event.channelId).send({
-    content: `<@&>`,
+    content: `<@&${Config.roles.member}>`,
     embeds,
     components: actionRows,
   });
