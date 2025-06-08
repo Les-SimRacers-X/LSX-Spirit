@@ -26,11 +26,13 @@ module.exports = {
 
     switch (selectedValue) {
       case 'add': {
-        const { embedEvolution, interactionEvolution } =
-          licenceEvolutionComponent(1, userId);
+        const { embeds, components } = await licenceEvolutionComponent(
+          1,
+          userId
+        );
         return interaction.update({
-          embeds: [embedEvolution],
-          components: [interactionEvolution],
+          embeds,
+          components,
           ephemeral: true,
         });
       }
@@ -42,10 +44,10 @@ module.exports = {
       }
 
       case 'return': {
-        const { driverProfil, interactions } = licenceDisplay(userId);
+        const { embeds, components } = await licenceDisplay(userId);
         return interaction.update({
-          embeds: [driverProfil],
-          components: [interactions],
+          embeds,
+          components,
           ephemeral: true,
         });
       }
@@ -63,7 +65,6 @@ module.exports = {
         );
 
         const data = userGameConfigParsed[selectedGame.value];
-        console.log({ data, platformValue: data?.platform });
         const platform = Config.platforms.find(
           (platform) => platform.value === data?.platform
         );

@@ -11,9 +11,9 @@ const { Config } = require('../../../context/config');
 
 async function editGameConfig(userId, selectedGame, defaultValues = {}) {
   const [user] = await fetchUserAccountConfigByIdQuery(userId);
-  const gameConfigObject = JSON.parse(user?.gameConfig[selectedGame]);
+  const gameConfigObject = JSON.parse(user.gameConfig);
   const platformDetails = Config.platforms.find(
-    (platform) => platform.value === gameConfig[selectedGame].platform
+    (platform) => platform.value === gameConfigObject[selectedGame].platform
   );
 
   const modal = new ModalBuilder()
@@ -26,7 +26,7 @@ async function editGameConfig(userId, selectedGame, defaultValues = {}) {
     .setPlaceholder('Exemple : toto')
     .setRequired(true)
     .setStyle(TextInputStyle.Short)
-    .setValue(gameConfigObject?.name || '');
+    .setValue(gameConfigObject[selectedGame].name || '');
 
   const trigramInput = new TextInputBuilder()
     .setCustomId(`trigramInput`)
@@ -34,7 +34,7 @@ async function editGameConfig(userId, selectedGame, defaultValues = {}) {
     .setPlaceholder('Exemple : LSX')
     .setRequired(true)
     .setStyle(TextInputStyle.Short)
-    .setValue(gameConfigObject?.trigram || '');
+    .setValue(gameConfigObject[selectedGame].trigram || '');
 
   const numberInput = new TextInputBuilder()
     .setCustomId(`numberInput`)
@@ -43,7 +43,7 @@ async function editGameConfig(userId, selectedGame, defaultValues = {}) {
     .setRequired(true)
     .setStyle(TextInputStyle.Short)
     .setValue(
-      `${defaultValues.suggestionNumber || gameConfigObject?.number || ''}`
+      `${defaultValues.suggestionNumber || gameConfigObject[selectedGame].number || ''}`
     );
 
   const firstActionRow = new ActionRowBuilder().addComponents(usernameInput);
