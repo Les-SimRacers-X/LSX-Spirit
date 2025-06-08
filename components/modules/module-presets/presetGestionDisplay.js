@@ -72,7 +72,7 @@ async function presetGestionDisplay(currentIndex) {
       text: `Preset : ${checkCurrentPresetIndex} sur ${preset.length}`,
     });
 
-  const selectPresetManagment = new ActionRowBuilder.addComponents(
+  const selectPresetManagment = new ActionRowBuilder().addComponents(
     new StringSelectMenuBuilder()
       .setCustomId(`presetManagment_${currentPreset.id}`)
       .setPlaceholder('📌 Séléctionner une option...')
