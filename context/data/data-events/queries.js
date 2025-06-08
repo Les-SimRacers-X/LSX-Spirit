@@ -40,7 +40,7 @@ async function getAllEventsQuery() {
 
 async function getEventByIdQuery(id) {
   try {
-    return await getAllEventsQuery('WHERE id = ?', [id]);
+    return await getAllEvents('WHERE events.id = ?', [id]);
   } catch (error) {
     console.error("Erreur lors de la requête 'getEventByIdQuery' : ", error);
     throw error;
@@ -49,7 +49,7 @@ async function getEventByIdQuery(id) {
 
 async function getEventByMessageIdQuery(id) {
   try {
-    return await getAllEventsQuery('WHERE message_id = ?', [id]);
+    return await getAllEventsQuery('WHERE events.message_id = ?', [id]);
   } catch (error) {
     console.error("Erreur lors de la requête 'getEventByIdQuery' : ", error);
     throw error;
