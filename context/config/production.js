@@ -75,7 +75,7 @@ module.exports = {
         id: '1381011582771007619',
         name: 'playLogo',
       },
-      value: 'PLaystation',
+      value: 'Playstation',
     },
     {
       name: 'Xbox',
