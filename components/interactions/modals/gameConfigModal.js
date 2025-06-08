@@ -77,7 +77,7 @@ module.exports = {
         error: `Votre pseudo "${reqPseudoContent}" n'est pas retrouver !`,
       };
 
-      if (UXID.id === undefined) {
+      if (!UXID || UXID.id === undefined) {
         const inputModal = await usernameAndNumberComponent(
           step,
           userId,
