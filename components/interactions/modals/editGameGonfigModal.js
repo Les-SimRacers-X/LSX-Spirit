@@ -10,6 +10,7 @@ const {
 const {
   editGameConfig,
 } = require('../../modules/module-licence/editGameConfig');
+const { emoteComposer } = require('../../../context/utils/utils');
 
 module.exports = {
   customId: 'editGameConfigModal',
