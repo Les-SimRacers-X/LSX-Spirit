@@ -69,10 +69,10 @@ module.exports = {
 
     const [userConfig] = await fetchUserAccountConfigByIdQuery(userId);
     let accountConfig = {};
-    let UXID = null;
+    let finalUXID = 'null';
 
     if (gameSelected === 'acc') {
-      UXID = await getConsoleUXID(reqPseudoContent);
+      const UXID = await getConsoleUXID(reqPseudoContent);
       defaultValues = {
         error: `Votre pseudo "${reqPseudoContent}" n'est pas retrouver !`,
       };
@@ -86,6 +86,8 @@ module.exports = {
         );
         return interaction.showModal(inputModal);
       }
+
+      finalUXID = `${UXID.platform}${UXID.id}`;
     }
 
     const buildTrigram = reqPseudoContent.match(/[a-zA-Z]/g) || [];
@@ -97,7 +99,7 @@ module.exports = {
 
     accountConfig = JSON.parse(userConfig.gameConfig);
     if (accountConfig[gameSelected]) {
-      accountConfig[gameSelected].id = `${UXID.platform}${UXID.id}`;
+      accountConfig[gameSelected].id = finalUXID;
       accountConfig[gameSelected].name = reqPseudoContent;
       accountConfig[gameSelected].trigram = trigram;
       accountConfig[gameSelected].number = reqNumberContent;
