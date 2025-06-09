@@ -33,7 +33,7 @@ module.exports = {
           .setLabel('Entrez la description de votre événement :')
           .setPlaceholder('Exemple : Coucou comment ça va ?')
           .setRequired(true)
-          .setStyle(TextInputStyle.Short);
+          .setStyle(TextInputStyle.Paragraph);
 
         const modalEventDate = new TextInputBuilder()
           .setCustomId(`DateInput`)
