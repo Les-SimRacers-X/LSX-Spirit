@@ -40,7 +40,7 @@ module.exports = {
           )
         ) {
           try {
-            return await handler.execute(interaction);
+            await handler.execute(interaction);
           } catch (err) {
             await errorHandler(interaction, err);
           }

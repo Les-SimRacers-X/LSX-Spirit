@@ -23,7 +23,21 @@ async function fetchNumberInAccountConfig(gameIdentifier) {
       SELECT JSON_EXTRACT(accounts_config, '$.${gameIdentifier}.number') AS found_number FROM users
       `
     );
-    return rows;
+
+    const extractedNumbers = rows
+      .map((row) => {
+        if (
+          row &&
+          row.found_number !== null &&
+          row.found_number !== undefined
+        ) {
+          return Number(row.found_number);
+        }
+        return null;
+      })
+      .filter((number) => number !== null);
+
+    return extractedNumbers;
   } catch (error) {
     console.error(
       `Erreur lors de la requête 'fetchNumberInAccountConfig' :`,

@@ -1,4 +1,9 @@
-const { EmbedBuilder } = require('discord.js');
+const {
+  EmbedBuilder,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+} = require('discord.js');
 const { Config } = require('../../../context/config');
 const {
   updateUserQuery,
@@ -7,9 +12,7 @@ const {
   fetchNumberInAccountConfig,
   fetchUserAccountConfigByIdQuery,
 } = require('../../../context/data/data-users/queries');
-const {
-  editGameConfig,
-} = require('../../modules/module-licence/editGameConfig');
+
 const { emoteComposer } = require('../../../context/utils/utils');
 
 module.exports = {
@@ -25,10 +28,12 @@ module.exports = {
     );
 
     const usedNumbers = await fetchNumberInAccountConfig(selectedGame);
+
     let defaultValues = {};
 
     if (usedNumbers.includes(reqNumberContent)) {
       let availableNumber = null;
+      let suggestionFound = false;
 
       for (let offset = 1; offset <= 999; offset++) {
         const upper = reqNumberContent + offset;
@@ -36,36 +41,61 @@ module.exports = {
 
         if (upper <= 999 && !usedNumbers.includes(upper)) {
           availableNumber = upper;
+          suggestionFound = true;
           break;
         }
 
         if (lower >= 1 && !usedNumbers.includes(lower)) {
           availableNumber = lower;
+          suggestionFound = true;
           break;
         }
 
-        if (availableNumber) {
-          defaultValues = {
-            error: `Le numéro ${reqNumberContent} n'est pas disponible. Suggestion ${availableNumber}`,
-            suggestionNumber: availableNumber,
-          };
-        } else {
-          defaultValues = {
-            error: `Aucun numéro disponible entre 1 et 999`,
-          };
+        if (upper > 999 && lower < 1) {
+          break;
         }
       }
 
-      const inputModal = await editGameConfig(
-        userId,
-        selectedGame,
-        defaultValues
+      if (suggestionFound) {
+        defaultValues = {
+          error: `Le numéro ${reqNumberContent} n'est pas disponible.`,
+          name: reqPseudoContent,
+          suggestionNumber: availableNumber,
+        };
+      } else {
+        defaultValues = {
+          error: `Aucun numéro disponible entre 1 et 999.`,
+          name: reqPseudoContent,
+        };
+      }
+
+      const alreadyTakenNumber = new EmbedBuilder()
+        .setColor(Config.colors.error)
+        .setDescription(
+          `### ${emoteComposer(Config.emotes.failure)} Le numéro ${reqNumberContent} n'est pas disponible. Voici un numéro disponible \`${availableNumber}\``
+        );
+
+      const buttonAlreadyTakenNumber = new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+          .setCustomId(`retryEditNumber_${userId}_${selectedGame}`)
+          .setLabel('Réessayé')
+          .setDisabled(false)
+          .setStyle(ButtonStyle.Primary)
       );
-      return interaction.showModal(inputModal);
+
+      return await interaction.reply({
+        embeds: [alreadyTakenNumber],
+        components: [buttonAlreadyTakenNumber],
+        ephemeral: true,
+      });
     }
 
     const [userConfig] = await fetchUserAccountConfigByIdQuery(userId);
     let accountConfig = {};
+
+    if (userConfig?.gameConfig) {
+      accountConfig = JSON.parse(userConfig.gameConfig);
+    }
 
     const buildTrigram = reqPseudoContent.match(/[a-zA-Z]/g) || [];
     while (buildTrigram.length < 3) {
@@ -77,12 +107,9 @@ module.exports = {
         ? buildTrigram.slice(0, 3).join('').toUpperCase()
         : reqTrigramContent;
 
-    accountConfig = JSON.parse(userConfig?.gameConfig);
-    if (accountConfig[selectedGame]) {
-      accountConfig[selectedGame].name = reqPseudoContent;
-      accountConfig[selectedGame].trigram = trigram;
-      accountConfig[selectedGame].number = reqNumberContent;
-    }
+    accountConfig[selectedGame].name = reqPseudoContent;
+    accountConfig[selectedGame].trigram = trigram;
+    accountConfig[selectedGame].number = reqNumberContent;
 
     const data = {
       accounts_config: JSON.stringify(accountConfig),

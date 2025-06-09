@@ -1,7 +1,9 @@
-const { EmbedBuilder } = require('discord.js');
 const {
-  usernameAndNumberComponent,
-} = require('../../modules/module-licence/usernameAndNumberComponent');
+  EmbedBuilder,
+  ButtonStyle,
+  ButtonBuilder,
+  ActionRowBuilder,
+} = require('discord.js');
 const { getConsoleUXID } = require('../../../context/utils/userGameUXID');
 const {
   updateUserQuery,
@@ -25,6 +27,7 @@ module.exports = {
     );
 
     const usedNumbers = await fetchNumberInAccountConfig(gameSelected);
+
     let defaultValues = {};
 
     if (usedNumbers.includes(reqNumberContent)) {
@@ -58,13 +61,27 @@ module.exports = {
         }
       }
 
-      const inputModal = await usernameAndNumberComponent(
-        step,
-        userId,
-        gameSelected,
-        defaultValues
+      const alreadyTakenNumber = new EmbedBuilder()
+        .setColor(Config.colors.error)
+        .setDescription(
+          `### ${emoteComposer(Config.emotes.failure)} Le numéro ${reqNumberContent} n'est pas disponible. Voici un numéro disponible \`${availableNumber}\``
+        );
+
+      const buttonAlreadyTakenNumber = new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+          .setCustomId(
+            `retryNumber_${userId}_${gameSelected}_${step}_${defaultValues}`
+          )
+          .setLabel('Réessayé')
+          .setDisabled(false)
+          .setStyle(ButtonStyle.Primary)
       );
-      return interaction.showModal(inputModal);
+
+      return await interaction.reply({
+        embeds: [alreadyTakenNumber],
+        components: [buttonAlreadyTakenNumber],
+        ephemeral: true,
+      });
     }
 
     const [userConfig] = await fetchUserAccountConfigByIdQuery(userId);
@@ -73,18 +90,32 @@ module.exports = {
 
     if (gameSelected === 'acc') {
       const UXID = await getConsoleUXID(reqPseudoContent);
-      defaultValues = {
-        error: `Votre pseudo "${reqPseudoContent}" n'est pas retrouver !`,
-      };
 
-      if (!UXID || UXID.id === undefined) {
-        const inputModal = await usernameAndNumberComponent(
-          step,
-          userId,
-          gameSelected,
-          defaultValues
+      if (!UXID || UXID === undefined) {
+        defaultValues = {
+          error: `Votre pseudo "${reqPseudoContent}" n'est pas retrouver !`,
+        };
+
+        const alreadyTakenNumber = new EmbedBuilder()
+          .setColor(Config.colors.error)
+          .setDescription(
+            `### ${emoteComposer(Config.emotes.failure)} Veuillez réessayer`
+          );
+        const buttonAlreadyTakenNumber = new ActionRowBuilder().addComponents(
+          new ButtonBuilder()
+            .setCustomId(
+              `retryNumber_${userId}_${gameSelected}_${step}_${defaultValues}`
+            )
+            .setLabel('Réessayé')
+            .setDisabled(false)
+            .setStyle(ButtonStyle.Primary)
         );
-        return interaction.showModal(inputModal);
+
+        return interaction.reply({
+          embeds: [alreadyTakenNumber],
+          components: [buttonAlreadyTakenNumber],
+          ephemeral: true,
+        });
       }
 
       finalUXID = `${UXID.platform}${UXID.id}`;
