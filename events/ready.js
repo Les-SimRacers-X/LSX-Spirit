@@ -1,6 +1,7 @@
 const loadSlashCommand = require('../handlers/loadSlashCommand');
 const db = require('../handlers/loadDataBase');
 const { Events } = require('discord.js');
+const { getEventOfTheDay } = require('../components/jobs/eventOfTheDay');
 
 module.exports = {
   name: Events.ClientReady,
@@ -36,6 +37,24 @@ module.exports = {
         );
       }
     }
+
+    const interval = 10 * 60 * 1000;
+    setInterval(await getEventOfTheDay(), interval);
+
+    bot.on('guildMemberUpdate', async (oldMember, newMember) => {
+      if (oldMember.roles.cache.size !== newMember.roles.cache.size) {
+        await updateTeamCategoryNumber(newMember.guild);
+      }
+    });
+
+    bot.on('guildMemberAdd', async (member) =>
+      updateGeneralCategoryNumber(member.guild)
+    );
+    bot.on('guildMemberRemove', async (member) =>
+      updateGeneralCategoryNumber(member.guild)
+    );
+
+    await getEventOfTheDay();
 
     await connectToDataBase();
 
