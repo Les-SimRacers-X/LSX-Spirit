@@ -1,6 +1,6 @@
 Licence d'utilisation restreinte pour le projet LSX-Bot
 
-# Copyright (c) 2025 l'organisation Les SimRacers X
+# Copyright (c) 2025 Les SimRacers X
 
 **Tous droits réservés.**
 
