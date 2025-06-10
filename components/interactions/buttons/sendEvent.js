@@ -7,7 +7,7 @@ module.exports = {
     const { embeds } = await generateEvent(eventId);
 
     return await interaction.reply({
-      embeds,
+      embeds: embeds,
       ephemeral: true,
     });
   },
