@@ -2,6 +2,10 @@ const loadSlashCommand = require('../handlers/loadSlashCommand');
 const db = require('../handlers/loadDataBase');
 const { Events } = require('discord.js');
 const { getEventOfTheDay } = require('../components/jobs/eventOfTheDay');
+const {
+  updateTeamCategoryNumber,
+  updateGeneralCategoryNumber,
+} = require('../components/jobs/updateCategoriesNumbers');
 
 module.exports = {
   name: Events.ClientReady,
@@ -47,11 +51,13 @@ module.exports = {
       }
     });
 
-    bot.on('guildMemberAdd', async (member) =>
-      updateGeneralCategoryNumber(member.guild)
+    bot.on(
+      'guildMemberAdd',
+      async (member) => await updateGeneralCategoryNumber(member.guild)
     );
-    bot.on('guildMemberRemove', async (member) =>
-      updateGeneralCategoryNumber(member.guild)
+    bot.on(
+      'guildMemberRemove',
+      async (member) => await updateGeneralCategoryNumber(member.guild)
     );
 
     await getEventOfTheDay();
