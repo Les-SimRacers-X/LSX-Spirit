@@ -21,6 +21,7 @@ async function getEventOfTheDay() {
     });
 
     if (todaysEvents.length !== 0) {
+      console.log(`Événement aujourd'hui : `, todaysEvents);
       for (const event of todaysEvents) {
         const eventTimestamp = Number(event.timestamp) * 1000;
         const timeUntilEvent = eventTimestamp - currentTimestamp;
