@@ -3,10 +3,12 @@ const { Config } = require('../config');
 const { emoteComposer } = require('./utils');
 
 async function errorHandler(interaction, error) {
+  const errorDescription = error instanceof Error ? error.stack : String(error);
+
   const embedErrorDetectionLog = new EmbedBuilder()
     .setColor(Config.colors.mainServerColor)
     .setTitle('📌 Error Détecté :')
-    .setDescription(`\`\`\`${error}\`\`\``)
+    .setDescription(`\`\`\`${errorDescription}\`\`\``)
     .setTimestamp();
 
   const embedErrorDetected = new EmbedBuilder()
