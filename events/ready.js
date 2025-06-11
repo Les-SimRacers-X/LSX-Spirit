@@ -39,7 +39,7 @@ module.exports = {
     }
 
     const interval = 10 * 60 * 1000;
-    setInterval(await getEventOfTheDay(), interval);
+    setInterval(getEventOfTheDay, interval);
 
     bot.on('guildMemberUpdate', async (oldMember, newMember) => {
       if (oldMember.roles.cache.size !== newMember.roles.cache.size) {
