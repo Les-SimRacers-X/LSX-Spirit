@@ -12,7 +12,7 @@ const { errorHandler } = require('../../context/utils/errorHandling');
 
 async function getEventOfTheDay() {
   try {
-    const [events] = await getAllEventsQuery();
+    const events = await getAllEventsQuery();
     const currentTimestamp = Date.now();
 
     const todaysEvents = events.filter((event) => {
