@@ -34,39 +34,39 @@ async function getEventOfTheDay() {
             if (timeUntilEvent > 15 * 60 * 1000) {
               setTimeout(
                 async () => {
-                  let targetThread = await channel.threads.fetch(message.id);
-
-                  if (targetThread) {
-                    console.log('Thread Already exists');
-                    return;
-                  }
-
-                  targetThread = await channel.threads.create({
+                  let targetThread = await channel.threads.create({
                     name: `Événement du jour !`,
                     type: ChannelType.PublicThread,
                     startMessage: message.id,
+                    reason: "Création du thread d'événement",
                   });
 
-                  const [updatedEvent] = await getEventByIdQuery(event.id);
+                  if (!targetThread) {
+                    console.log('Thread Already exists');
+                    return;
+                  } else {
+                    targetThread = await channel.threads.fetch(message.id);
 
-                  const participations = JSON.parse(updatedEvent.registered);
-                  const usersID = participations
-                    .filter((p) => !p?.waiting)
-                    .map((p) => p?.id);
-                  const users = await Promise.all(
-                    usersID.map((userID) =>
-                      bot.users.fetch(userID).catch(() => null)
+                    const [updatedEvent] = await getEventByIdQuery(event.id);
+
+                    const participations = JSON.parse(updatedEvent.registered);
+                    const usersID = participations
+                      .filter((p) => !p?.waiting)
+                      .map((p) => p?.id);
+                    const users = await Promise.all(
+                      usersID.map((userID) =>
+                        bot.users.fetch(userID).catch(() => null)
+                      )
+                    );
+                    const userList = users
+                      .filter((user) => user)
+                      .map((user) => `<@${user.id}>`)
+                      .join(', ');
+
+                    const embedRules = new EmbedBuilder().setColor(
+                      Config.colors.default
                     )
-                  );
-                  const userList = users
-                    .filter((user) => user)
-                    .map((user) => `<@${user.id}>`)
-                    .join(', ');
-
-                  const embedRules = new EmbedBuilder().setColor(
-                    Config.colors.default
-                  )
-                    .setDescription(`### 📌 Règlement de l'événement\n\n**__Rappels :__**
+                      .setDescription(`### 📌 Règlement de l'événement\n\n**__Rappels :__**
                   :one: Extrême vigilance au premier tour, encore plus au premier virage
                   :two: Le fair play en piste est primordial, autant dans le pilotage que dans l'attitude
                   :three: En cas de contact, si vous êtes fautif, ne prenez pas l'avantage et attendez votre victime
@@ -75,20 +75,21 @@ async function getEventOfTheDay() {
                   :six: En cas de retour au stand pour abandon, si vous provoquez un drapeau jaune faites 'Conduire' puis à nouveau 'Retour au garage'
                   `);
 
-                  const data = {
-                    status: 'false',
-                  };
+                    const data = {
+                      status: 'false',
+                    };
 
-                  await updateEventQuery(event.id, data);
+                    await updateEventQuery(event.id, data);
 
-                  await targetThread.send({
-                    content: `## 🟢 L'événement commence à <t:${Math.floor(
-                      eventTimestamp / 1000
-                    )}:t> (<t:${Math.floor(eventTimestamp / 1000)}:R>)\n${
-                      userList || 'Aucun participant.'
-                    }`,
-                    embeds: [embedRules],
-                  });
+                    await targetThread.send({
+                      content: `## 🟢 L'événement commence à <t:${Math.floor(
+                        eventTimestamp / 1000
+                      )}:t> (<t:${Math.floor(eventTimestamp / 1000)}:R>)\n${
+                        userList || 'Aucun participant.'
+                      }`,
+                      embeds: [embedRules],
+                    });
+                  }
                 },
                 timeUntilEvent - 15 * 60 * 1000
               );
