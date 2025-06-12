@@ -43,17 +43,35 @@ module.exports = {
       '1355941419864555640',
       '1132947259349282816',
     ],
-    console: '1179353258070917180',
     general: '1130557618792955905',
     team: '1166445624653262898',
   },
   channels: {
-    accChannels: ['1375922411274506260', '1132938881411596379'],
     monitoringServer: '1132938881411596379',
     licence: '1339169354989830208',
     logs: '1321920387126263872',
     botGestion: '1317894969222103093',
     errorLogs: '1321920324119560435',
+  },
+  gameSpecificConfigs: {
+    acc: {
+      name: 'Assetto Corsa Competizione',
+      category: '1179353258070917180',
+      channels: ['1179673347441819708', '1264827348558024766'],
+      requiredFields: ['id', 'name', 'trigram', 'platform', 'number'],
+    },
+    lmu: {
+      name: 'Le Mans Ultimate',
+      category: '1355941419864555640',
+      channels: ['1355941865790111835'],
+      requiredFields: ['name', 'trigram', 'platform', 'number'],
+    },
+    f1: {
+      name: 'Formula 1',
+      category: '1132947259349282816',
+      channels: ['1379533061036834896'],
+      requiredFields: ['name', 'trigram', 'platform', 'number'],
+    },
   },
   roles: {
     spectator: '1342837215109054545',
