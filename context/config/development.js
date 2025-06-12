@@ -56,6 +56,26 @@ module.exports = {
     team: '1349479229234090144',
     member: '',
   },
+  gameSpecificConfigs: {
+    acc: {
+      name: 'Assetto Corsa Competizione',
+      category: '',
+      channels: [],
+      requiredFields: ['id', 'name', 'trigram', 'platform', 'number'],
+    },
+    lmu: {
+      name: 'Le Mans Ultimate',
+      category: '',
+      channels: [],
+      requiredFields: ['name', 'trigram', 'platform', 'number'],
+    },
+    f1: {
+      name: 'Formula 1',
+      category: '',
+      channels: [],
+      requiredFields: ['name', 'trigram', 'platform', 'number'],
+    },
+  },
   platforms: [
     {
       name: 'PC',
