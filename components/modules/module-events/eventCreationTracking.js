@@ -18,17 +18,25 @@ async function eventCreationTracking(id) {
     'timestamp',
     'channelId',
   ];
-  const fields = keysToCheck.map((key) => ({
-    name: key,
-    value:
+  const fields = keysToCheck.map((key) => {
+    let value =
       event[key] !== null &&
       event[key] !== undefined &&
       event[key] !== '' &&
       event[key] !== 'None'
         ? `\`${event[key]}\``
-        : '🚫 Vide',
-    inline: true,
-  }));
+        : '🚫 Vide';
+
+    if (key === 'description' && value.length > 1024) {
+      value = value.substring(0, 400) + '...`'
+    }
+
+    return {
+      name: key,
+      value: value,
+      inline: true,
+    };
+  });
 
   const allFieldsFilled = fields.every((field) => field.value !== '🚫 Vide');
 
