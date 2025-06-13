@@ -18,7 +18,7 @@ module.exports = {
       interaction.customId.split('_');
     const selectedAction = interaction.values[0];
 
-    switch (selectedAction && step) {
+    switch (selectedAction && step === selectedAction && step) {
       case '1': {
         return interaction.update({
           components: [await gameSelectionComponent(step, userId)],
