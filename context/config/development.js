@@ -54,6 +54,7 @@ module.exports = {
   roles: {
     spectator: '1349479229234090144',
     team: '1349479229234090144',
+    steward: '1349479229225439261',
     member: '',
   },
   gameSpecificConfigs: {
