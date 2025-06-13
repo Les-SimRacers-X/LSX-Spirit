@@ -23,7 +23,7 @@ module.exports = {
     },
   ],
 
-  async run(interaction) {
+  async run(bot, interaction) {
     if (!interaction.member.roles.cache.has(Config.roles.steward)) {
       const embedNoPermissions = new EmbedBuilder()
         .setColor(Config.colors.error)
