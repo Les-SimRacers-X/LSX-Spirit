@@ -76,6 +76,7 @@ module.exports = {
   roles: {
     spectator: '1342837215109054545',
     team: '1166375974435311697',
+    steward: '1186975087795118081',
     member: '1169430370626850996',
   },
   platforms: [

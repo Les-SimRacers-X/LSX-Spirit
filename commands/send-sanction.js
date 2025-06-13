@@ -10,10 +10,21 @@ const { emoteComposer } = require('../context/utils/utils');
 
 module.exports = {
   name: 'send-sanction',
-  type: 'APPLICATION',
+  description: "Cette commande permet l'envoi des sanctions",
+  dm: false,
+  utilisation: '<user>',
+  permission: 'Aucune',
+  options: [
+    {
+      type: 'user',
+      name: 'user',
+      description: 'Sélectionner un utilisateur',
+      required: true,
+    },
+  ],
 
   async run(interaction) {
-    if (!interaction.member.roles.cache.has('1321919765140344895')) {
+    if (!interaction.member.roles.cache.has(Config.roles.steward)) {
       const embedNoPermissions = new EmbedBuilder()
         .setColor(Config.colors.error)
         .setDescription(
@@ -25,7 +36,7 @@ module.exports = {
         ephemeral: true,
       });
     } else {
-      const user = interaction.targetUser;
+      const user = interaction.options.getUser('user');
       // Modal d'envoi de sanction
       const modalSendingSanction = new ModalBuilder()
         .setCustomId(`sendSanction_${user.id}`)
