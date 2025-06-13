@@ -24,7 +24,7 @@ process.on('unhandledRejection', (err, origin) => {
     .setTimestamp();
 
   bot.channels.cache
-    .get(Config.channels.errorlogChannel)
+    .get(Config.channels.errorLogs)
     .send({ embeds: [embedBotLogs] });
 });
 
@@ -32,13 +32,13 @@ process.on('unhandledRejectionMonitor', (err, origin) => {
   console.log(err, origin);
 
   const embedBotLogs = new EmbedBuilder()
-    .setColor(Config.mainServerColor)
+    .setColor(Config.colors.mainServerColor)
     .setTitle(`📌 Erreur détecté :`)
     .setDescription(`\`\`\`${err}\n\n\n${origin}\`\`\``)
     .setTimestamp();
 
   bot.channels.cache
-    .get(Config.channels.errorlogChannel)
+    .get(Config.channels.errorLogs)
     .send({ embeds: [embedBotLogs] });
 });
 

@@ -1,6 +1,9 @@
 const { EmbedBuilder } = require('discord.js');
 const { getDiscordUserInfos } = require('../../../context/utils/discordUtils');
-const { calculatePercentage } = require('../../../context/utils/utils');
+const {
+  calculatePercentage,
+  emoteComposer,
+} = require('../../../context/utils/utils');
 const {
   fetchUserProfilByIdQuery,
 } = require('../../../context/data/data-users/queries');
@@ -10,6 +13,18 @@ const { interactionOnProfil } = require('./interactionOnProfil');
 async function licenceDisplay(userId) {
   const [userInfos] = await fetchUserProfilByIdQuery(userId);
   const discordUser = await getDiscordUserInfos(userId);
+
+  if (!userInfos) {
+    const noUser = new EmbedBuilder()
+      .setColor(Config.colors.error)
+      .setDescription(
+        `### ${emoteComposer(Config.emotes.failure)} ${discordUser} doesn't have a licence`
+      );
+
+    return {
+      embeds: [noUser],
+    };
+  }
 
   const gameConfigObject = JSON.parse(userInfos.gameConfig);
 

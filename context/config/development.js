@@ -54,7 +54,28 @@ module.exports = {
   roles: {
     spectator: '1349479229234090144',
     team: '1349479229234090144',
+    steward: '1349479229225439261',
     member: '',
+  },
+  gameSpecificConfigs: {
+    acc: {
+      name: 'Assetto Corsa Competizione',
+      category: '',
+      channels: [],
+      requiredFields: ['id', 'name', 'trigram', 'platform', 'number'],
+    },
+    lmu: {
+      name: 'Le Mans Ultimate',
+      category: '',
+      channels: [],
+      requiredFields: ['name', 'trigram', 'platform', 'number'],
+    },
+    f1: {
+      name: 'Formula 1',
+      category: '',
+      channels: [],
+      requiredFields: ['name', 'trigram', 'platform', 'number'],
+    },
   },
   platforms: [
     {
