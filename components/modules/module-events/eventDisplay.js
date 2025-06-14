@@ -187,6 +187,7 @@ async function updateEventMessage(interaction, category) {
           if (eventBeforeUpdate.presetLicence === 'true') {
             return gameConfigValidation.isValid;
           }
+          return false;
         },
         message: gameConfigValidation.message,
       },
