@@ -66,8 +66,8 @@ module.exports = {
     },
     lmu: {
       name: 'Le Mans Ultimate',
-      category: '',
-      channels: [],
+      category: '1349479229242347592',
+      channels: ['1375922411274506260'],
       requiredFields: ['name', 'trigram', 'platform', 'number'],
     },
     f1: {

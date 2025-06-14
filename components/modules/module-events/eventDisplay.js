@@ -157,7 +157,7 @@ async function updateEventMessage(interaction, category) {
     );
     const [userProfil] = await fetchUserProfilByIdQuery(interaction.user.id);
 
-    const gameConfigValidation = await validateGameConfiguration(
+    let validationResult = await validateGameConfiguration(
       interaction,
       userProfil?.gameConfig
     );
@@ -183,13 +183,10 @@ async function updateEventMessage(interaction, category) {
         message: `Vous n'avez pas configurer votre licence !`,
       },
       {
-        condition: () => {
-          if (eventBeforeUpdate.presetLicence === 'true') {
-            return gameConfigValidation.isValid;
-          }
-          return false;
-        },
-        message: gameConfigValidation.message,
+        condition:
+          eventBeforeUpdate.presetLicence === 'true' &&
+          validationResult.isValid,
+        message: validationResult.message,
       },
       {
         condition:
