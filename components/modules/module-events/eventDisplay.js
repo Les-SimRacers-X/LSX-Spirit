@@ -183,7 +183,11 @@ async function updateEventMessage(interaction, category) {
         message: `Vous n'avez pas configurer votre licence !`,
       },
       {
-        condition: gameConfigValidation.isValid,
+        condition: () => {
+          if (eventBeforeUpdate.presetLicence === 'true') {
+            return gameConfigValidation.isValid;
+          }
+        },
         message: gameConfigValidation.message,
       },
       {
