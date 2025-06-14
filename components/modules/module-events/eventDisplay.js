@@ -169,7 +169,8 @@ async function updateEventMessage(interaction, category) {
       },
       {
         condition:
-          eventBeforeUpdate.presetLicence === 'true' && userProfil.length === 0,
+          eventBeforeUpdate.presetLicence === 'true' &&
+          (!userProfil || userProfil.length === 0),
         message: `Vous ne possédez pas de super-licence ! Pour vous inscrire ${emoteComposer(
           Config.emotes.nextArrow
         )} <#${Config.channels.licence}>`,
