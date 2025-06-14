@@ -21,7 +21,7 @@ const { getDiscordUserInfos } = require('../../../context/utils/discordUtils');
 const { validateGameConfiguration } = require('./validateGameConfig');
 
 async function createEventEmbed(event, categories, registrations) {
-  const [flag, country] = event?.trackNationality.split('-');
+  const [flag, country] = event.trackNationality.split('-');
 
   const embedEventDisplay = new EmbedBuilder()
     .setColor(Config.colors.mainServerColor)
@@ -278,7 +278,7 @@ async function updateEventMessage(interaction, category) {
         await updateEventQuery(eventBeforeUpdate.id, data);
 
         const [eventAfterUpdate] = await getEventByMessageIdQuery(
-          interaction.user.id
+          interaction.message.id
         );
 
         const participantsAfterUpdate =
