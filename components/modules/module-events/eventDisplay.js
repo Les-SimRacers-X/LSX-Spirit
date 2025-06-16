@@ -345,7 +345,7 @@ async function updateEventMessage(interaction, category) {
 
         if (promotedUser) {
           try {
-            const promotedUserObject = getDiscordUserInfos(promotedUser?.id);
+            const promotedUserObject = await bot.users.fetch(promotedUser?.id);
             const promotedEmbed = new EmbedBuilder()
               .setColor(Config.colors.success)
               .setDescription(
