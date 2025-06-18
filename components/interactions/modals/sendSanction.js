@@ -1,4 +1,3 @@
-const { EmbedBuilder } = require('@discordjs/builders');
 const {
   fetchUserProfilByIdQuery,
 } = require('../../../context/data/data-users/queries');
@@ -15,6 +14,7 @@ const {
 const {
   updateUserQuery,
 } = require('../../../context/data/data-users/mutations');
+const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
   customId: 'sendSanction',
