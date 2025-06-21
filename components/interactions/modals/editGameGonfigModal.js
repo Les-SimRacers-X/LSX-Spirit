@@ -27,9 +27,27 @@ module.exports = {
       interaction.fields.getTextInputValue('numberInput')
     );
 
-    const usedNumbers = await fetchNumberInAccountConfig(selectedGame);
+    let currentUsedNumber = null;
 
-    let defaultValues = {};
+    const [userConfig] = await fetchUserAccountConfigByIdQuery(userId);
+    let accountConfig = {};
+
+    if (userConfig?.gameConfig) {
+      accountConfig = JSON.parse(userConfig.gameConfig);
+      if (accountConfig[selectedGame]) {
+        currentUsedNumber = accountConfig[selectedGame].number;
+      }
+    }
+
+    let usedNumbers = await fetchNumberInAccountConfig(selectedGame);
+
+    if (
+      currentUsedNumber !== null &&
+      reqNumberContent === currentUsedNumber &&
+      usedNumbers.includes(reqNumberContent)
+    ) {
+      usedNumbers = usedNumbers.filter((num) => num !== reqNumberContent);
+    }
 
     if (usedNumbers.includes(reqNumberContent)) {
       let availableNumber = null;
@@ -88,13 +106,6 @@ module.exports = {
         components: [buttonAlreadyTakenNumber],
         ephemeral: true,
       });
-    }
-
-    const [userConfig] = await fetchUserAccountConfigByIdQuery(userId);
-    let accountConfig = {};
-
-    if (userConfig?.gameConfig) {
-      accountConfig = JSON.parse(userConfig.gameConfig);
     }
 
     const buildTrigram = reqPseudoContent.match(/[a-zA-Z]/g) || [];
