@@ -99,7 +99,7 @@ module.exports = {
         const alreadyTakenNumber = new EmbedBuilder()
           .setColor(Config.colors.error)
           .setDescription(
-            `### ${emoteComposer(Config.emotes.failure)} Veuillez réessayer`
+            `### ${emoteComposer(Config.emotes.failure)} Veuillez réessayer, votre pseudo \`${reqPseudoContent}\` n'est pas retrouver !`
           );
         const buttonAlreadyTakenNumber = new ActionRowBuilder().addComponents(
           new ButtonBuilder()
