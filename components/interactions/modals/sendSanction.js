@@ -1,7 +1,6 @@
 const {
   fetchUserProfilByIdQuery,
 } = require('../../../context/data/data-users/queries');
-const { getDiscordUserInfos } = require('../../../context/utils/discordUtils');
 const {
   generateID,
   currentTimestamp,
@@ -21,7 +20,7 @@ module.exports = {
   async execute(interaction) {
     const [action, userId] = interaction.customId.split('_');
     await interaction.deferReply({ ephemeral: true });
-    const user = await getDiscordUserInfos(userId);
+    const user = await bot.users.fetch(userId);
     const [userProfil] = await fetchUserProfilByIdQuery(userId);
     const reqMessageContent =
       interaction.fields.getTextInputValue('messageContent');
