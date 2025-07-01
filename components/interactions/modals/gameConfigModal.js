@@ -30,6 +30,34 @@ module.exports = {
 
     let defaultValues = {};
 
+    if (reqNumberContent < 1 || reqNumberContent > 999) {
+      defaultValues = {
+        error: `Le numéro doit être compris entre 1 et 999`,
+        name: reqPseudoContent,
+      };
+
+      const alreadyTakenNumber = new EmbedBuilder()
+        .setColor(Config.colors.error)
+        .setDescription(
+          `### ${emoteComposer(Config.emotes.failure)} Le numéro doit être compris entre 1 et 999`
+        );
+      const buttonAlreadyTakenNumber = new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+          .setCustomId(
+            `retryNumber_${userId}_${gameSelected}_${step}_${defaultValues}`
+          )
+          .setLabel('Réessayé')
+          .setDisabled(false)
+          .setStyle(ButtonStyle.Primary)
+      );
+
+      return await interaction.reply({
+        embeds: [alreadyTakenNumber],
+        components: [buttonAlreadyTakenNumber],
+        ephemeral: true,
+      });
+    }
+
     if (usedNumbers.includes(reqNumberContent)) {
       let availableNumber = null;
 
