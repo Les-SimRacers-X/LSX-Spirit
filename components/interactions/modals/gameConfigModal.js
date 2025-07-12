@@ -114,10 +114,14 @@ module.exports = {
 
     const [userConfig] = await fetchUserAccountConfigByIdQuery(userId);
     let accountConfig = {};
+    const accountConfigObject = JSON.parse(userConfig.gameConfig);
     let finalUXID = 'null';
 
     if (gameSelected === 'acc') {
-      const UXID = await getConsoleUXID(reqPseudoContent);
+      const UXID = await getConsoleUXID(
+        reqPseudoContent,
+        accountConfigObject.acc.platform
+      );
 
       if (!UXID || UXID === undefined) {
         defaultValues = {
