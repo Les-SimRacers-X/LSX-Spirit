@@ -15,7 +15,7 @@ module.exports = {
   customId: 'presetManagment',
   async execute(interaction) {
     const [action, presetId] = interaction.customId.split('_');
-    const selectedValue = interaction.value[0];
+    const selectedValue = interaction.values[0];
 
     switch (selectedValue) {
       case 'addPreset': {
