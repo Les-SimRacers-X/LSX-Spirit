@@ -18,7 +18,7 @@ async function getConsoleUXID(username, platform) {
         return { platform: 'P', id: userProfile.profile.accountId };
       }
     } catch (error) {
-      await errorHandler(_, error);
+      await errorHandler('', error);
     }
   }
 
@@ -36,7 +36,7 @@ async function getConsoleUXID(username, platform) {
         return { platform: 'M', id: response.data.people[0].xuid };
       }
     } catch (error) {
-      await errorHandler(_, error);
+      await errorHandler('', error);
     }
   }
 
