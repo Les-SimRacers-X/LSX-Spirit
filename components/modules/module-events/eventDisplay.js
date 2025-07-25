@@ -152,10 +152,30 @@ async function generateEvent(eventId) {
 
 async function updateEventMessage(interaction, category) {
   try {
+    await interaction.deferReply({ ephemeral: true });
     const [eventBeforeUpdate] = await getEventByMessageIdQuery(
       interaction.message.id
     );
     const [userProfil] = await fetchUserProfilByIdQuery(interaction.user.id);
+
+    const categoryEntries = eventBeforeUpdate?.presetCategory
+      .split(';')
+      .filter((entry) => entry);
+    const categories = categoryEntries.map((entry) => {
+      const [category, maxParticipants] = entry.split('-');
+      return {
+        category,
+        maxParticipants: parseInt(maxParticipants, 10),
+      };
+    });
+
+    const participants = JSON.parse(eventBeforeUpdate?.registered) || [];
+
+    const { embeds } = await createEventEmbed(
+      eventBeforeUpdate,
+      categories,
+      participants
+    );
 
     let validationResult = await validateGameConfiguration(
       interaction,
@@ -202,7 +222,7 @@ async function updateEventMessage(interaction, category) {
       .map((rule) => rule.message);
 
     if (failedMessage.length > 0) {
-      return await interaction.reply({
+      await interaction.editReply({
         embeds: [
           new EmbedBuilder()
             .setColor(Config.colors.error)
@@ -214,20 +234,10 @@ async function updateEventMessage(interaction, category) {
         ],
         ephemeral: true,
       });
-    }
-
-    const categoryEntries = eventBeforeUpdate?.presetCategory
-      .split(';')
-      .filter((entry) => entry);
-    const categories = categoryEntries.map((entry) => {
-      const [category, maxParticipants] = entry.split('-');
       return {
-        category,
-        maxParticipants: parseInt(maxParticipants, 10),
+        embeds,
       };
-    });
-
-    const participants = JSON.parse(eventBeforeUpdate?.registered) || [];
+    }
 
     const categoryDetails = categories.find(
       (cat) => cat?.category === category
@@ -245,7 +255,7 @@ async function updateEventMessage(interaction, category) {
     );
 
     if (userAlreadyregistered) {
-      return await interaction.reply({
+      await interaction.editReply({
         embeds: [
           new EmbedBuilder()
             .setColor(Config.colors.warning)
@@ -257,6 +267,9 @@ async function updateEventMessage(interaction, category) {
         ],
         ephemeral: true,
       });
+      return {
+        embeds,
+      };
     }
 
     if (userInCategory) {
@@ -298,7 +311,7 @@ async function updateEventMessage(interaction, category) {
             )} Vous avez été retiré de la liste d'attente pour la catégorie \`${category}\``
           );
 
-        await interaction.reply({
+        await interaction.editReply({
           embeds: [removeUserFromWaitlist],
           ephemeral: true,
         });
@@ -381,7 +394,7 @@ async function updateEventMessage(interaction, category) {
             )} Vous avez été retiré de l'événement pour la catégorie \`${category}\``
           );
 
-        await interaction.reply({
+        await interaction.editReply({
           embeds: [removeUserFromCategory],
           ephemeral: true,
         });
@@ -418,7 +431,7 @@ async function updateEventMessage(interaction, category) {
           )} Vous avez été retiré de l'événement pour la catégorie \`${category}\``
         );
 
-      await interaction.reply({
+      await interaction.editReply({
         embeds: [removedFromList],
         ephemeral: true,
       });
@@ -467,7 +480,7 @@ async function updateEventMessage(interaction, category) {
           )} La catégorie \`${category}\` est pleine. Vous avez été ajouté à la liste d'attente.`
         );
 
-      await interaction.reply({
+      await interaction.editReply({
         embeds: [addedToWaitingList],
         ephemeral: true,
       });
@@ -511,7 +524,7 @@ async function updateEventMessage(interaction, category) {
           )} Vous avez été inscrit avec succès à la catégorie \`${category}\``
         );
 
-      await interaction.reply({
+      await interaction.editReply({
         embeds: [added],
         ephemeral: true,
       });
