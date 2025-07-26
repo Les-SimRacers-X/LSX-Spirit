@@ -171,7 +171,7 @@ async function updateEventMessage(interaction, category) {
 
     const participants = JSON.parse(eventBeforeUpdate?.registered) || [];
 
-    const { embeds } = await createEventEmbed(
+    const { embedBeforeUpdate } = await createEventEmbed(
       eventBeforeUpdate,
       categories,
       participants
@@ -235,7 +235,7 @@ async function updateEventMessage(interaction, category) {
         ephemeral: true,
       });
       return {
-        embeds,
+        embeds: embedBeforeUpdate,
       };
     }
 
@@ -268,7 +268,7 @@ async function updateEventMessage(interaction, category) {
         ephemeral: true,
       });
       return {
-        embeds,
+        embeds: embedBeforeUpdate,
       };
     }
 
