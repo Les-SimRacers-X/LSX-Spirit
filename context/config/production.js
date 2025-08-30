@@ -43,6 +43,8 @@ module.exports = {
       '1355941419864555640',
       '1132947259349282816',
     ],
+    console: '1179353258070917180',
+    pc: '1355941419864555640',
     general: '1130557618792955905',
     team: '1166445624653262898',
   },
@@ -60,34 +62,16 @@ module.exports = {
       channels: ['1179673347441819708', '1264827348558024766'],
       requiredFields: ['id', 'name', 'trigram', 'platform', 'number'],
     },
-    lmu: {
-      name: 'Le Mans Ultimate',
-      category: '1355941419864555640',
-      channels: ['1355941865790111835'],
-      requiredFields: ['name', 'trigram', 'platform', 'number'],
-    },
-    f1: {
-      name: 'Formula 1',
-      category: '1132947259349282816',
-      channels: ['1379533061036834896'],
-      requiredFields: ['name', 'trigram', 'platform', 'number'],
-    },
   },
   roles: {
     spectator: '1342837215109054545',
+    consoleMembers: '1359235240337342687',
+    pcMembers: '1355939379612352622',
     team: '1166375974435311697',
     steward: '1186975087795118081',
     member: '1169430370626850996',
   },
   platforms: [
-    {
-      name: 'PC',
-      emote: {
-        id: '1359254614524035202',
-        name: 'windows',
-      },
-      value: 'pc',
-    },
     {
       name: 'Playstation',
       emote: {
@@ -113,22 +97,6 @@ module.exports = {
         name: 'acc',
       },
       value: 'acc',
-    },
-    {
-      name: 'Le Mans Ultimate',
-      emote: {
-        id: '1381011587598385162',
-        name: 'lmu',
-      },
-      value: 'lmu',
-    },
-    {
-      name: 'Formula 1',
-      emote: {
-        id: '1381135251123994639',
-        name: 'f1logo',
-      },
-      value: 'f1',
     },
   ],
   countries: [
