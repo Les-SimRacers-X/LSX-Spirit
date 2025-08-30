@@ -5,6 +5,7 @@ const { getEventOfTheDay } = require('../components/jobs/eventOfTheDay');
 const {
   updateTeamCategoryNumber,
   updateGeneralCategoryNumber,
+  updatePlatformCategoriesNumber,
 } = require('../components/jobs/updateCategoriesNumbers');
 
 module.exports = {
@@ -48,6 +49,12 @@ module.exports = {
     bot.on('guildMemberUpdate', async (oldMember, newMember) => {
       if (oldMember.roles.cache.size !== newMember.roles.cache.size) {
         await updateTeamCategoryNumber(newMember.guild);
+      }
+    });
+
+    bot.on('guildMemberUpdate', async (oldMember, newMember) => {
+      if (oldMember.roles.cache.size !== newMember.roles.cache.size) {
+        await updatePlatformCategoriesNumber(newMember.guild);
       }
     });
 
