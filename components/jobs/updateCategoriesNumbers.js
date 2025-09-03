@@ -80,7 +80,7 @@ async function updatePlatformCategoriesNumber(guild) {
     }
     const consoleRoleMemberCount = consoleRole.members.size;
 
-    await pcCategory.setName(`🎮PC : ${roleMemberCount} Pilotes🎮`);
+    await pcCategory.setName(`💻PC : ${roleMemberCount} Pilotes💻`);
     await consoleCategory.setName(
       `🎮Consoles : ${consoleRoleMemberCount} Pilotes🎮`
     );
